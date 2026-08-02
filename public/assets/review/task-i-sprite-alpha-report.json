@@ -1,0 +1,94 @@
+{
+  "method": "edge-connected near-black flood fill; threshold=18; Gaussian alpha feather radius=1.15",
+  "expected_size": [
+    1024,
+    1536
+  ],
+  "sprites": [
+    {
+      "path": "/home/runner/work/qin-mie-liu-guo/qin-mie-liu-guo/demo/public/assets/battle/enemy_assassin_idle_v1.png",
+      "mode": "RGBA",
+      "size": [
+        1024,
+        1536
+      ],
+      "alpha_zero": 1249248,
+      "alpha_partial": 41708,
+      "alpha_opaque": 281908,
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "path": "/home/runner/work/qin-mie-liu-guo/qin-mie-liu-guo/demo/public/assets/battle/enemy_hanwu_idle_v1.png",
+      "mode": "RGBA",
+      "size": [
+        1024,
+        1536
+      ],
+      "alpha_zero": 1200867,
+      "alpha_partial": 35211,
+      "alpha_opaque": 336786,
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "path": "/home/runner/work/qin-mie-liu-guo/qin-mie-liu-guo/demo/public/assets/battle/enemy_hanzu_idle_v1.png",
+      "mode": "RGBA",
+      "size": [
+        1024,
+        1536
+      ],
+      "alpha_zero": 1212089,
+      "alpha_partial": 38154,
+      "alpha_opaque": 322621,
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "path": "/home/runner/work/qin-mie-liu-guo/qin-mie-liu-guo/demo/public/assets/battle/enemy_toumu_idle_v1.png",
+      "mode": "RGBA",
+      "size": [
+        1024,
+        1536
+      ],
+      "alpha_zero": 1180989,
+      "alpha_partial": 37630,
+      "alpha_opaque": 354245,
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "path": "/home/runner/work/qin-mie-liu-guo/qin-mie-liu-guo/demo/public/assets/battle/enemy_zonghuo_idle_v1.png",
+      "mode": "RGBA",
+      "size": [
+        1024,
+        1536
+      ],
+      "alpha_zero": 1192872,
+      "alpha_partial": 65851,
+      "alpha_opaque": 314141,
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ]
+    }
+  ]
+}

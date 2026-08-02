@@ -1,0 +1,2225 @@
+[
+  {
+    "scene": "s1_anfa",
+    "idx": 1,
+    "speaker": "旁白",
+    "text": "前 230 年。",
+    "tts": "前 230 年。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/s1_anfa/01_旁白.mp3"
+  },
+  {
+    "scene": "s1_anfa",
+    "idx": 2,
+    "speaker": "旁白",
+    "text": "郑国下狱。逐客令下。",
+    "tts": "郑国下狱。逐客令下。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/s1_anfa/02_旁白.mp3"
+  },
+  {
+    "scene": "s1_anfa",
+    "idx": 3,
+    "speaker": "旁白",
+    "text": "驿道上，被逐的车队连绵出城，从清晨排到黄昏。",
+    "tts": "驿道上，被逐的车队连绵出城，从清晨排到黄昏。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/s1_anfa/03_旁白.mp3"
+  },
+  {
+    "scene": "s1_anfa",
+    "idx": 4,
+    "speaker": "旁白",
+    "text": "郑国渠修了十年，行将竣工。",
+    "tts": "郑国渠修了十年，行将竣工。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/s1_anfa/04_旁白.mp3"
+  },
+  {
+    "scene": "s1_anfa",
+    "idx": 5,
+    "speaker": "旁白",
+    "text": "三日前，黑冰台都尉北芒探知——",
+    "tts": "三日前，黑冰台都尉北芒探知——",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/s1_anfa/05_旁白.mp3"
+  },
+  {
+    "scene": "s1_anfa",
+    "idx": 6,
+    "speaker": "旁白",
+    "text": "郑国深夜，密见韩使。",
+    "tts": "郑国深夜，密见韩使。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/s1_anfa/06_旁白.mp3"
+  },
+  {
+    "scene": "s1_anfa",
+    "idx": 7,
+    "speaker": "旁白",
+    "text": "见了什么，没人知道。",
+    "tts": "见了什么，没人知道。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/s1_anfa/07_旁白.mp3"
+  },
+  {
+    "scene": "s1_anfa",
+    "idx": 8,
+    "speaker": "旁白",
+    "text": "谈了什么，没人听见。",
+    "tts": "谈了什么，没人听见。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/s1_anfa/08_旁白.mp3"
+  },
+  {
+    "scene": "s1_anfa",
+    "idx": 9,
+    "speaker": "旁白",
+    "text": "按律，告到总都尉公孙钺。",
+    "tts": "按律，告到总都尉公孙月。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/s1_anfa/09_旁白.mp3"
+  },
+  {
+    "scene": "s1_anfa",
+    "idx": 10,
+    "speaker": "公孙钺",
+    "text": "“你看见的？”",
+    "tts": "“你看见的？”",
+    "voice": "lengdan_xiongzhang",
+    "file": "voice/s1_anfa/10_公孙钺.mp3"
+  },
+  {
+    "scene": "s1_anfa",
+    "idx": 11,
+    "speaker": "北芒",
+    "text": "“我看见的。”",
+    "tts": "“我看见的。”",
+    "voice": "Chinese (Mandarin)_Gentleman",
+    "file": "voice/s1_anfa/11_北芒.mp3"
+  },
+  {
+    "scene": "s1_anfa",
+    "idx": 12,
+    "speaker": "公孙钺",
+    "text": "“那就写上。”（顿）“写你看见的。”",
+    "tts": "“那就写上。”“写你看见的。”",
+    "voice": "lengdan_xiongzhang",
+    "file": "voice/s1_anfa/12_公孙钺.mp3"
+  },
+  {
+    "scene": "s1_anfa",
+    "idx": 13,
+    "speaker": "旁白",
+    "text": "传闻先一步到了章台——",
+    "tts": "传闻先一步到了章台——",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/s1_anfa/13_旁白.mp3"
+  },
+  {
+    "scene": "s1_anfa",
+    "idx": 14,
+    "speaker": "旁白",
+    "text": "韩国派水工，行疲秦之计。",
+    "tts": "韩国派水工，行疲秦之计。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/s1_anfa/14_旁白.mp3"
+  },
+  {
+    "scene": "s1_anfa",
+    "idx": 15,
+    "speaker": "旁白",
+    "text": "秦王大怒，欲杀郑国。",
+    "tts": "秦王大怒，欲杀郑国。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/s1_anfa/15_旁白.mp3"
+  },
+  {
+    "scene": "s1_anfa",
+    "idx": 16,
+    "speaker": "旁白",
+    "text": "宗室鼓噪：六国之人，皆为间来。",
+    "tts": "宗室鼓噪：六国之人，皆维间来。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/s1_anfa/16_旁白.mp3"
+  },
+  {
+    "scene": "s1_anfa",
+    "idx": 17,
+    "speaker": "旁白",
+    "text": "秦王令——凡六国客卿，不问官职，限期离秦。",
+    "tts": "秦王令——凡六国客卿，不问官职，限期离秦。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/s1_anfa/17_旁白.mp3"
+  },
+  {
+    "scene": "s1_anfa",
+    "idx": 18,
+    "speaker": "旁白",
+    "text": "李斯在逐。越女亦在逐。",
+    "tts": "李斯在逐。越女亦在逐。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/s1_anfa/18_旁白.mp3"
+  },
+  {
+    "scene": "s1_anfa",
+    "idx": 19,
+    "speaker": "旁白",
+    "text": "告发的人是他。",
+    "tts": "告发的人是他。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/s1_anfa/19_旁白.mp3"
+  },
+  {
+    "scene": "s1_anfa",
+    "idx": 20,
+    "speaker": "旁白",
+    "text": "他只报了“见了”。",
+    "tts": "他只报了“见了”。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/s1_anfa/20_旁白.mp3"
+  },
+  {
+    "scene": "s1_anfa",
+    "idx": 21,
+    "speaker": "旁白",
+    "text": "郑国连一句“没见”，都没有说。",
+    "tts": "郑国连一句“没见”，都没有说。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/s1_anfa/21_旁白.mp3"
+  },
+  {
+    "scene": "s2_shenxun",
+    "idx": 1,
+    "speaker": "旁白",
+    "text": "诏狱。",
+    "tts": "诏狱。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/s2_shenxun/01_旁白.mp3"
+  },
+  {
+    "scene": "s2_shenxun",
+    "idx": 2,
+    "speaker": "公孙钺",
+    "text": "“人，是你报的。”",
+    "tts": "“人，是你报的。”",
+    "voice": "lengdan_xiongzhang",
+    "file": "voice/s2_shenxun/02_公孙钺.mp3"
+  },
+  {
+    "scene": "s2_shenxun",
+    "idx": 3,
+    "speaker": "公孙钺",
+    "text": "“你去问。”",
+    "tts": "“你去问。”",
+    "voice": "lengdan_xiongzhang",
+    "file": "voice/s2_shenxun/03_公孙钺.mp3"
+  },
+  {
+    "scene": "s2_shenxun",
+    "idx": 4,
+    "speaker": "旁白",
+    "text": "郑国坐在狱墙下，瘦得只剩一把骨头，一双眼睛却亮得吓人。",
+    "tts": "郑国坐在狱墙下，瘦得只剩一把骨头，一双眼睛却亮得吓人。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/s2_shenxun/04_旁白.mp3"
+  },
+  {
+    "scene": "s2_shenxun",
+    "idx": 5,
+    "speaker": "北芒",
+    "text": "“韩使深夜见你。谈了什么？”",
+    "tts": "“韩使深夜见你。谈了什么？”",
+    "voice": "Chinese (Mandarin)_Gentleman",
+    "file": "voice/s2_shenxun/05_北芒.mp3"
+  },
+  {
+    "scene": "s2_shenxun",
+    "idx": 7,
+    "speaker": "北芒",
+    "text": "“你不辩，就是认。”",
+    "tts": "“你不辩，就是认。”",
+    "voice": "Chinese (Mandarin)_Gentleman",
+    "file": "voice/s2_shenxun/07_北芒.mp3"
+  },
+  {
+    "scene": "s2_shenxun",
+    "idx": 8,
+    "speaker": "郑国",
+    "text": "“渠上——”（哑声）“今日，进度如何？”",
+    "tts": "“渠上——”“今日，进度如何？”",
+    "voice": "Chinese (Mandarin)_Humorous_Elder",
+    "file": "voice/s2_shenxun/08_郑国.mp3"
+  },
+  {
+    "scene": "s2_shenxun",
+    "idx": 9,
+    "speaker": "狱卒",
+    "text": "“问了三天。他就这一句。”",
+    "tts": "“问了三天。他就这一句。”",
+    "voice": "male-qn-jingying",
+    "file": "voice/s2_shenxun/09_狱卒.mp3"
+  },
+  {
+    "scene": "s2_shenxun",
+    "idx": 10,
+    "speaker": "狱卒",
+    "text": "“每日在墙上画一道水线。画完，再擦掉。”",
+    "tts": "“每日在墙上画一道水线。画完，再擦掉。”",
+    "voice": "male-qn-jingying",
+    "file": "voice/s2_shenxun/10_狱卒.mp3"
+  },
+  {
+    "scene": "s2_shenxun",
+    "idx": 11,
+    "speaker": "北芒",
+    "text": "通敌者不辩，是认罪。",
+    "tts": "通敌者不辩，是认罪。",
+    "voice": "Chinese (Mandarin)_Gentleman",
+    "file": "voice/s2_shenxun/11_北芒.mp3"
+  },
+  {
+    "scene": "s2_shenxun",
+    "idx": 12,
+    "speaker": "北芒",
+    "text": "可他问的，却是渠。",
+    "tts": "可他问的，却是渠。",
+    "voice": "Chinese (Mandarin)_Gentleman",
+    "file": "voice/s2_shenxun/12_北芒.mp3"
+  },
+  {
+    "scene": "s3_chaqu",
+    "idx": 1,
+    "speaker": "旁白",
+    "text": "渠口。十年的查验记档，堆了半间屋。",
+    "tts": "渠口。十年的查验记档，堆了半间屋。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/s3_chaqu/01_旁白.mp3"
+  },
+  {
+    "scene": "s3_chaqu",
+    "idx": 2,
+    "speaker": "旁白",
+    "text": "北芒带人，翻了一夜。",
+    "tts": "北芒带人，翻了一夜。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/s3_chaqu/02_旁白.mp3"
+  },
+  {
+    "scene": "s3_chaqu",
+    "idx": 3,
+    "speaker": "北芒",
+    "text": "无一错漏。",
+    "tts": "无一错漏。",
+    "voice": "Chinese (Mandarin)_Gentleman",
+    "file": "voice/s3_chaqu/03_北芒.mp3"
+  },
+  {
+    "scene": "s3_chaqu",
+    "idx": 4,
+    "speaker": "北芒",
+    "text": "渠净，与蓄意坏渠对不上。",
+    "tts": "渠净，与蓄意坏渠对不上。",
+    "voice": "Chinese (Mandarin)_Gentleman",
+    "file": "voice/s3_chaqu/04_北芒.mp3"
+  },
+  {
+    "scene": "s3_chaqu",
+    "idx": 5,
+    "speaker": "北芒",
+    "text": "求死，与畏罪对不上。",
+    "tts": "求死，与畏罪对不上。",
+    "voice": "Chinese (Mandarin)_Gentleman",
+    "file": "voice/s3_chaqu/05_北芒.mp3"
+  },
+  {
+    "scene": "s3_chaqu",
+    "idx": 6,
+    "speaker": "北芒",
+    "text": "他不辩——是有比死更不能说的。",
+    "tts": "他不辩——是有比死更不能说的。",
+    "voice": "Chinese (Mandarin)_Gentleman",
+    "file": "voice/s3_chaqu/06_北芒.mp3"
+  },
+  {
+    "scene": "s3_chaqu",
+    "idx": 7,
+    "speaker": "北芒",
+    "text": "更像是，有人在封他的口。",
+    "tts": "更像是，有人在封他的口。",
+    "voice": "Chinese (Mandarin)_Gentleman",
+    "file": "voice/s3_chaqu/07_北芒.mp3"
+  },
+  {
+    "scene": "s3_chaqu",
+    "idx": 8,
+    "speaker": "旁白",
+    "text": "入境记档：韩使，有入，无出。",
+    "tts": "入境记档：韩使，有入，无出。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/s3_chaqu/08_旁白.mp3"
+  },
+  {
+    "scene": "s3_chaqu",
+    "idx": 9,
+    "speaker": "旁白",
+    "text": "馆驿记档：每隔五日，向韩境传讯一次。",
+    "tts": "馆驿记档：每隔五日，向韩境传讯一次。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/s3_chaqu/09_旁白.mp3"
+  },
+  {
+    "scene": "s3_chaqu",
+    "idx": 10,
+    "speaker": "旁白",
+    "text": "人还在秦。还在等。",
+    "tts": "人还在秦。还在等。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/s3_chaqu/10_旁白.mp3"
+  },
+  {
+    "scene": "s3_chaqu",
+    "idx": 11,
+    "speaker": "北芒",
+    "text": "“我要出境。”",
+    "tts": "“我要出境。”",
+    "voice": "Chinese (Mandarin)_Gentleman",
+    "file": "voice/s3_chaqu/11_北芒.mp3"
+  },
+  {
+    "scene": "s3_chaqu",
+    "idx": 12,
+    "speaker": "公孙钺",
+    "text": "“作甚？”",
+    "tts": "“作甚？”",
+    "voice": "lengdan_xiongzhang",
+    "file": "voice/s3_chaqu/12_公孙钺.mp3"
+  },
+  {
+    "scene": "s3_chaqu",
+    "idx": 13,
+    "speaker": "北芒",
+    "text": "“追一个等消息的人。”（顿）“韩国密使！”",
+    "tts": "“追一个等消息的人。”“韩国密使！”",
+    "voice": "Chinese (Mandarin)_Gentleman",
+    "file": "voice/s3_chaqu/13_北芒.mp3"
+  },
+  {
+    "scene": "s3_chaqu",
+    "idx": 14,
+    "speaker": "公孙钺",
+    "text": "“好。”",
+    "tts": "“好。”",
+    "voice": "lengdan_xiongzhang",
+    "file": "voice/s3_chaqu/14_公孙钺.mp3"
+  },
+  {
+    "scene": "s4_andun",
+    "idx": 1,
+    "speaker": "小吏",
+    "text": "“念在多年辛劳，赐一马十金。两日之内，离秦。”",
+    "tts": "“念在多年辛劳，赐一马十金。两日之内，离秦。”",
+    "voice": "male-qn-jingying",
+    "file": "voice/s4_andun/01_小吏.mp3"
+  },
+  {
+    "scene": "s4_andun",
+    "idx": 2,
+    "speaker": "旁白",
+    "text": "越女交还铜符。一句话没有。",
+    "tts": "越女交还铜符。一句话没有。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/s4_andun/02_旁白.mp3"
+  },
+  {
+    "scene": "s4_andun",
+    "idx": 3,
+    "speaker": "旁白",
+    "text": "同一道令下，楚人李斯也在收拾——行李已束，笔却不停。",
+    "tts": "同一道令下，楚人李斯也在收拾——行李已束，笔却不停。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/s4_andun/03_旁白.mp3"
+  },
+  {
+    "scene": "s4_andun",
+    "idx": 4,
+    "speaker": "北芒",
+    "text": "“东出函谷，跟商队走。沿途三处接应，暗号是旧例。”",
+    "tts": "“东出函谷，跟商队走。沿途三处接应，暗号是旧例。”",
+    "voice": "Chinese (Mandarin)_Gentleman",
+    "file": "voice/s4_andun/04_北芒.mp3"
+  },
+  {
+    "scene": "s4_andun",
+    "idx": 5,
+    "speaker": "越女",
+    "text": "“你呢？”",
+    "tts": "“你呢？”",
+    "voice": "danya_xuejie",
+    "file": "voice/s4_andun/05_越女.mp3"
+  },
+  {
+    "scene": "s4_andun",
+    "idx": 6,
+    "speaker": "北芒",
+    "text": "“我去追查韩使。”",
+    "tts": "“我去追查韩使。”",
+    "voice": "Chinese (Mandarin)_Gentleman",
+    "file": "voice/s4_andun/06_北芒.mp3"
+  },
+  {
+    "scene": "s4_andun",
+    "idx": 7,
+    "speaker": "越女",
+    "text": "“你一个人？”",
+    "tts": "“你一个人？”",
+    "voice": "danya_xuejie",
+    "file": "voice/s4_andun/07_越女.mp3"
+  },
+  {
+    "scene": "s4_andun",
+    "idx": 8,
+    "speaker": "北芒",
+    "text": "“大队人马出不了营。再说——这案子不干净，少一个人沾，少一分祸。”",
+    "tts": "“大队人马出不了营。再说——这案子不干净，少一个人沾，少一分祸。”",
+    "voice": "Chinese (Mandarin)_Gentleman",
+    "file": "voice/s4_andun/08_北芒.mp3"
+  },
+  {
+    "scene": "s4_andun",
+    "idx": 9,
+    "speaker": "旁白",
+    "text": "道别说得像公务。",
+    "tts": "道别说得像公务。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/s4_andun/09_旁白.mp3"
+  },
+  {
+    "scene": "s4_andun",
+    "idx": 10,
+    "speaker": "商队老执事",
+    "text": "“那女客啊——”（挠头）“过了山口，人就没影了。”",
+    "tts": "“那女客啊——”“过了山口，人就没影了。”",
+    "voice": "Chinese (Mandarin)_Humorous_Elder",
+    "file": "voice/s4_andun/10_商队老执事.mp3"
+  },
+  {
+    "scene": "s5_zhuishi",
+    "idx": 1,
+    "speaker": "旁白",
+    "text": "秦韩交界，馆驿。",
+    "tts": "秦韩交界，馆驿。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/s5_zhuishi/01_旁白.mp3"
+  },
+  {
+    "scene": "s5_zhuishi",
+    "idx": 2,
+    "speaker": "旁白",
+    "text": "密使滞留的第九日。",
+    "tts": "密使滞留的第九日。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/s5_zhuishi/02_旁白.mp3"
+  },
+  {
+    "scene": "s5_zhuishi",
+    "idx": 3,
+    "speaker": "旁白",
+    "text": "北芒没带大队。孟甲，十来个老卒。",
+    "tts": "北芒没带大队。孟甲，十来个老卒。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/s5_zhuishi/03_旁白.mp3"
+  },
+  {
+    "scene": "s5_zhuishi",
+    "idx": 4,
+    "speaker": "旁白",
+    "text": "截住了。",
+    "tts": "截住了。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/s5_zhuishi/04_旁白.mp3"
+  },
+  {
+    "scene": "s5_zhuishi",
+    "idx": 5,
+    "speaker": "旁白",
+    "text": "密使弃囊遁走——",
+    "tts": "密使弃囊遁走——",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/s5_zhuishi/05_旁白.mp3"
+  },
+  {
+    "scene": "s5_zhuishi",
+    "idx": 6,
+    "speaker": "旁白",
+    "text": "囊中有符信、盘缠，和一卷书。",
+    "tts": "囊中有符信、盘缠，和一卷书。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/s5_zhuishi/06_旁白.mp3"
+  },
+  {
+    "scene": "s5_zhuishi",
+    "idx": 7,
+    "speaker": "孟甲",
+    "text": "“追不追？”",
+    "tts": "“追不追？”",
+    "voice": "Chinese (Mandarin)_Humorous_Elder",
+    "file": "voice/s5_zhuishi/07_孟甲.mp3"
+  },
+  {
+    "scene": "s5_zhuishi",
+    "idx": 8,
+    "speaker": "北芒",
+    "text": "（展开那卷书）“不追。”（顿）“人，没有这卷书值钱。”",
+    "tts": "“不追。”“人，没有这卷书值钱。”",
+    "voice": "Chinese (Mandarin)_Gentleman",
+    "file": "voice/s5_zhuishi/08_北芒.mp3"
+  },
+  {
+    "scene": "s5_zhuishi",
+    "idx": 9,
+    "speaker": "旁白",
+    "text": "密令副本——署作韩王之命：",
+    "tts": "密令副本——署作韩王之命：",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/s5_zhuishi/09_旁白.mp3"
+  },
+  {
+    "scene": "s5_zhuishi",
+    "idx": 10,
+    "speaker": "旁白",
+    "text": "「坏渠，绝水，而后自裁。事成，郑氏乃活。」",
+    "tts": "「坏渠，绝水，而后自裁。事成，郑氏乃活。」",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/s5_zhuishi/10_旁白.mp3"
+  },
+  {
+    "scene": "s5_zhuishi",
+    "idx": 11,
+    "speaker": "旁白",
+    "text": "原件已被郑国烧毁。这一卷，应是密使回韩缴令的凭证。",
+    "tts": "原件已被郑国烧毁。这一卷，应是密使回韩缴令的凭证。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/s5_zhuishi/11_旁白.mp3"
+  },
+  {
+    "scene": "s5_zhuishi",
+    "idx": 12,
+    "speaker": "旁白",
+    "text": "渠，是他一生心血。坏渠，比死更难。",
+    "tts": "渠，是他一生心血。坏渠，比死更难。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/s5_zhuishi/12_旁白.mp3"
+  },
+  {
+    "scene": "s5_zhuishi",
+    "idx": 13,
+    "speaker": "旁白",
+    "text": "队后远处，一道骑影。一行新蹄印。",
+    "tts": "队后远处，一道骑影。一杭新蹄印。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/s5_zhuishi/13_旁白.mp3"
+  },
+  {
+    "scene": "s5_zhuishi",
+    "idx": 14,
+    "speaker": "北芒",
+    "text": "“收队。连夜西返。”",
+    "tts": "“收队。连夜西返。”",
+    "voice": "Chinese (Mandarin)_Gentleman",
+    "file": "voice/s5_zhuishi/14_北芒.mp3"
+  },
+  {
+    "scene": "s6_fusha",
+    "idx": 1,
+    "speaker": "旁白",
+    "text": "雨夜。郑地山道。",
+    "tts": "雨夜。郑地山道。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/s6_fusha/01_旁白.mp3"
+  },
+  {
+    "scene": "s6_fusha",
+    "idx": 2,
+    "speaker": "旁白",
+    "text": "密使没跑出十里，就被灭了口。",
+    "tts": "密使没跑出十里，就被灭了口。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/s6_fusha/02_旁白.mp3"
+  },
+  {
+    "scene": "s6_fusha",
+    "idx": 3,
+    "speaker": "旁白",
+    "text": "灭口队问出了他们要的答案——",
+    "tts": "灭口队问出了他们要的答案——",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/s6_fusha/03_旁白.mp3"
+  },
+  {
+    "scene": "s6_fusha",
+    "idx": 4,
+    "speaker": "旁白",
+    "text": "书，在秦人手里。",
+    "tts": "书，在秦人手里。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/s6_fusha/04_旁白.mp3"
+  },
+  {
+    "scene": "s6_fusha",
+    "idx": 5,
+    "speaker": "旁白",
+    "text": "火把从三面围上来。这不是劫道，是要灭口",
+    "tts": "火把从三面围上来。这不是劫道，是要灭口",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/s6_fusha/05_旁白.mp3"
+  },
+  {
+    "scene": "s6_fusha",
+    "idx": 6,
+    "speaker": "旁白",
+    "text": "乱军中，孟甲被滚木击中。",
+    "tts": "乱军中，孟甲被滚木击中。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/s6_fusha/06_旁白.mp3"
+  },
+  {
+    "scene": "s6_fusha",
+    "idx": 7,
+    "speaker": "孟甲",
+    "text": "“校尉！人太多了——”",
+    "tts": "“校尉！人太多了——”",
+    "voice": "Chinese (Mandarin)_Humorous_Elder",
+    "file": "voice/s6_fusha/07_孟甲.mp3"
+  },
+  {
+    "scene": "s6_fusha",
+    "idx": 8,
+    "speaker": "北芒",
+    "text": "“守谷口！书在我身上——冲我来。”",
+    "tts": "“守谷口！书在我身上——冲我来。”",
+    "voice": "Chinese (Mandarin)_Gentleman",
+    "file": "voice/s6_fusha/08_北芒.mp3"
+  },
+  {
+    "scene": "s6_fusha",
+    "idx": 9,
+    "speaker": "旁白",
+    "text": "绝境回合。",
+    "tts": "绝境回合。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/s6_fusha/09_旁白.mp3"
+  },
+  {
+    "scene": "s6_fusha",
+    "idx": 10,
+    "speaker": "旁白",
+    "text": "山坡上杀下一人。",
+    "tts": "山坡上杀下一人。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/s6_fusha/10_旁白.mp3"
+  },
+  {
+    "scene": "s6_fusha",
+    "idx": 11,
+    "speaker": "旁白",
+    "text": "她根本没上商队的车。",
+    "tts": "她根本没上商队的车。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/s6_fusha/11_旁白.mp3"
+  },
+  {
+    "scene": "s6_fusha",
+    "idx": 12,
+    "speaker": "越女",
+    "text": "“走。”",
+    "tts": "“走。”",
+    "voice": "danya_xuejie",
+    "file": "voice/s6_fusha/12_越女.mp3"
+  },
+  {
+    "scene": "s6_fusha",
+    "idx": 13,
+    "speaker": "旁白",
+    "text": "包围被她一人一剑撕开。",
+    "tts": "包围被她一人一剑撕开。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/s6_fusha/13_旁白.mp3"
+  },
+  {
+    "scene": "s6_fusha",
+    "idx": 14,
+    "speaker": "旁白",
+    "text": "孟甲踉跄着跟上。",
+    "tts": "孟甲踉跄着跟上。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/s6_fusha/14_旁白.mp3"
+  },
+  {
+    "scene": "s6_fusha",
+    "idx": 15,
+    "speaker": "旁白",
+    "text": "弩弦骤响。北芒推开了孟甲。",
+    "tts": "弩弦骤响。北芒推开了孟甲。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/s6_fusha/15_旁白.mp3"
+  },
+  {
+    "scene": "s6_fusha",
+    "idx": 16,
+    "speaker": "旁白",
+    "text": "钉穿胸口。北芒坠下山坡。",
+    "tts": "钉穿胸口。北芒坠下山坡。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/s6_fusha/16_旁白.mp3"
+  },
+  {
+    "scene": "s6_fusha",
+    "idx": 17,
+    "speaker": "旁白",
+    "text": "有些仗，活下来，就是赢。",
+    "tts": "有些仗，活下来，就是赢。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/s6_fusha/17_旁白.mp3"
+  },
+  {
+    "scene": "s6_fusha",
+    "idx": 18,
+    "speaker": "旁白",
+    "text": "越女折回辎重旁，将孟甲拖出。左臂被追来的刀锋划开。",
+    "tts": "越女折回资重旁，将孟甲拖出。左臂被追来的刀锋划开。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/s6_fusha/18_旁白.mp3"
+  },
+  {
+    "scene": "s7_xiandai",
+    "idx": 1,
+    "speaker": "旁白",
+    "text": "两千年后。洛阳，北邙山。",
+    "tts": "两千年后。洛阳，北邙山。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/s7_xiandai/01_旁白.mp3"
+  },
+  {
+    "scene": "s7_xiandai",
+    "idx": 2,
+    "speaker": "旁白",
+    "text": "古墓博物馆。",
+    "tts": "古墓博物馆。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/s7_xiandai/02_旁白.mp3"
+  },
+  {
+    "scene": "s7_xiandai",
+    "idx": 3,
+    "speaker": "旁白",
+    "text": "胸口，同样的位置——",
+    "tts": "胸口，同样的位置——",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/s7_xiandai/03_旁白.mp3"
+  },
+  {
+    "scene": "s7_xiandai",
+    "idx": 4,
+    "speaker": "旁白",
+    "text": "一阵剧痛。",
+    "tts": "一阵剧痛。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/s7_xiandai/04_旁白.mp3"
+  },
+  {
+    "scene": "s8_nongjia",
+    "idx": 1,
+    "speaker": "旁白",
+    "text": "透骨钉穿胸，撑不到大营。",
+    "tts": "透骨钉穿胸，撑不到大营。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/s8_nongjia/01_旁白.mp3"
+  },
+  {
+    "scene": "s8_nongjia",
+    "idx": 2,
+    "speaker": "旁白",
+    "text": "伏击者身份不明，大营也未必安全——",
+    "tts": "伏击者身份不明，大营也未必安全——",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/s8_nongjia/02_旁白.mp3"
+  },
+  {
+    "scene": "s8_nongjia",
+    "idx": 3,
+    "speaker": "旁白",
+    "text": "孟甲与越女，只能把他送进山脚农家。",
+    "tts": "孟甲与越女，只能把他送进山脚农家。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/s8_nongjia/03_旁白.mp3"
+  },
+  {
+    "scene": "s8_nongjia",
+    "idx": 4,
+    "speaker": "旁白",
+    "text": "农家里还借住着一个韩地医者，名叫小满。",
+    "tts": "农家里还借住着一个韩地医者，名叫小满。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/s8_nongjia/04_旁白.mp3"
+  },
+  {
+    "scene": "s8_nongjia",
+    "idx": 5,
+    "speaker": "旁白",
+    "text": "她本要入秦——为诏狱里那个修渠的人。",
+    "tts": "她本要入秦——为诏狱里那个修渠的人。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/s8_nongjia/05_旁白.mp3"
+  },
+  {
+    "scene": "s8_nongjia",
+    "idx": 6,
+    "speaker": "旁白",
+    "text": "函谷戒严，无有路引。她入不了秦。",
+    "tts": "函谷戒严，无有路引。她入不了秦。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/s8_nongjia/06_旁白.mp3"
+  },
+  {
+    "scene": "s8_nongjia",
+    "idx": 7,
+    "speaker": "农家老翁",
+    "text": "（按住她的手腕）“这是秦人。”",
+    "tts": "“这是秦人。”",
+    "voice": "Chinese (Mandarin)_Kind-hearted_Elder",
+    "file": "voice/s8_nongjia/07_农家老翁.mp3"
+  },
+  {
+    "scene": "s8_nongjia",
+    "idx": 8,
+    "speaker": "小满",
+    "text": "“眼下，他只是伤者。”",
+    "tts": "“眼下，他只是伤者。”",
+    "voice": "Chinese (Mandarin)_Sweet_Lady",
+    "file": "voice/s8_nongjia/08_小满.mp3"
+  },
+  {
+    "scene": "s8_nongjia",
+    "idx": 9,
+    "speaker": "旁白",
+    "text": "透骨钉取出，收入药囊。",
+    "tts": "透骨钉取出，收入药囊。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/s8_nongjia/09_旁白.mp3"
+  },
+  {
+    "scene": "s8_nongjia",
+    "idx": 10,
+    "speaker": "阿芒",
+    "text": "（醒来，看见她）“……青翎。”",
+    "tts": "“……青翎。”",
+    "voice": "Chinese (Mandarin)_Gentleman",
+    "file": "voice/s8_nongjia/10_阿芒.mp3"
+  },
+  {
+    "scene": "s8_nongjia",
+    "idx": 11,
+    "speaker": "青翎",
+    "text": "（按住剑）“你叫我什么？”",
+    "tts": "“你叫我什么？”",
+    "voice": "danya_xuejie",
+    "file": "voice/s8_nongjia/11_青翎.mp3"
+  },
+  {
+    "scene": "s8_nongjia",
+    "idx": 12,
+    "speaker": "孟甲",
+    "text": "（上前）“校尉。回营的暗号？”",
+    "tts": "“校尉。回营的暗号？”",
+    "voice": "Chinese (Mandarin)_Humorous_Elder",
+    "file": "voice/s8_nongjia/12_孟甲.mp3"
+  },
+  {
+    "scene": "s8_nongjia",
+    "idx": 14,
+    "speaker": "孟甲",
+    "text": "“咱们最后分开的渡口？”",
+    "tts": "“咱们最后分开的渡口？”",
+    "voice": "Chinese (Mandarin)_Humorous_Elder",
+    "file": "voice/s8_nongjia/14_孟甲.mp3"
+  },
+  {
+    "scene": "s8_nongjia",
+    "idx": 15,
+    "speaker": "青翎",
+    "text": "“你给我备的三处接应，”（盯着他）“我一处都没去。”",
+    "tts": "“你给我备的三处接应，”“我一处都没去。”",
+    "voice": "danya_xuejie",
+    "file": "voice/s8_nongjia/15_青翎.mp3"
+  },
+  {
+    "scene": "s9_tongxing",
+    "idx": 1,
+    "speaker": "旁白",
+    "text": "追兵搜到了农家。",
+    "tts": "追兵搜到了农家。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/s9_tongxing/01_旁白.mp3"
+  },
+  {
+    "scene": "s9_tongxing",
+    "idx": 2,
+    "speaker": "旁白",
+    "text": "一个照面，他横剑，封住了她的右后方。",
+    "tts": "一个照面，他横剑，封住了她的右后方。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/s9_tongxing/02_旁白.mp3"
+  },
+  {
+    "scene": "s9_tongxing",
+    "idx": 3,
+    "speaker": "旁白",
+    "text": "像做过千百次。",
+    "tts": "像做过千百次。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/s9_tongxing/03_旁白.mp3"
+  },
+  {
+    "scene": "s9_tongxing",
+    "idx": 4,
+    "speaker": "青翎",
+    "text": "（收剑。走近，盯着他，看了很久）“那手剑，天下只有一个人会使。”",
+    "tts": "“那手剑，天下只有一个人会使。”",
+    "voice": "danya_xuejie",
+    "file": "voice/s9_tongxing/04_青翎.mp3"
+  },
+  {
+    "scene": "s9_tongxing",
+    "idx": 5,
+    "speaker": "青翎",
+    "text": "“那个名字——”（压低）“知道的人，不超过一只手。”",
+    "tts": "“那个名字——”“知道的人，不超过一只手。”",
+    "voice": "danya_xuejie",
+    "file": "voice/s9_tongxing/05_青翎.mp3"
+  },
+  {
+    "scene": "s9_tongxing",
+    "idx": 6,
+    "speaker": "青翎",
+    "text": "“剑没忘。人忘了。”",
+    "tts": "“剑没忘。人忘了。”",
+    "voice": "danya_xuejie",
+    "file": "voice/s9_tongxing/06_青翎.mp3"
+  },
+  {
+    "scene": "s9_tongxing",
+    "idx": 7,
+    "speaker": "青翎",
+    "text": "“北芒——你都忘了吗？”",
+    "tts": "“北芒——你都忘了吗？”",
+    "voice": "danya_xuejie",
+    "file": "voice/s9_tongxing/07_青翎.mp3"
+  },
+  {
+    "scene": "s9_tongxing",
+    "idx": 8,
+    "speaker": "旁白",
+    "text": "孟甲领着三人回营复命。",
+    "tts": "孟甲领着三人回营复命。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/s9_tongxing/08_旁白.mp3"
+  },
+  {
+    "scene": "s9_tongxing",
+    "idx": 9,
+    "speaker": "阿芒",
+    "text": "不识路，不认人，答不上暗号。在这年头，我活不过三天。",
+    "tts": "不识路，不认人，答不上暗号。在这年头，我活不过三天。",
+    "voice": "Chinese (Mandarin)_Gentleman",
+    "file": "voice/s9_tongxing/09_阿芒.mp3"
+  },
+  {
+    "scene": "s9_tongxing",
+    "idx": 10,
+    "speaker": "小满",
+    "text": "“郑水工还在诏狱。总得有人去看他。”（顿）“那年他在鸿沟治水，我在营里帮忙治疫。我认得他。”",
+    "tts": "“郑水工还在诏狱。总得有人去看他。”“那年他在鸿沟治水，我在营里帮忙治疫。我认得他。”",
+    "voice": "Chinese (Mandarin)_Sweet_Lady",
+    "file": "voice/s9_tongxing/10_小满.mp3"
+  },
+  {
+    "scene": "s9_tongxing",
+    "idx": 11,
+    "speaker": "青翎",
+    "text": "“这条命是我拖回来的。”（顿）“我跟着你——看它落在哪。”",
+    "tts": "“这条命是我拖回来的。”“我跟着你——看它落在哪。”",
+    "voice": "danya_xuejie",
+    "file": "voice/s9_tongxing/11_青翎.mp3"
+  },
+  {
+    "scene": "s10_guace",
+    "idx": 1,
+    "speaker": "公孙钺",
+    "text": "“头伤，忘事？”",
+    "tts": "“头伤，忘事？”",
+    "voice": "lengdan_xiongzhang",
+    "file": "voice/s10_guace/01_公孙钺.mp3"
+  },
+  {
+    "scene": "s10_guace",
+    "idx": 2,
+    "speaker": "阿芒",
+    "text": "“……嗯。”",
+    "tts": "“……嗯。”",
+    "voice": "Chinese (Mandarin)_Gentleman",
+    "file": "voice/s10_guace/02_阿芒.mp3"
+  },
+  {
+    "scene": "s10_guace",
+    "idx": 3,
+    "speaker": "公孙钺",
+    "text": "（没抬头）“她没走？”",
+    "tts": "“她没走？”",
+    "voice": "lengdan_xiongzhang",
+    "file": "voice/s10_guace/03_公孙钺.mp3"
+  },
+  {
+    "scene": "s10_guace",
+    "idx": 4,
+    "speaker": "阿芒",
+    "text": "“没走。”",
+    "tts": "“没走。”",
+    "voice": "Chinese (Mandarin)_Gentleman",
+    "file": "voice/s10_guace/04_阿芒.mp3"
+  },
+  {
+    "scene": "s10_guace",
+    "idx": 5,
+    "speaker": "公孙钺",
+    "text": "（提笔）“越女，记随军剑客。小满，记随军医者。暂挂玄羽偏册。”",
+    "tts": "“越女，记随军剑客。小满，记随军医者。暂挂玄羽偏册。”",
+    "voice": "lengdan_xiongzhang",
+    "file": "voice/s10_guace/05_公孙钺.mp3"
+  },
+  {
+    "scene": "s10_guace",
+    "idx": 6,
+    "speaker": "公孙钺",
+    "text": "“名册我担着。诏令问下来，先问我。”",
+    "tts": "“名册我担着。诏令问下来，先问我。”",
+    "voice": "lengdan_xiongzhang",
+    "file": "voice/s10_guace/06_公孙钺.mp3"
+  },
+  {
+    "scene": "s10_guace",
+    "idx": 7,
+    "speaker": "旁白",
+    "text": "同营，一名秦卒——伏击夜与队伍失散，慌了，不敢走大路，绕山迷了向，误了归期。",
+    "tts": "同营，一名秦卒——伏击夜与队伍失散，慌了，不敢走大路，绕山迷了向，误了归期。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/s10_guace/07_旁白.mp3"
+  },
+  {
+    "scene": "s10_guace",
+    "idx": 8,
+    "speaker": "军吏",
+    "text": "“失期。按律，笞八十。”",
+    "tts": "“失期。按律，痴八十。”",
+    "voice": "male-qn-jingying",
+    "file": "voice/s10_guace/08_军吏.mp3"
+  },
+  {
+    "scene": "s10_guace",
+    "idx": 9,
+    "speaker": "阿芒",
+    "text": "法不问缘由。",
+    "tts": "法不问缘由。",
+    "voice": "Chinese (Mandarin)_Gentleman",
+    "file": "voice/s10_guace/09_阿芒.mp3"
+  },
+  {
+    "scene": "s10_guace",
+    "idx": 10,
+    "speaker": "阿芒",
+    "text": "秦法的重量，第一次落到我手里。",
+    "tts": "秦法的重量，第一次落到我手里。",
+    "voice": "Chinese (Mandarin)_Gentleman",
+    "file": "voice/s10_guace/10_阿芒.mp3"
+  },
+  {
+    "scene": "s10_guace",
+    "idx": 11,
+    "speaker": "旁白",
+    "text": "序章《郑地伏杀》·完。",
+    "tts": "序章《郑地伏杀》·完。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/s10_guace/11_旁白.mp3"
+  },
+  {
+    "scene": "c1_pinan",
+    "idx": 1,
+    "speaker": "旁白",
+    "text": "那一夜的最后一段——他没有。",
+    "tts": "那一夜的最后一段——他没有。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/c1_pinan/01_旁白.mp3"
+  },
+  {
+    "scene": "c1_pinan",
+    "idx": 2,
+    "speaker": "旁白",
+    "text": "书夺到手之后，发生了什么？书，又在哪？",
+    "tts": "书夺到手之后，发生了什么？书，又在哪？",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/c1_pinan/02_旁白.mp3"
+  },
+  {
+    "scene": "c1_pinan",
+    "idx": 3,
+    "speaker": "孟甲",
+    "text": "“校尉的行囊，有个暗层。”（顿）“要紧的东西，你一向分两层放。”",
+    "tts": "“校尉的行囊，有个暗层。”“要紧的东西，你一向分两层放。”",
+    "voice": "Chinese (Mandarin)_Humorous_Elder",
+    "file": "voice/c1_pinan/03_孟甲.mp3"
+  },
+  {
+    "scene": "c1_pinan",
+    "idx": 4,
+    "speaker": "青翎",
+    "text": "（把行囊放到他面前）“你的东西。”（顿）“我没动。”",
+    "tts": "“你的东西。”“我没动。”",
+    "voice": "danya_xuejie",
+    "file": "voice/c1_pinan/04_青翎.mp3"
+  },
+  {
+    "scene": "c1_pinan",
+    "idx": 6,
+    "speaker": "青翎",
+    "text": "（接过，看钉尾）“钉尾，没有军匠的号。”（顿）“这不是官造——是私坊的活儿。”",
+    "tts": "“钉尾，没有军匠的号。”“这不是官造——是私坊的活儿。”",
+    "voice": "danya_xuejie",
+    "file": "voice/c1_pinan/06_青翎.mp3"
+  },
+  {
+    "scene": "c1_pinan",
+    "idx": 7,
+    "speaker": "旁白",
+    "text": "三证合勘。孟甲指点，暗层开启。",
+    "tts": "三证合勘。孟甲指点，暗层开启。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/c1_pinan/07_旁白.mp3"
+  },
+  {
+    "scene": "c1_pinan",
+    "idx": 8,
+    "speaker": "旁白",
+    "text": "副本在。",
+    "tts": "副本在。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/c1_pinan/08_旁白.mp3"
+  },
+  {
+    "scene": "c1_pinan",
+    "idx": 9,
+    "speaker": "旁白",
+    "text": "外层明卷即使被夺，伏兵也没有发现这道封线。",
+    "tts": "外层明卷即使被夺，伏兵也没有发现这道封线。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/c1_pinan/09_旁白.mp3"
+  },
+  {
+    "scene": "c1_pinan",
+    "idx": 10,
+    "speaker": "旁白",
+    "text": "不是通敌，是要挟。",
+    "tts": "不是通敌，是要挟。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/c1_pinan/10_旁白.mp3"
+  },
+  {
+    "scene": "c1_pinan",
+    "idx": 11,
+    "speaker": "旁白",
+    "text": "钉，私坊所铸；剑，不是韩军路数。",
+    "tts": "钉，私坊所铸；剑，不是韩军路数。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/c1_pinan/11_旁白.mp3"
+  },
+  {
+    "scene": "c1_pinan",
+    "idx": 12,
+    "speaker": "旁白",
+    "text": "动手的不像韩军，更像私兵。",
+    "tts": "动手的不像韩军，更像私兵。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/c1_pinan/12_旁白.mp3"
+  },
+  {
+    "scene": "c2_zhangtai",
+    "idx": 1,
+    "speaker": "旁白",
+    "text": "章台。两证一疏。",
+    "tts": "章台。两证一疏。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/c2_zhangtai/01_旁白.mp3"
+  },
+  {
+    "scene": "c2_zhangtai",
+    "idx": 2,
+    "speaker": "姚贾",
+    "text": "（验那副符信）“符信是真的。”（顿）“人，是韩国密使。”",
+    "tts": "“符信是真的。”“人，是韩国密使。”",
+    "voice": "male-qn-badao-jingpin",
+    "file": "voice/c2_zhangtai/02_姚贾.mp3"
+  },
+  {
+    "scene": "c2_zhangtai",
+    "idx": 3,
+    "speaker": "旁白",
+    "text": "同日，李斯亦上了一疏——",
+    "tts": "同日，李斯亦上了一疏——",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/c2_zhangtai/03_旁白.mp3"
+  },
+  {
+    "scene": "c2_zhangtai",
+    "idx": 4,
+    "speaker": "旁白",
+    "text": "“泰山不让土壤，故能成其大；河海不择细流，故能就其深。”",
+    "tts": "“泰山不让土壤，故能成其大；河海不择细流，故能就其深。”",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/c2_zhangtai/04_旁白.mp3"
+  },
+  {
+    "scene": "c2_zhangtai",
+    "idx": 5,
+    "speaker": "旁白",
+    "text": "实证给了转圜的台阶，雄文给了除令的理由。",
+    "tts": "实证给了转圜的台阶，雄文给了除令的理由。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/c2_zhangtai/05_旁白.mp3"
+  },
+  {
+    "scene": "c2_zhangtai",
+    "idx": 6,
+    "speaker": "秦王",
+    "text": "“郑国复职的诏，先压下。”（顿）“郑氏一族入秦之前，今日之事，不出此殿。”",
+    "tts": "“郑国复职的诏，先压下。”“郑氏一族入秦之前，今日之事，不出此殿。”",
+    "voice": "badao_shaoye",
+    "file": "voice/c2_zhangtai/06_秦王.mp3"
+  },
+  {
+    "scene": "c2_zhangtai",
+    "idx": 7,
+    "speaker": "阿芒",
+    "text": "史书上说，郑国为韩，行疲秦之计。",
+    "tts": "史书上说，郑国为韩，行疲秦之计。",
+    "voice": "Chinese (Mandarin)_Gentleman",
+    "file": "voice/c2_zhangtai/07_阿芒.mp3"
+  },
+  {
+    "scene": "c2_zhangtai",
+    "idx": 8,
+    "speaker": "阿芒",
+    "text": "可眼前的每一页证据，都在说另一件事——",
+    "tts": "可眼前的每一页证据，都在说另一件事——",
+    "voice": "Chinese (Mandarin)_Gentleman",
+    "file": "voice/c2_zhangtai/08_阿芒.mp3"
+  },
+  {
+    "scene": "c2_zhangtai",
+    "idx": 9,
+    "speaker": "阿芒",
+    "text": "史书只记了结果。",
+    "tts": "史书只记了结果。",
+    "voice": "Chinese (Mandarin)_Gentleman",
+    "file": "voice/c2_zhangtai/09_阿芒.mp3"
+  },
+  {
+    "scene": "c2_zhangtai",
+    "idx": 10,
+    "speaker": "阿芒",
+    "text": "却没有记下这场要挟。",
+    "tts": "却没有记下这场要挟。",
+    "voice": "Chinese (Mandarin)_Gentleman",
+    "file": "voice/c2_zhangtai/10_阿芒.mp3"
+  },
+  {
+    "scene": "c3_guoshu",
+    "idx": 1,
+    "speaker": "旁白",
+    "text": "秦王决意灭韩。",
+    "tts": "秦王决意灭韩。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/c3_guoshu/01_旁白.mp3"
+  },
+  {
+    "scene": "c3_guoshu",
+    "idx": 2,
+    "speaker": "旁白",
+    "text": "大军东出之际，姚贾携国书先行。",
+    "tts": "大军东出之际，姚假携国书先行。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/c3_guoshu/02_旁白.mp3"
+  },
+  {
+    "scene": "c3_guoshu",
+    "idx": 3,
+    "speaker": "姚贾",
+    "text": "（对韩王）“释放郑氏一族，安然归秦。”（顿）“若少一人——誓灭韩国，鸡犬不留。”",
+    "tts": "“释放郑氏一族，安然归秦。”“若少一人——誓灭韩国，鸡犬不留。”",
+    "voice": "male-qn-badao-jingpin",
+    "file": "voice/c3_guoshu/03_姚贾.mp3"
+  },
+  {
+    "scene": "c3_guoshu",
+    "idx": 4,
+    "speaker": "韩王",
+    "text": "（验看录副与封泥拓印，手抖）“这印……”（霍然起身）“这不是寡人的印！”",
+    "tts": "“这印……”“这不是寡人的印！”",
+    "voice": "male-qn-qingse",
+    "file": "voice/c3_guoshu/04_韩王.mp3"
+  },
+  {
+    "scene": "c3_guoshu",
+    "idx": 5,
+    "speaker": "韩王",
+    "text": "“封泥背印——”（咬牙）“是宗室府的旧记。”",
+    "tts": "“封泥背印——”“是宗室府的旧记。”",
+    "voice": "male-qn-qingse",
+    "file": "voice/c3_guoshu/05_韩王.mp3"
+  },
+  {
+    "scene": "c3_guoshu",
+    "idx": 6,
+    "speaker": "韩王",
+    "text": "“查。”（哑声）“……放人。”",
+    "tts": "“查。”“……放人。”",
+    "voice": "male-qn-qingse",
+    "file": "voice/c3_guoshu/06_韩王.mp3"
+  },
+  {
+    "scene": "c3_guoshu",
+    "idx": 7,
+    "speaker": "旁白",
+    "text": "同日，秦王另下一令——玄羽小队，潜入韩境，接应护送。",
+    "tts": "同日，秦王另下一令——玄羽小队，潜入韩境，接应护送。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/c3_guoshu/07_旁白.mp3"
+  },
+  {
+    "scene": "c3_guoshu",
+    "idx": 8,
+    "speaker": "旁白",
+    "text": "军情简报一角：魏地游士司马朔，在新郑活动。",
+    "tts": "军情简报一角：魏地游士司马朔，在新郑活动。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/c3_guoshu/08_旁白.mp3"
+  },
+  {
+    "scene": "c3_guoshu",
+    "idx": 9,
+    "speaker": "旁白",
+    "text": "国书即战书。",
+    "tts": "国书即战书。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/c3_guoshu/09_旁白.mp3"
+  },
+  {
+    "scene": "c3_guoshu",
+    "idx": 10,
+    "speaker": "旁白",
+    "text": "郑氏一族，被拘在宗室别庄，见过押他们的府兵——能指认宗室府的关键人证。",
+    "tts": "郑氏一族，被拘在宗室别庄，见过押他们的府兵——能指认宗室府的关键人证。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/c3_guoshu/10_旁白.mp3"
+  },
+  {
+    "scene": "c3_guoshu",
+    "idx": 11,
+    "speaker": "旁白",
+    "text": "王令出了宫门，却管不住宗室府的兵。",
+    "tts": "王令出了宫门，却管不住宗室府的兵。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/c3_guoshu/11_旁白.mp3"
+  },
+  {
+    "scene": "c3_guoshu",
+    "idx": 12,
+    "speaker": "旁白",
+    "text": "王令出宫那夜。",
+    "tts": "王令出宫那夜。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/c3_guoshu/12_旁白.mp3"
+  },
+  {
+    "scene": "c3_guoshu",
+    "idx": 13,
+    "speaker": "旁白",
+    "text": "死战派的私兵，已先一步出城。",
+    "tts": "死战派的私兵，已先一步出城。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/c3_guoshu/13_旁白.mp3"
+  },
+  {
+    "scene": "c4_husong",
+    "idx": 1,
+    "speaker": "守谷口老卒",
+    "text": "“那次，你替我说情。”",
+    "tts": "“那次，你替我说情。”",
+    "voice": "Chinese (Mandarin)_Sincere_Adult",
+    "file": "voice/c4_husong/01_守谷口老卒.mp3"
+  },
+  {
+    "scene": "c4_husong",
+    "idx": 2,
+    "speaker": "守谷口老卒",
+    "text": "“这次，我替你守口。”",
+    "tts": "“这次，我替你守口。”",
+    "voice": "Chinese (Mandarin)_Sincere_Adult",
+    "file": "voice/c4_husong/02_守谷口老卒.mp3"
+  },
+  {
+    "scene": "c4_husong",
+    "idx": 3,
+    "speaker": "旁白",
+    "text": "郑氏入秦之日，秦王明发——",
+    "tts": "郑氏入秦之日，秦王明发——",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/c4_husong/03_旁白.mp3"
+  },
+  {
+    "scene": "c4_husong",
+    "idx": 4,
+    "speaker": "旁白",
+    "text": "除逐客令。郑国出狱，复职返渠。李斯复官。越女入正册。",
+    "tts": "除逐客令。郑国出狱，复职返渠。李斯复官。越女入正册。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/c4_husong/04_旁白.mp3"
+  },
+  {
+    "scene": "c4_husong",
+    "idx": 5,
+    "speaker": "旁白",
+    "text": "郑国出狱那天，族人正好入秦。",
+    "tts": "郑国出狱那天，族人正好入秦。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/c4_husong/05_旁白.mp3"
+  },
+  {
+    "scene": "c4_husong",
+    "idx": 6,
+    "speaker": "旁白",
+    "text": "他什么都没问。",
+    "tts": "他什么都没问。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/c4_husong/06_旁白.mp3"
+  },
+  {
+    "scene": "c4_husong",
+    "idx": 7,
+    "speaker": "旁白",
+    "text": "往北看了一眼，便上了渠。",
+    "tts": "往北看了一眼，便上了渠。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/c4_husong/07_旁白.mp3"
+  },
+  {
+    "scene": "c4_husong",
+    "idx": 8,
+    "speaker": "旁白",
+    "text": "同一处山道。",
+    "tts": "同一处山道。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/c4_husong/08_旁白.mp3"
+  },
+  {
+    "scene": "c4_husong",
+    "idx": 9,
+    "speaker": "旁白",
+    "text": "上次，人没守住。",
+    "tts": "上次，人没守住。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/c4_husong/09_旁白.mp3"
+  },
+  {
+    "scene": "c4_husong",
+    "idx": 10,
+    "speaker": "旁白",
+    "text": "这次，守住了。",
+    "tts": "这次，守住了。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/c4_husong/10_旁白.mp3"
+  },
+  {
+    "scene": "c4_husong",
+    "idx": 11,
+    "speaker": "守谷口老卒",
+    "text": "“那次，你没开口。”",
+    "tts": "“那次，你没开口。”",
+    "voice": "Chinese (Mandarin)_Sincere_Adult",
+    "file": "voice/c4_husong/11_守谷口老卒.mp3"
+  },
+  {
+    "scene": "c4_husong",
+    "idx": 12,
+    "speaker": "守谷口老卒",
+    "text": "“今日我守这里。不为还债，为军令。”",
+    "tts": "“今日我守这里。不为还债，为军令。”",
+    "voice": "Chinese (Mandarin)_Sincere_Adult",
+    "file": "voice/c4_husong/12_守谷口老卒.mp3"
+  },
+  {
+    "scene": "c4_husong",
+    "idx": 13,
+    "speaker": "旁白",
+    "text": "郑地山道。",
+    "tts": "郑地山道。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/c4_husong/13_旁白.mp3"
+  },
+  {
+    "scene": "c4_husong",
+    "idx": 14,
+    "speaker": "旁白",
+    "text": "这条道上，有过一个“北芒”。",
+    "tts": "这条道上，有过一个“北芒”。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/c4_husong/14_旁白.mp3"
+  },
+  {
+    "scene": "c4_husong",
+    "idx": 15,
+    "speaker": "旁白",
+    "text": "死战派的私兵从山上压下来——",
+    "tts": "死战派的私兵从山上压下来——",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/c4_husong/15_旁白.mp3"
+  },
+  {
+    "scene": "c4_husong",
+    "idx": 16,
+    "speaker": "旁白",
+    "text": "灭人证的口，泄困兽之愤。",
+    "tts": "灭人证的口，泄困兽之愤。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/c4_husong/16_旁白.mp3"
+  },
+  {
+    "scene": "c4_husong",
+    "idx": 17,
+    "speaker": "旁白",
+    "text": "护住车。守到秦军前锋抵达。",
+    "tts": "护住车。守到秦军前锋抵达。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/c4_husong/17_旁白.mp3"
+  },
+  {
+    "scene": "c5_shouxiang",
+    "idx": 1,
+    "speaker": "旁白",
+    "text": "大军压境。韩廷裂成三块——",
+    "tts": "大军压境。韩廷裂成三块——",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/c5_shouxiang/01_旁白.mp3"
+  },
+  {
+    "scene": "c5_shouxiang",
+    "idx": 2,
+    "speaker": "旁白",
+    "text": "要殉国的，要体面的，要北逃的。",
+    "tts": "要殉国的，要体面的，要北逃的。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/c5_shouxiang/02_旁白.mp3"
+  },
+  {
+    "scene": "c5_shouxiang",
+    "idx": 3,
+    "speaker": "旁白",
+    "text": "北逃的，结成了回旆盟——不肯认亡国、图谋复国的一伙。替他们安排退路的，是魏人司马朔。",
+    "tts": "北逃的，结成了回佩盟——不肯认亡国、图谋复国的一伙。替他们安排退路的，是魏人司马朔。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/c5_shouxiang/03_旁白.mp3"
+  },
+  {
+    "scene": "c5_shouxiang",
+    "idx": 4,
+    "speaker": "旁白",
+    "text": "韩王安，素车出降。",
+    "tts": "韩王安，素车出降。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/c5_shouxiang/04_旁白.mp3"
+  },
+  {
+    "scene": "c5_shouxiang",
+    "idx": 5,
+    "speaker": "旁白",
+    "text": "六国第一个亡国之君。",
+    "tts": "六国第一个亡国之君。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/c5_shouxiang/05_旁白.mp3"
+  },
+  {
+    "scene": "c5_shouxiang",
+    "idx": 6,
+    "speaker": "旁白",
+    "text": "没人知道亡国该怎么办——",
+    "tts": "没人知道亡国该怎么办——",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/c5_shouxiang/06_旁白.mp3"
+  },
+  {
+    "scene": "c5_shouxiang",
+    "idx": 7,
+    "speaker": "旁白",
+    "text": "降书、城门、武库、粮仓、户籍。",
+    "tts": "降书、城门、武库、粮仓、户籍。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/c5_shouxiang/07_旁白.mp3"
+  },
+  {
+    "scene": "c5_shouxiang",
+    "idx": 8,
+    "speaker": "旁白",
+    "text": "秦军多跨一步，是抢。少跨一步，是乱。",
+    "tts": "秦军多跨一步，是抢。少跨一步，是乱。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/c5_shouxiang/08_旁白.mp3"
+  },
+  {
+    "scene": "c5_shouxiang",
+    "idx": 9,
+    "speaker": "旁白",
+    "text": "进城。韩人闭门。征粮起摩擦。",
+    "tts": "进城。韩人闭门。征粮起摩擦。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/c5_shouxiang/09_旁白.mp3"
+  },
+  {
+    "scene": "c5_shouxiang",
+    "idx": 10,
+    "speaker": "旁白",
+    "text": "积尸未敛，污水漫街，伤者涌入。",
+    "tts": "积尸未敛，污水漫街，伤者涌入。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/c5_shouxiang/10_旁白.mp3"
+  },
+  {
+    "scene": "c5_shouxiang",
+    "idx": 11,
+    "speaker": "旁白",
+    "text": "疫，先于安靖而至。",
+    "tts": "疫，先于安靖而至。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/c5_shouxiang/11_旁白.mp3"
+  },
+  {
+    "scene": "c6_yiying",
+    "idx": 1,
+    "speaker": "韩地伤兵",
+    "text": "（她正替他裹伤）“你是韩人。”（盯着她）“为什么帮秦军？”",
+    "tts": "“你是韩人。”“为什么帮秦军？”",
+    "voice": "Chinese (Mandarin)_Pure-hearted_Boy",
+    "file": "voice/c6_yiying/01_韩地伤兵.mp3"
+  },
+  {
+    "scene": "c6_yiying",
+    "idx": 2,
+    "speaker": "小满",
+    "text": "“我不是替秦军救人。”（顿）“我救的，是人。”",
+    "tts": "“我不是替秦军救人。”“我救的，是人。”",
+    "voice": "Chinese (Mandarin)_Sweet_Lady",
+    "file": "voice/c6_yiying/02_小满.mp3"
+  },
+  {
+    "scene": "c6_yiying",
+    "idx": 3,
+    "speaker": "阿芒",
+    "text": "“军令下来了。疫营即刻撤往城外。”",
+    "tts": "“军令下来了。疫营即刻撤往城外。”",
+    "voice": "Chinese (Mandarin)_Gentleman",
+    "file": "voice/c6_yiying/03_阿芒.mp3"
+  },
+  {
+    "scene": "c6_yiying",
+    "idx": 4,
+    "speaker": "小满",
+    "text": "“军令要城。”（顿）“这里要命。”",
+    "tts": "“军令要城。”“这里要命。”",
+    "voice": "Chinese (Mandarin)_Sweet_Lady",
+    "file": "voice/c6_yiying/04_小满.mp3"
+  },
+  {
+    "scene": "c6_yiying",
+    "idx": 5,
+    "speaker": "韩老伯",
+    "text": "（逢人便问）“闺女，见着我家蕙儿没有？”",
+    "tts": "“闺女，见着我家蕙儿没有？”",
+    "voice": "Chinese (Mandarin)_Humorous_Elder",
+    "file": "voice/c6_yiying/05_韩老伯.mp3"
+  },
+  {
+    "scene": "c6_yiying",
+    "idx": 6,
+    "speaker": "小满",
+    "text": "“叫什么？”",
+    "tts": "“叫什么？”",
+    "voice": "Chinese (Mandarin)_Sweet_Lady",
+    "file": "voice/c6_yiying/06_小满.mp3"
+  },
+  {
+    "scene": "c6_yiying",
+    "idx": 7,
+    "speaker": "韩老伯",
+    "text": "“韩蕙。蕙草的蕙。十六了，左眉一颗小痣。”",
+    "tts": "“韩蕙。蕙草的蕙。十六了，左眉一颗小痣。”",
+    "voice": "Chinese (Mandarin)_Humorous_Elder",
+    "file": "voice/c6_yiying/07_韩老伯.mp3"
+  },
+  {
+    "scene": "c6_yiying",
+    "idx": 8,
+    "speaker": "韩老媪",
+    "text": "“城破那天，南市走散的……”",
+    "tts": "“城破那天，南市走散的……”",
+    "voice": "Chinese (Mandarin)_Kind-hearted_Elder",
+    "file": "voice/c6_yiying/08_韩老媪.mp3"
+  },
+  {
+    "scene": "c6_yiying",
+    "idx": 9,
+    "speaker": "小满",
+    "text": "（记在简上）“我替你们留意。”",
+    "tts": "“我替你们留意。”",
+    "voice": "Chinese (Mandarin)_Sweet_Lady",
+    "file": "voice/c6_yiying/09_小满.mp3"
+  },
+  {
+    "scene": "c6_yiying",
+    "idx": 10,
+    "speaker": "旁白",
+    "text": "城西骤然响起三声急鼓。不是秦军的号令。",
+    "tts": "城西骤然响起三声急鼓。不是秦军的号令。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/c6_yiying/10_旁白.mp3"
+  },
+  {
+    "scene": "c6_yiying",
+    "idx": 11,
+    "speaker": "孟甲",
+    "text": "（掀帘而入）“回旆盟反扑。官署、武库、北门，三路同时有人。”",
+    "tts": "“回佩盟反扑。官署、武库、北门，三路同时有人。”",
+    "voice": "Chinese (Mandarin)_Humorous_Elder",
+    "file": "voice/c6_yiying/11_孟甲.mp3"
+  },
+  {
+    "scene": "c6_yiying",
+    "idx": 12,
+    "speaker": "青翎",
+    "text": "（扣住袖中飞针）“韩王已经降了。他们不是守国，是拿满城的人给自己断后。”",
+    "tts": "“韩王已经降了。他们不是守国，是拿满城的人给自己断后。”",
+    "voice": "danya_xuejie",
+    "file": "voice/c6_yiying/12_青翎.mp3"
+  },
+  {
+    "scene": "c6_yiying",
+    "idx": 13,
+    "speaker": "阿芒",
+    "text": "“孟甲留下守住疫营。小满带药，青翎看弩手。”（拔剑）“我们三个，打散他们。”",
+    "tts": "“孟甲留下守住疫营。小满带药，青翎看弩手。”“我们三个，打散他们。”",
+    "voice": "Chinese (Mandarin)_Gentleman",
+    "file": "voice/c6_yiying/13_阿芒.mp3"
+  },
+  {
+    "scene": "c7_huoqi",
+    "idx": 1,
+    "speaker": "旁白",
+    "text": "保户籍——若户籍得存，可循册查到韩蕙被编入南市安置营。父女重逢。",
+    "tts": "保户籍——若户籍得存，可循册查到韩蕙被编入南市安置营。父女重逢。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/c7_huoqi/01_旁白.mp3"
+  },
+  {
+    "scene": "c7_huoqi",
+    "idx": 2,
+    "speaker": "旁白",
+    "text": "截残军——赵地的回旆盟，弱一分。",
+    "tts": "截残军——赵地的回佩盟，弱一分。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/c7_huoqi/02_旁白.mp3"
+  },
+  {
+    "scene": "c7_huoqi",
+    "idx": 3,
+    "speaker": "旁白",
+    "text": "护疫营——获救的韩医随队北上。魏地，多一队援手的医者。",
+    "tts": "护疫营——获救的韩医随队北上。魏地，多一队援手的医者。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/c7_huoqi/03_旁白.mp3"
+  },
+  {
+    "scene": "c7_huoqi",
+    "idx": 4,
+    "speaker": "旁白",
+    "text": "回旆盟败了。",
+    "tts": "回佩盟败了。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/c7_huoqi/04_旁白.mp3"
+  },
+  {
+    "scene": "c7_huoqi",
+    "idx": 5,
+    "speaker": "旁白",
+    "text": "执旐者倒在街口，司马朔却带着残众钻入坊巷。",
+    "tts": "执旐者倒在街口，司马朔却带着残众钻入坊巷。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/c7_huoqi/05_旁白.mp3"
+  },
+  {
+    "scene": "c7_huoqi",
+    "idx": 6,
+    "speaker": "旁白",
+    "text": "败兵没有向北门集结。他们分成三股，一路逃，一路杀，一路把火种抛进身后的屋舍。",
+    "tts": "败兵没有向北门集结。他们分成三股，一路逃，一路杀，一路把火种抛进身后的屋舍。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/c7_huoqi/06_旁白.mp3"
+  },
+  {
+    "scene": "c7_huoqi",
+    "idx": 7,
+    "speaker": "旁白",
+    "text": "城里起火。",
+    "tts": "城里起火。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/c7_huoqi/07_旁白.mp3"
+  },
+  {
+    "scene": "c7_huoqi",
+    "idx": 8,
+    "speaker": "旁白",
+    "text": "官署、疫营、北门，几乎同时传来急报。",
+    "tts": "官署、疫营、北门，几乎同时传来急报。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/c7_huoqi/08_旁白.mp3"
+  },
+  {
+    "scene": "c7_huoqi",
+    "idx": 9,
+    "speaker": "旁白",
+    "text": "回旆盟烧的不只是简册——",
+    "tts": "回佩盟烧的不只是简册——",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/c7_huoqi/09_旁白.mp3"
+  },
+  {
+    "scene": "c7_huoqi",
+    "idx": 10,
+    "speaker": "旁白",
+    "text": "是这座城留下姓名的方式。",
+    "tts": "是这座城留下姓名的方式。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/c7_huoqi/10_旁白.mp3"
+  },
+  {
+    "scene": "c7_huoqi",
+    "idx": 11,
+    "speaker": "青翎",
+    "text": "（俯身，验看官署前被杀秦卒的剑伤，起身）“这手剑，不是韩军路数。”（顿）“郑地山道上，我见过。”（顿）“同一伙人——回旆盟。”",
+    "tts": "“这手剑，不是韩军路数。”“郑地山道上，我见过。”“同一伙人——回佩盟。”",
+    "voice": "danya_xuejie",
+    "file": "voice/c7_huoqi/11_青翎.mp3"
+  },
+  {
+    "scene": "c8_zhangmo",
+    "idx": 1,
+    "speaker": "旁白",
+    "text": "韩旗降下。",
+    "tts": "韩旗降下。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/c8_zhangmo/01_旁白.mp3"
+  },
+  {
+    "scene": "c8_zhangmo",
+    "idx": 2,
+    "speaker": "旁白",
+    "text": "仅过十日，新郑市门，照常打开。",
+    "tts": "仅过十日，新郑市门，照常打开。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/c8_zhangmo/02_旁白.mp3"
+  },
+  {
+    "scene": "c8_zhangmo",
+    "idx": 3,
+    "speaker": "旁白",
+    "text": "玄羽小队，军功入册——",
+    "tts": "玄羽小队，军功入册——",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/c8_zhangmo/03_旁白.mp3"
+  },
+  {
+    "scene": "c8_zhangmo",
+    "idx": 4,
+    "speaker": "旁白",
+    "text": "斩死战派，全救人质。",
+    "tts": "斩死战派，全救人质。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/c8_zhangmo/04_旁白.mp3"
+  },
+  {
+    "scene": "c8_zhangmo",
+    "idx": 5,
+    "speaker": "旁白",
+    "text": "同旬，关中传来消息——",
+    "tts": "同旬，关中传来消息——",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/c8_zhangmo/05_旁白.mp3"
+  },
+  {
+    "scene": "c8_zhangmo",
+    "idx": 6,
+    "speaker": "旁白",
+    "text": "郑国渠，全线通水。",
+    "tts": "郑国渠，全线通水。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/c8_zhangmo/06_旁白.mp3"
+  },
+  {
+    "scene": "c8_zhangmo",
+    "idx": 7,
+    "speaker": "小满",
+    "text": "“下一座城？”",
+    "tts": "“下一座城？”",
+    "voice": "Chinese (Mandarin)_Sweet_Lady",
+    "file": "voice/c8_zhangmo/07_小满.mp3"
+  },
+  {
+    "scene": "c8_zhangmo",
+    "idx": 8,
+    "speaker": "阿芒",
+    "text": "“邯郸。”",
+    "tts": "“邯郸。”",
+    "voice": "Chinese (Mandarin)_Gentleman",
+    "file": "voice/c8_zhangmo/08_阿芒.mp3"
+  },
+  {
+    "scene": "c8_zhangmo",
+    "idx": 9,
+    "speaker": "青翎",
+    "text": "（望北）“比这里冷。”",
+    "tts": "“比这里冷。”",
+    "voice": "danya_xuejie",
+    "file": "voice/c8_zhangmo/09_青翎.mp3"
+  },
+  {
+    "scene": "c8_zhangmo",
+    "idx": 10,
+    "speaker": "旁白",
+    "text": "一个国亡了。",
+    "tts": "一个国亡了。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/c8_zhangmo/10_旁白.mp3"
+  },
+  {
+    "scene": "c8_zhangmo",
+    "idx": 11,
+    "speaker": "旁白",
+    "text": "一条渠成了。",
+    "tts": "一条渠成了。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/c8_zhangmo/11_旁白.mp3"
+  },
+  {
+    "scene": "c7_fire",
+    "idx": 1,
+    "speaker": "旁白",
+    "text": "官署里，火已经上了梁。",
+    "tts": "官署里，火已经上了梁。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/c7_fire/01_旁白.mp3"
+  },
+  {
+    "scene": "c7_fire",
+    "idx": 2,
+    "speaker": "旁白",
+    "text": "户籍主档还在。这座城的人，名字还在。",
+    "tts": "户籍主档还在。这座城的人，名字还在。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/c7_fire/02_旁白.mp3"
+  },
+  {
+    "scene": "c7_fire",
+    "idx": 3,
+    "speaker": "旁白",
+    "text": "册灰落在水缸里，黑了一层。有些名字，没人记得了。",
+    "tts": "册灰落在水缸里，黑了一层。有些名字，没人记得了。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/c7_fire/03_旁白.mp3"
+  },
+  {
+    "scene": "c7_evac",
+    "idx": 1,
+    "speaker": "小满",
+    "text": "“军令要城。”（顿）“这里要命。”",
+    "tts": "“军令要城。”“这里要命。”",
+    "voice": "Chinese (Mandarin)_Sweet_Lady",
+    "file": "voice/c7_evac/01_小满.mp3"
+  },
+  {
+    "scene": "c7_evac",
+    "idx": 2,
+    "speaker": "旁白",
+    "text": "乱兵冲着医篷来了——伤兵抢药，溃兵抢命。",
+    "tts": "乱兵冲着医篷来了——伤兵抢药，溃兵抢命。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/c7_evac/02_旁白.mp3"
+  },
+  {
+    "scene": "c7_evac",
+    "idx": 3,
+    "speaker": "旁白",
+    "text": "医篷保住了。躺着的，多半还能起来。",
+    "tts": "医篷保住了。躺着的，多半还能起来。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/c7_evac/03_旁白.mp3"
+  },
+  {
+    "scene": "c7_evac",
+    "idx": 4,
+    "speaker": "旁白",
+    "text": "医篷塌了半边。抬出去的，比抬进来的少。",
+    "tts": "医篷塌了半边。抬出去的，比抬进来的少。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/c7_evac/04_旁白.mp3"
+  },
+  {
+    "scene": "defeat",
+    "idx": 1,
+    "speaker": "旁白",
+    "text": "密使脱缰——再截一次。",
+    "tts": "密使脱缰——再截一次。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/defeat/01_旁白.mp3"
+  },
+  {
+    "scene": "defeat",
+    "idx": 2,
+    "speaker": "旁白",
+    "text": "山道被围死了——再守一次。",
+    "tts": "山道被围死了——再守一次。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/defeat/02_旁白.mp3"
+  },
+  {
+    "scene": "defeat",
+    "idx": 3,
+    "speaker": "旁白",
+    "text": "剑路被合围压住——越女退回坡上，再破一次阵。",
+    "tts": "剑路被合围压住——越女退回坡上，再破一次阵。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/defeat/03_旁白.mp3"
+  },
+  {
+    "scene": "defeat",
+    "idx": 4,
+    "speaker": "旁白",
+    "text": "追兵堵死了门——再挡一回。",
+    "tts": "追兵堵死了门——再挡一回。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/defeat/04_旁白.mp3"
+  },
+  {
+    "scene": "defeat",
+    "idx": 5,
+    "speaker": "旁白",
+    "text": "谷口破了——从头再守一次。",
+    "tts": "谷口破了——从头再守一次。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/defeat/05_旁白.mp3"
+  },
+  {
+    "scene": "defeat",
+    "idx": 6,
+    "speaker": "旁白",
+    "text": "回旆盟冲破街口——新郑陷入乱火。重整阵线，再战一次。",
+    "tts": "回佩盟冲破街口——新郑陷入乱火。重整阵线，再战一次。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/defeat/06_旁白.mp3"
+  },
+  {
+    "scene": "c8_zhangmo",
+    "idx": 12,
+    "speaker": "军报",
+    "text": "户籍主档在，人名可循。",
+    "tts": "户籍主档在，人名可循。",
+    "voice": "Chinese (Mandarin)_Radio_Host",
+    "file": "voice/c8_zhangmo/12_军报.mp3"
+  },
+  {
+    "scene": "c8_zhangmo",
+    "idx": 13,
+    "speaker": "军报",
+    "text": "户籍主档焚毁，其余三册得存。",
+    "tts": "户籍主档焚毁，其余三册得存。",
+    "voice": "Chinese (Mandarin)_Radio_Host",
+    "file": "voice/c8_zhangmo/13_军报.mp3"
+  },
+  {
+    "scene": "c8_zhangmo",
+    "idx": 14,
+    "speaker": "军报",
+    "text": "残军溃散，北道者寡。",
+    "tts": "残军溃散，北道者寡。",
+    "voice": "Chinese (Mandarin)_Radio_Host",
+    "file": "voice/c8_zhangmo/14_军报.mp3"
+  },
+  {
+    "scene": "c8_zhangmo",
+    "idx": 15,
+    "speaker": "军报",
+    "text": "疫营伤者，多数得活。",
+    "tts": "疫营伤者，多数得活。",
+    "voice": "Chinese (Mandarin)_Radio_Host",
+    "file": "voice/c8_zhangmo/15_军报.mp3"
+  },
+  {
+    "scene": "c8_zhangmo",
+    "idx": 16,
+    "speaker": "军报",
+    "text": "疫营伤者，得活者半。",
+    "tts": "疫营伤者，得活者半。",
+    "voice": "Chinese (Mandarin)_Radio_Host",
+    "file": "voice/c8_zhangmo/16_军报.mp3"
+  },
+  {
+    "scene": "s7_xiandai",
+    "idx": 5,
+    "speaker": "旁白",
+    "text": "三个镜头——",
+    "tts": "三个镜头——",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/s7_xiandai/05_旁白.mp3"
+  },
+  {
+    "scene": "s7_xiandai",
+    "idx": 6,
+    "speaker": "旁白",
+    "text": "一枚鸟羽纹的铜符。",
+    "tts": "一枚鸟羽纹的铜符。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/s7_xiandai/06_旁白.mp3"
+  },
+  {
+    "scene": "s7_xiandai",
+    "idx": 7,
+    "speaker": "旁白",
+    "text": "一场失控的高热。",
+    "tts": "一场失控的高热。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/s7_xiandai/07_旁白.mp3"
+  },
+  {
+    "scene": "s7_xiandai",
+    "idx": 8,
+    "speaker": "旁白",
+    "text": "梦里有人喊：北芒尉。",
+    "tts": "梦里有人喊：北芒尉。",
+    "voice": "Chinese (Mandarin)_Wise_Women",
+    "file": "voice/s7_xiandai/08_旁白.mp3"
+  }
+]
