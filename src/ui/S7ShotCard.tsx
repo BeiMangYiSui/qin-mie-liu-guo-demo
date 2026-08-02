@@ -10,22 +10,22 @@ export interface S7Shot {
 const S7_SHOTS_BY_TEXT: Readonly<Record<string, S7Shot>> = {
   '三个镜头——': {
     id: 'tongfu',
-    src: './assets/shot_tongfu.webp',
+    src: 'https://stats.puck-muling.top/game/assets/shot_tongfu.webp',
     alt: '博物馆展柜中的鸟羽纹铜符',
   },
   '一枚鸟羽纹的铜符。': {
     id: 'tongfu',
-    src: './assets/shot_tongfu.webp',
+    src: 'https://stats.puck-muling.top/game/assets/shot_tongfu.webp',
     alt: '博物馆展柜中的鸟羽纹铜符',
   },
   '一场失控的高热。': {
     id: 'gaore',
-    src: './assets/shot_gaore.webp',
+    src: 'https://stats.puck-muling.top/game/assets/shot_gaore.webp',
     alt: '暖红虚焦中的高热病榻意象',
   },
   '梦里有人喊：北芒尉。': {
     id: 'mengye',
-    src: './assets/shot_mengye.webp',
+    src: 'https://stats.puck-muling.top/game/assets/shot_mengye.webp',
     alt: '冷青雨夜山道上回望的人影',
   },
 }
