@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { ChevronRight } from 'lucide-react'
 import type { DialogueLine, LineType, StoryScene as Scene } from '../game/story'
 import type { StoryFlags } from '../game/save'
-import { playSfxFile, playVoiceLine, stopVoice, unlockBgm } from '../game/audio'
+import { playSfxFile, playVoiceLine, stopVoice, unlockAudio, unlockBgm } from '../game/audio'
 import SkipButton from '../components/SkipButton'
 import S7ShotCard, { resolveS7Shot } from '../ui/S7ShotCard'
 import {
@@ -124,6 +124,7 @@ export default function StoryScene({
   }, [atEndOfMain, choice, chosen, idx, lines, respIdx, scene.id])
 
   const advance = () => {
+    unlockAudio()
     unlockBgm()
     // 剧情推进点击音：丝滑瓷音（替代默认 select）
     playSfxFile('sfx/silk_click.mp3', { volume: 0.7 })
