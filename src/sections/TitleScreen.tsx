@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { BookOpenText, FolderOpen, MessageCircle, Sword, Tv } from 'lucide-react'
+import { BookOpenText, FolderOpen, MessageCircle, Send, Sword, Tv } from 'lucide-react'
 import SaveLoadModal from '../components/SaveLoadModal'
 import WechatQrModal from '../components/WechatQrModal'
 import { findLatestSave, listSaveSlots, type SaveData } from '../game/save'
@@ -21,6 +21,7 @@ export default function TitleScreen({
   const [showLoad, setShowLoad] = useState(false)
   const [showShicheng, setShowShicheng] = useState(false)
   const [showQr, setShowQr] = useState(false)
+  const [showTgQr, setShowTgQr] = useState(false)
   const saveSlots = listSaveSlots()
   const hasSave = saveSlots.some((save) => save.status === 'ready')
   const hasStoredSave = saveSlots.some((save) => save.status !== 'empty')
@@ -105,7 +106,14 @@ export default function TitleScreen({
                 className="flex items-center gap-1.5 text-sm tracking-[0.15em] text-qin-bronze transition-colors hover:text-qin-bronze-light"
               >
                 <MessageCircle className="size-4" />
-                加我微信
+                微信
+              </button>
+              <button
+                onClick={() => setShowTgQr(true)}
+                className="flex items-center gap-1.5 text-sm tracking-[0.15em] text-qin-bronze transition-colors hover:text-qin-bronze-light"
+              >
+                <Send className="size-4" />
+                Telegram
               </button>
               <a
                 href={SOCIAL_LINKS.bilibili}
@@ -141,6 +149,7 @@ export default function TitleScreen({
       )}
 
       {showQr && <WechatQrModal onClose={() => setShowQr(false)} />}
+      {showTgQr && <WechatQrModal onClose={() => setShowTgQr(false)} type="telegram" />}
     </div>
   )
 }

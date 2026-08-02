@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState, type ReactNode } from 'react'
-import { MessageCircle, Tv, Volume2, VolumeX } from 'lucide-react'
+import { MessageCircle, Send, Tv, Volume2, VolumeX } from 'lucide-react'
 import TitleScreen from './sections/TitleScreen'
 import StoryScene from './sections/StoryScene'
 import TutorialBattleScene from './sections/TutorialBattleScene'
@@ -182,6 +182,7 @@ export default function App() {
   const [fireResult, setFireResult] = useState<SavedRegisterId[] | null>(null)
   const [mute, setMute] = useState(isMuted())
   const [showQr, setShowQr] = useState(false)
+  const [showTgQr, setShowTgQr] = useState(false)
   const farmBattleConfig = useMemo(() => farmBattleForOutcome(flags), [flags])
   const c4BattleConfig = useMemo(
     () => escortBattleForTactic((flags.c4_tactic as C4Tactic | undefined) ?? 'ambush'),
@@ -665,7 +666,14 @@ export default function App() {
                     className="flex items-center gap-1.5 text-sm tracking-[0.15em] text-qin-bronze transition-colors hover:text-qin-bronze-light"
                   >
                     <MessageCircle className="size-4" />
-                    加我微信
+                    微信
+                  </button>
+                  <button
+                    onClick={() => setShowTgQr(true)}
+                    className="flex items-center gap-1.5 text-sm tracking-[0.15em] text-qin-bronze transition-colors hover:text-qin-bronze-light"
+                  >
+                    <Send className="size-4" />
+                    Telegram
                   </button>
                   <a
                     href={SOCIAL_LINKS.bilibili}
@@ -688,6 +696,7 @@ export default function App() {
               </div>
             )}
             {showQr && <WechatQrModal onClose={() => setShowQr(false)} />}
+            {showTgQr && <WechatQrModal onClose={() => setShowTgQr(false)} type="telegram" />}
           </div>
         )
     }
