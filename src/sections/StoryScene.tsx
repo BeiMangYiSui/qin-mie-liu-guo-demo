@@ -3,6 +3,7 @@ import { ChevronRight } from 'lucide-react'
 import type { DialogueLine, LineType, StoryScene as Scene } from '../game/story'
 import type { StoryFlags } from '../game/save'
 import { playSfxFile, playVoiceLine, stopVoice, unlockAudio, unlockBgm } from '../game/audio'
+import { MEDIA_CDN } from '../lib/cdn'
 import SkipButton from '../components/SkipButton'
 import S7ShotCard, { resolveS7Shot } from '../ui/S7ShotCard'
 import {
@@ -39,29 +40,29 @@ const SPEAKER_COLOR: Record<string, string> = {
 }
 
 const SPEAKER_AVATAR: Record<string, string> = {
-  阿芒: './assets/avatar_beimang.webp',
-  北芒: './assets/avatar_beimang.webp',
-  小满: './assets/avatar_xiaoman.webp',
-  青翎: './assets/avatar_qingling.webp',
-  越女: './assets/avatar_qingling.webp',
-  公孙钺: './assets/npc_gongsunyue.webp',
-  郑国: './assets/npc_zhengguo.webp',
-  孟甲: './assets/npc_mengjia.webp',
-  秦王: './assets/npc_qinwang.webp',
-  姚贾: './assets/npc_yaojia.webp',
-  韩王: './assets/npc_hanwang.webp',
-  韩王安: './assets/npc_hanwang.webp',
-  韩老伯: './assets/npc_hanlaobo.webp',
+  阿芒: `${MEDIA_CDN}assets/avatar_beimang.webp`,
+  北芒: `${MEDIA_CDN}assets/avatar_beimang.webp`,
+  小满: `${MEDIA_CDN}assets/avatar_xiaoman.webp`,
+  青翎: `${MEDIA_CDN}assets/avatar_qingling.webp`,
+  越女: `${MEDIA_CDN}assets/avatar_qingling.webp`,
+  公孙钺: `${MEDIA_CDN}assets/npc_gongsunyue.webp`,
+  郑国: `${MEDIA_CDN}assets/npc_zhengguo.webp`,
+  孟甲: `${MEDIA_CDN}assets/npc_mengjia.webp`,
+  秦王: `${MEDIA_CDN}assets/npc_qinwang.webp`,
+  姚贾: `${MEDIA_CDN}assets/npc_yaojia.webp`,
+  韩王: `${MEDIA_CDN}assets/npc_hanwang.webp`,
+  韩王安: `${MEDIA_CDN}assets/npc_hanwang.webp`,
+  韩老伯: `${MEDIA_CDN}assets/npc_hanlaobo.webp`,
   // —— 缺图暂代（见交付报告缺图清单）——
-  韩老媪: './assets/npc_hanlaomu.webp',
-  农家老翁: './assets/npc_hanlaomu.webp',
-  小吏: './assets/npc_shizu.webp',
-  狱卒: './assets/npc_shizu.webp',
-  军吏: './assets/npc_shizu.webp',
-  商队老执事: './assets/npc_shangdui.webp',
-  守谷口老卒: './assets/npc_shizu.webp',
-  秦卒: './assets/npc_shizu.webp',
-  韩地伤兵: './assets/npc_shizu.webp',
+  韩老媪: `${MEDIA_CDN}assets/npc_hanlaomu.webp`,
+  农家老翁: `${MEDIA_CDN}assets/npc_hanlaomu.webp`,
+  小吏: `${MEDIA_CDN}assets/npc_shizu.webp`,
+  狱卒: `${MEDIA_CDN}assets/npc_shizu.webp`,
+  军吏: `${MEDIA_CDN}assets/npc_shizu.webp`,
+  商队老执事: `${MEDIA_CDN}assets/npc_shangdui.webp`,
+  守谷口老卒: `${MEDIA_CDN}assets/npc_shizu.webp`,
+  秦卒: `${MEDIA_CDN}assets/npc_shizu.webp`,
+  韩地伤兵: `${MEDIA_CDN}assets/npc_shizu.webp`,
 }
 
 // 演出轨不配音（配音台本轨约定）；字幕轨尝试查找——有条目则播（如 S7 三个镜头，通览标【旁白】），无条目静默
