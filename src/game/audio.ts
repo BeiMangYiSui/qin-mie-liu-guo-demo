@@ -115,7 +115,7 @@ function startVoice(relativePath: string) {
     voiceEl.src = ''
   }
   const el = new Audio(`${import.meta.env.BASE_URL}${relativePath}`)
-  el.volume = 0.9
+  el.volume = 0.7
   el.muted = muted
   voiceEl = el
   el.play().catch(() => {
@@ -185,7 +185,7 @@ export function playSfxFile(
     }
   }
   const el = new Audio(`${import.meta.env.BASE_URL}${relativePath}`)
-  el.volume = opts.volume ?? 0.8
+  el.volume = opts.volume ?? 0.6
   el.loop = opts.loop ?? false
   el.muted = muted
   if (!opts.overlap) sfxFileChannels[channel] = el
@@ -218,15 +218,15 @@ export function stopSfxFile(channel?: SfxFileChannel) {
 type SfxKind = 'hit' | 'interrupt' | 'rescue' | 'hold' | 'steal' | 'hurt' | 'select' | 'win' | 'fall'
 
 const ACTION_SFX: Record<SfxKind, { path: string; volume: number }> = {
-  hit:       { path: 'sfx/hit.mp3', volume: 0.8 },       // 剑击命中
-  hurt:      { path: 'sfx/hurt.mp3', volume: 0.8 },      // 受创闷哼
-  interrupt: { path: 'sfx/interrupt.mp3', volume: 0.55 }, // 打断（保留原版）
-  rescue:    { path: 'sfx/rescue.mp3', volume: 0.7 },    // 救援/医治
-  hold:      { path: 'sfx/hold.mp3', volume: 0.75 },     // 撑住阵脚
-  steal:     { path: 'sfx/steal.mp3', volume: 0.75 },    // 夺走
-  select:    { path: 'sfx/select.mp3', volume: 0.6 },    // 界面点击
-  fall:      { path: 'sfx/fall.mp3', volume: 0.8 },      // 坠坡
-  win:       { path: 'sfx/win.mp3', volume: 0.9 },       // 小胜
+  hit:       { path: 'sfx/hit.mp3', volume: 0.6 },       // 剑击命中
+  hurt:      { path: 'sfx/hurt.mp3', volume: 0.6 },      // 受创闷哼
+  interrupt: { path: 'sfx/interrupt.mp3', volume: 0.45 }, // 打断（保留原版 ）
+  rescue:    { path: 'sfx/rescue.mp3', volume: 0.55 },    // 救援/医治
+  hold:      { path: 'sfx/hold.mp3', volume: 0.55 },     // 撑住阵脚
+  steal:     { path: 'sfx/steal.mp3', volume: 0.55 },    // 夺走
+  select:    { path: 'sfx/select.mp3', volume: 0.45 },    // 界面点击
+  fall:      { path: 'sfx/fall.mp3', volume: 0.6 },      // 坠坡
+  win:       { path: 'sfx/win.mp3', volume: 0.7 },       // 小胜
 }
 
 export function playSfx(kind: SfxKind) {
