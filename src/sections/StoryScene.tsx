@@ -255,6 +255,8 @@ export default function StoryScene({
 
 function Line({ line, dim, active }: { line: DialogueLine; dim?: boolean; active?: boolean }) {
   const { type, speaker, text } = line
+  const [imgFailed, setImgFailed] = useState(false)
+  const [useFallback, setUseFallback] = useState(false)
 
   // 字幕轨：整行居中，无说话人栏
   if (type === 'caption') {
@@ -271,6 +273,8 @@ function Line({ line, dim, active }: { line: DialogueLine; dim?: boolean; active
 
   const color = SPEAKER_COLOR[speaker] ?? '#E9E5DA'
   const avatar = SPEAKER_AVATAR[speaker]
+  // webp 失败时回退到 png portrait（仅主角有 png）
+  const pngFallback = avatar?.replace('avatar_', 'portrait_').replace('.webp', '.png')
   const textClass =
     type === 'stage'
       ? 'italic text-[#8A8578]'
@@ -278,19 +282,41 @@ function Line({ line, dim, active }: { line: DialogueLine; dim?: boolean; active
         ? 'italic text-qin-parchment-80'
         : 'text-qin-parchment-80'
 
+  const renderAvatar = () => {
+    if (!avatar) return null
+    // 全部失败：显示彩色占位符
+    if (imgFailed) {
+      return (
+        <div
+          className="flex h-12 w-12 shrink-0 items-center justify-center rounded-md border-2 text-lg font-bold"
+          style={{ borderColor: color, color, backgroundColor: `${color}22` }}
+        >
+          {speaker[0]}
+        </div>
+      )
+    }
+    const src = useFallback && pngFallback ? pngFallback : avatar
+    return (
+      <img
+        src={src}
+        alt=""
+        loading="eager"
+        className="block h-12 w-12 shrink-0 rounded-md border-2 object-cover object-top"
+        style={{ borderColor: color }}
+        onError={() => {
+          if (!useFallback && pngFallback) {
+            setUseFallback(true)
+          } else {
+            setImgFailed(true)
+          }
+        }}
+      />
+    )
+  }
+
   return (
     <div className={`flex gap-3 leading-8 ${dim ? 'opacity-40' : ''} ${active ? 'animate-[fadein_.3s_ease]' : ''}`}>
-      {avatar && (
-        <img
-          src={avatar}
-          alt=""
-          className="block h-12 w-12 shrink-0 rounded-md border-2 object-cover object-top"
-          style={{ borderColor: color }}
-          onError={(event) => {
-            event.currentTarget.style.display = 'none'
-          }}
-        />
-      )}
+      {renderAvatar()}
       <span className="shrink-0 w-20 text-right font-sans text-sm font-bold tracking-[0.1em]" style={{ color }}>
         {speaker}
       </span>
