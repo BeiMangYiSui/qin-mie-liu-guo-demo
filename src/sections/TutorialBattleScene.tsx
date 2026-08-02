@@ -27,8 +27,8 @@ import CinematicBattlefield, {
 
 type Floater = { id: number; target: number | 'hero'; text: string; color: string }
 
-const HERO_SPRITE = '/assets/battle/hero_beimang_idle_v1.webp'
-const ENEMY_SPRITE = '/assets/battle/enemy_assassin_idle_v1.webp'
+const HERO_SPRITE = './assets/battle/hero_beimang_idle_v1.webp'
+const ENEMY_SPRITE = './assets/battle/enemy_assassin_idle_v1.webp'
 
 export default function TutorialBattleScene({
   battle,
@@ -382,7 +382,7 @@ export default function TutorialBattleScene({
   return (
     <div className="relative flex h-dvh flex-col overflow-hidden bg-[#14161c] text-qin-parchment">
       <img
-        src="/assets/bg_zhengdi_yuye.webp"
+        src="./assets/bg_zhengdi_yuye.webp"
         alt=""
         className="pointer-events-none absolute inset-0 h-full w-full object-cover"
         onError={(event) => {

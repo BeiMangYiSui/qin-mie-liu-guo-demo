@@ -308,7 +308,7 @@ export default function App() {
         return storySegment(SCENES.s1_anfa, 'testimony-setup', S1_BEFORE_TESTIMONY_LINES, 's1_statement')
       case 's1_statement':
         return (
-          <MountShell bg="/assets/bg_heibingtai.webp">
+          <MountShell bg="./assets/bg_heibingtai.webp">
             <WitnessStatementPanel onComplete={() => setStage('s1_anfa_after')} />
           </MountShell>
         )
@@ -320,7 +320,7 @@ export default function App() {
         return story('s3_chaqu', 's3_chaan')
       case 's3_chaan':
         return (
-          <MountShell bg="/assets/bg_qukou.webp">
+          <MountShell bg="./assets/bg_qukou.webp">
             <ScrollInspect
               sceneId="s3_chaan"
               stacks={S3_SCROLL_STACKS}
@@ -465,7 +465,7 @@ export default function App() {
         return story('c1_pinan', 'c1_case')
       case 'c1_case':
         return (
-          <MountShell bg="/assets/bg_junzhang.webp">
+          <MountShell bg="./assets/bg_junzhang.webp">
             <CaseFragmentBoard onCombine={() => setStage('c1_pinan_after')} combineLabel="合卷定案" />
           </MountShell>
         )
@@ -554,7 +554,7 @@ export default function App() {
         )
       case 'c7_fire':
         return (
-          <MountShell bg="/assets/bg_guanshu_huo.webp">
+          <MountShell bg="./assets/bg_guanshu_huo.webp">
             <p className="text-center text-lg tracking-[0.2em] text-qin-parchment [text-shadow:0_2px_8px_#000]">
               {C7_FIRE.intro[0]}
             </p>
@@ -608,7 +608,7 @@ export default function App() {
         )
       case 'c7_troops':
         return (
-          <MountShell bg="/assets/bg_xinzheng.webp">
+          <MountShell bg="./assets/bg_xinzheng.webp">
             <PursuitIntercept
               onFlagsChange={({ c7_troops_intercepted }) => patchFlags({ c7_troops_intercepted })}
               onFinish={() => setStage('c7_huoqi_after')}
@@ -621,7 +621,7 @@ export default function App() {
         return story('c8_zhangmo', 'c8_settle')
       case 'c8_settle':
         return (
-          <MountShell bg="/assets/bg_junzhang.webp">
+          <MountShell bg="./assets/bg_junzhang.webp">
             <div className="text-sm tracking-[0.3em] text-qin-bronze [text-shadow:0_2px_8px_#000]">
               {C8_SETTLE.title}
             </div>

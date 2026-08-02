@@ -103,7 +103,7 @@ const s1_anfa: StoryScene = {
   id: 's1_anfa',
   chapter: PRO,
   place: '前 230 年 · 咸阳 · 黑冰台',
-  bg: '/assets/bg_heibingtai.webp',
+  bg: './assets/bg_heibingtai.webp',
   notes: ['“亲见”与“传闻”之间插入落笔取证互动，让玩家在序章两分钟内第一次参与。'],
   lines: [...S1_BEFORE_TESTIMONY_LINES, ...S1_AFTER_TESTIMONY_LINES],
 }
@@ -112,7 +112,7 @@ const s2_shenxun: StoryScene = {
   id: 's2_shenxun',
   chapter: PRO,
   place: '咸阳 · 诏狱',
-  bg: '/assets/bg_zhaoyu.webp',
+  bg: './assets/bg_zhaoyu.webp',
   lines: [
     N('诏狱。'),
     D('公孙钺', '“人，是你报的。”'),
@@ -134,7 +134,7 @@ const s3_chaqu: StoryScene = {
   id: 's3_chaqu',
   chapter: PRO,
   place: '郑国渠 · 渠口',
-  bg: '/assets/bg_qukou.webp',
+  bg: './assets/bg_qukou.webp',
   notes: ['两条★齐后，接 S3 冻结稿内心戏与“我要出境”对白，不动。（查案组件 ScrollInspect 挂载点 s3_chaan）'],
   lines: [
     N('渠口。十年的查验记档，堆了半间屋。'),
@@ -163,7 +163,7 @@ const s4_andun: StoryScene = {
   id: 's4_andun',
   chapter: PRO,
   place: '咸阳 · 客舍',
-  bg: '/assets/bg_keshe.webp',
+  bg: './assets/bg_keshe.webp',
   lines: [
     D('小吏', '“念在多年辛劳，赐一马十金。两日之内，离秦。”'),
     N('越女交还铜符。一句话没有。'),
@@ -182,7 +182,7 @@ const s5_zhuishi: StoryScene = {
   id: 's5_zhuishi',
   chapter: PRO,
   place: '秦韩交界 · 馆驿',
-  bg: '/assets/bg_zhengdi_dao.webp',
+  bg: './assets/bg_zhengdi_dao.webp',
   notes: ['骑影一节为“玩家看见，北芒没看见”。'],
   lines: [
     N('秦韩交界，馆驿。'),
@@ -239,7 +239,7 @@ const s6_fusha: StoryScene = {
   id: 's6_fusha',
   chapter: PRO,
   place: '郑地山道 · 雨夜',
-  bg: '/assets/bg_zhengdi_yuye.webp',
+  bg: './assets/bg_zhengdi_yuye.webp',
   notes: [
     '北芒教学战：护住副本、救出孟甲、守住谷口退路；越女登场后接一场单人破围战。',
     '固定——孟甲活、副本在、北芒坠坡；可变——谷口失守程度、旧部伤亡、越女负伤、敌方是否带走线索。',
@@ -269,7 +269,7 @@ const s7_xiandai: StoryScene = {
   id: 's7_xiandai',
   chapter: PRO,
   place: '两千年后 · 洛阳 · 古墓博物馆',
-  bg: '/assets/bg_luoyang_xiandai.webp',
+  bg: './assets/bg_luoyang_xiandai.webp',
   notes: ['那夜山坡上，北芒尉已经死了。醒来的，是另一个人。不解释机制。'],
   lines: [
     N('两千年后。洛阳，北邙山。'),
@@ -287,7 +287,7 @@ const s8_nongjia: StoryScene = {
   id: 's8_nongjia',
   chapter: PRO,
   place: '郑地山脚 · 农家',
-  bg: '/assets/bg_nongjia.webp',
+  bg: './assets/bg_nongjia.webp',
   notes: ['自本场起，叙述与名册称“阿芒”。'],
   lines: [
     N('透骨钉穿胸，撑不到大营。'),
@@ -315,7 +315,7 @@ const s9_tongxing: StoryScene = {
   id: 's9_tongxing',
   chapter: PRO,
   place: '郑地山脚 · 农家',
-  bg: '/assets/bg_nongjia.webp',
+  bg: './assets/bg_nongjia.webp',
   notes: [
     '战斗：阿芒未愈，只能勉强持剑。',
     '她认定的是失忆。她不知道，那夜山坡上，北芒尉已经死了。',
@@ -343,7 +343,7 @@ const s10_guace: StoryScene = {
   id: 's10_guace',
   chapter: PRO,
   place: '秦军前锋营 · 都尉帐',
-  bg: '/assets/bg_junzhang.webp',
+  bg: './assets/bg_junzhang.webp',
   notes: ['选择点：求情——减一等；不开口——照数领罚。（写 flag plead_soldier）'],
   lines: [
     D('公孙钺', '“头伤，忘事？”'),
@@ -376,7 +376,7 @@ const c1_pinan: StoryScene = {
   id: 'c1_pinan',
   chapter: CH1,
   place: '秦军前锋营 · 都尉帐',
-  bg: '/assets/bg_junzhang.webp',
+  bg: './assets/bg_junzhang.webp',
   lines: [
     N('那一夜的最后一段——他没有。'),
     N('书夺到手之后，发生了什么？书，又在哪？'),
@@ -402,7 +402,7 @@ const c2_zhangtai: StoryScene = {
   id: 'c2_zhangtai',
   chapter: CH1,
   place: '咸阳 · 章台',
-  bg: '/assets/bg_zhangtai.webp',
+  bg: './assets/bg_zhangtai.webp',
   lines: [
     N('章台。两证一疏。'),
     D('姚贾', '（验那副符信）“符信是真的。”（顿）“人，是韩国密使。”'),
@@ -421,7 +421,7 @@ const c3_guoshu: StoryScene = {
   id: 'c3_guoshu',
   chapter: CH1,
   place: '新郑 · 韩宫',
-  bg: '/assets/bg_hangong.webp',
+  bg: './assets/bg_hangong.webp',
   lines: [
     N('秦王决意灭韩。'),
     N('大军东出之际，姚贾携国书先行。'),
@@ -463,7 +463,7 @@ const c4_husong: StoryScene = {
   id: 'c4_husong',
   chapter: CH1,
   place: '郑地山道',
-  bg: '/assets/bg_zhengdi_dao.webp',
+  bg: './assets/bg_zhengdi_dao.webp',
   notes: [
     '三选一战术，伤损锁进 C7：上山→C7 护疫营不可选；入谷→C7 截残军不可选；断后→C7 保户籍不可选。',
     '郑氏零伤亡恒定。最坏结局：人人几乎残血。',
@@ -494,7 +494,7 @@ const c5_shouxiang: StoryScene = {
   id: 'c5_shouxiang',
   chapter: CH1,
   place: '新郑 · 城门',
-  bg: '/assets/bg_xinzheng.webp',
+  bg: './assets/bg_xinzheng.webp',
   lines: [
     N('大军压境。韩廷裂成三块——'),
     N('要殉国的，要体面的，要北逃的。'),
@@ -514,7 +514,7 @@ const c6_yiying: StoryScene = {
   id: 'c6_yiying',
   chapter: CH1,
   place: '新郑东城 · 疫营',
-  bg: '/assets/bg_yiying.webp',
+  bg: './assets/bg_yiying.webp',
   lines: [
     D('韩地伤兵', '（她正替他裹伤）“你是韩人。”（盯着她）“为什么帮秦军？”'),
     D('小满', '“我不是替秦军救人。”（顿）“我救的，是人。”'),
@@ -543,7 +543,7 @@ const c7_huoqi: StoryScene = {
   id: 'c7_huoqi',
   chapter: CH1,
   place: '新郑 · 官署',
-  bg: '/assets/bg_guanshu_huo.webp',
+  bg: './assets/bg_guanshu_huo.webp',
   notes: [
     '三选一：保户籍／截残军／护疫营撤离。不可全得。其中一项，已被上一战的伤损锁死。',
     '抉择面板用 C7ChoicePanel（锁定逻辑 C7_LOCKED_CHOICE_BY_TACTIC）；保户籍接挂载点 c7_fire，护疫营接挂载点 c7_evac。',
@@ -596,7 +596,7 @@ const c8_zhangmo: StoryScene = {
   id: 'c8_zhangmo',
   chapter: CH1,
   place: '新郑 · 市门',
-  bg: '/assets/bg_xinzheng.webp',
+  bg: './assets/bg_xinzheng.webp',
   notes: ['军报按 C7 选择与战果变体；章末结算挂载点 c8_settle（SettlePanel 占位）。'],
   lines: [...C8_BODY.head, C8_BODY.registerLost, ...C8_BODY.tail],
   lineVariants: [

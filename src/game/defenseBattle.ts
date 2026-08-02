@@ -81,7 +81,7 @@ export const C4_ESCORT_BATTLE_CONFIG: DefenseBattleConfig = {
     ['captain', 'rush', 'casualties', 'captain'],
     ['casualties', 'captain', 'rush', 'casualties'],
   ],
-  enemySprite: '/assets/battle/enemy_hanzu_idle_v1.webp',
+  enemySprite: './assets/battle/enemy_hanzu_idle_v1.webp',
   introPlaceholder: '私兵压向郑氏车队。守住谷口，等秦军前锋赶到。',
 }
 
@@ -100,7 +100,7 @@ export const EVAC_BATTLE_CONFIG: DefenseBattleConfig = {
     ['captain', 'rush', 'casualties', 'captain'],
     ['casualties', 'captain', 'rush', 'casualties'],
   ],
-  enemySprite: '/assets/battle/enemy_hanzu_idle_v1.webp',
+  enemySprite: './assets/battle/enemy_hanzu_idle_v1.webp',
   introPlaceholder: '乱兵冲着医篷来了——伤兵抢药，溃兵抢命。', // v3.5 冻结稿附录逐字
 }
 

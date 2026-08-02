@@ -35,29 +35,29 @@ const HERO_STYLE: Record<HeroId, { border: string; badge: string; role: string }
 }
 
 const HERO_SPRITE: Record<HeroId, string> = {
-  beimang: '/assets/battle/hero_beimang_idle_v1.webp',
-  mengjia: '/assets/battle/hero_mengjia_idle_v2.webp',
-  xiaoman: '/assets/battle/hero_xiaoman_idle_v1.webp',
-  yuenu: '/assets/battle/hero_qingling_idle_v1.webp',
+  beimang: './assets/battle/hero_beimang_idle_v1.webp',
+  mengjia: './assets/battle/hero_mengjia_idle_v2.webp',
+  xiaoman: './assets/battle/hero_xiaoman_idle_v1.webp',
+  yuenu: './assets/battle/hero_qingling_idle_v1.webp',
 }
 
-const DEFAULT_ENEMY_SPRITE = '/assets/battle/enemy_assassin_idle_v1.webp'
+const DEFAULT_ENEMY_SPRITE = './assets/battle/enemy_assassin_idle_v1.webp'
 
 const ENEMY_SPRITE_BY_SPEC: Record<string, string> = {
   youxia: DEFAULT_ENEMY_SPRITE,
-  toutmu: '/assets/battle/enemy_toumu_idle_v1.webp',
-  zu: '/assets/battle/enemy_hanzu_idle_v1.webp',
-  zhang: '/assets/battle/enemy_hanwu_idle_v1.webp',
-  huo: '/assets/battle/enemy_zonghuo_idle_v1.webp',
+  toutmu: './assets/battle/enemy_toumu_idle_v1.webp',
+  zu: './assets/battle/enemy_hanzu_idle_v1.webp',
+  zhang: './assets/battle/enemy_hanwu_idle_v1.webp',
+  huo: './assets/battle/enemy_zonghuo_idle_v1.webp',
   sibing: DEFAULT_ENEMY_SPRITE,
-  jingrui: '/assets/battle/enemy_toumu_idle_v1.webp',
+  jingrui: './assets/battle/enemy_toumu_idle_v1.webp',
   sishi: DEFAULT_ENEMY_SPRITE,
-  qishou: '/assets/battle/enemy_rider_idle_v1.webp',
-  weishi: '/assets/battle/enemy_hanzu_idle_v1.webp',
+  qishou: './assets/battle/enemy_rider_idle_v1.webp',
+  weishi: './assets/battle/enemy_hanzu_idle_v1.webp',
   anzhuang: DEFAULT_ENEMY_SPRITE,
   mengzu: DEFAULT_ENEMY_SPRITE,
-  nushou: '/assets/battle/enemy_crossbow_idle_v1.webp',
-  zhizao: '/assets/battle/enemy_toumu_idle_v1.webp',
+  nushou: './assets/battle/enemy_crossbow_idle_v1.webp',
+  zhizao: './assets/battle/enemy_toumu_idle_v1.webp',
 }
 
 const ACTION_ICON: Record<ActionId, typeof Sword> = {
@@ -537,7 +537,7 @@ export default function BattleScene({
     return true
   }
   const battleBackground =
-    cfg.bg ?? (cfg.mode === 'winch' ? '/assets/bg_jiaopanfang.webp' : cfg.mode === 'defend' ? '/assets/bg_zhengdi_dao.webp' : '/assets/bg_nongjia.webp')
+    cfg.bg ?? (cfg.mode === 'winch' ? './assets/bg_jiaopanfang.webp' : cfg.mode === 'defend' ? './assets/bg_zhengdi_dao.webp' : './assets/bg_nongjia.webp')
   const heroOrder: HeroId[] = ['mengjia', 'xiaoman', 'yuenu', 'beimang']
   const heroViews: BattlefieldHero[] = heroOrder.map((id) => {
     const hero = battle.heroes[id]

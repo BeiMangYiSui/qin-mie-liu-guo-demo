@@ -5,7 +5,7 @@
 
 export const SOCIAL_LINKS = {
   /** 微信二维码图片路径（放在 public/assets/ 下） */
-  wechatQr: '/assets/wechat-qr.png',
+  wechatQr: './assets/wechat-qr.png',
   /** B站主页 */
   bilibili: 'https://space.bilibili.com/你的UID',
   /** 机核主页 */

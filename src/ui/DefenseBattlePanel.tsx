@@ -96,7 +96,7 @@ export default function DefenseBattlePanel({
         className="relative min-h-64 bg-cover bg-center p-5 sm:p-8"
         style={{
           backgroundImage:
-            "linear-gradient(rgba(13,14,17,.32),rgba(13,14,17,.9)),url('/assets/bg_yiying.webp')",
+            "linear-gradient(rgba(13,14,17,.32),rgba(13,14,17,.9)),url('./assets/bg_yiying.webp')",
         }}
       >
         <p className="text-[0.65rem] tracking-[0.45em] text-qin-bronze/75">防守战 · 局势应对</p>
