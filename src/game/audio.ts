@@ -81,6 +81,8 @@ export function isMuted() {
 // 路径规则：voice/{sceneId}/{idx:02d}_{speaker}.mp3（与 manifest.json 对齐）
 
 let voiceEl: HTMLAudioElement | null = null
+// 移动端音频解锁标记：首次用户交互后解锁，后续 play() 不再被拦截
+let audioUnlocked = false
 
 interface VoiceManifestEntry {
   scene: string
@@ -90,11 +92,12 @@ interface VoiceManifestEntry {
 }
 
 let voiceManifestPromise: Promise<VoiceManifestEntry[]> | null = null
+let voiceManifest: VoiceManifestEntry[] | null = null
 
 function normalizeVoiceText(text: string): string {
   return text
     .normalize('NFKC')
-    .replace(/[\s"'“”‘’…—，。！？、：；（）()·]/g, '')
+    .replace(/[\s"'""''…—，。！？、：；（）()·]/g, '')
 }
 
 function loadVoiceManifest(): Promise<VoiceManifestEntry[]> {
@@ -104,10 +107,17 @@ function loadVoiceManifest(): Promise<VoiceManifestEntry[]> {
         if (!response.ok) throw new Error(`voice manifest: ${response.status}`)
         return response.json() as Promise<VoiceManifestEntry[]>
       })
+      .then((data) => {
+        voiceManifest = data
+        return data
+      })
       .catch(() => [])
   }
   return voiceManifestPromise
 }
+
+// 页面加载时立即预取 manifest，避免首次播放时的异步延迟
+loadVoiceManifest()
 
 function startVoice(relativePath: string) {
   if (voiceEl) {
@@ -119,6 +129,7 @@ function startVoice(relativePath: string) {
   el.muted = muted
   voiceEl = el
   el.play().catch(() => {
+    // 移动端自动播放被拦截：标记未解锁，等下次用户交互重试
     if (voiceEl === el) voiceEl = null
   })
 }
@@ -137,7 +148,8 @@ export async function playVoiceLine(scene: string, speaker: string, text: string
     voiceEl = null
   }
   if (muted) return
-  const manifest = await loadVoiceManifest()
+  // 优先使用已缓存的 manifest（同步路径），避免 await 打断移动端播放手势链
+  const manifest = voiceManifest ?? (await loadVoiceManifest())
   if (requestId !== voiceRequestId || muted) return
   // 战斗/挂载前后的分段场景都带 #suffix（after / yuenu-arrival / beimang-fall），配音按主场景 id 查。
   const voiceScene = scene.split('#', 1)[0]
@@ -149,6 +161,18 @@ export async function playVoiceLine(scene: string, speaker: string, text: string
       normalizeVoiceText(item.text) === normalized,
   )
   if (entry) startVoice(entry.file)
+}
+
+/** 用户首次交互时调用，解锁移动端音频播放限制 */
+export function unlockAudio() {
+  if (audioUnlocked) return
+  audioUnlocked = true
+  // 播放一段静音以解锁 iOS/Android 音频上下文
+  const el = new Audio()
+  el.volume = 0
+  el.play().catch(() => {})
+  // 同时解锁 BGM
+  unlockBgm()
 }
 
 export function stopVoice() {
