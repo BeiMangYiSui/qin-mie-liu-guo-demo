@@ -27,7 +27,7 @@ import {
 } from './game/scenarios'
 import { EVAC_BATTLE_CONFIG } from './game/defenseBattle'
 import { createTutorial, tutorialOutcome, type TutorialState } from './game/tutorial'
-import { isMuted, playBgm, setMuted, type BgmName } from './game/audio'
+import { isMuted, playBgm, setMuted, unlockAudio, type BgmName } from './game/audio'
 import GameMenu from './components/GameMenu'
 import ChapterCard from './ui/ChapterCard'
 import C7ChoicePanel from './ui/C7ChoicePanel'
@@ -173,7 +173,9 @@ function continuationScene(scene: Scene): Scene {
 
 export default function App() {
   const previewMode = new URLSearchParams(window.location.search).get('ui-preview') === '1'
-  const [stage, setStage] = useState<Stage>('title')
+  const urlParams = new URLSearchParams(window.location.search)
+  const initialStage = (urlParams.get('stage') as Stage | null) || 'title'
+  const [stage, setStage] = useState<Stage>(initialStage)
   const [tutorial, setTutorial] = useState<TutorialState | null>(null)
   const [flags, setFlags] = useState<StoryFlags>({ ...DEFAULT_STORY_FLAGS })
   const [battle, setBattle] = useState<BattleState | null>(null)
@@ -193,6 +195,21 @@ export default function App() {
   useEffect(() => {
     playBgm(STAGE_BGM[stage])
   }, [stage])
+
+  // 当从 URL 参数跳转到战斗 stage 时，自动构造 battle/tutorial state
+  useEffect(() => {
+    if (initialStage === 's5_battle' && !battle) {
+      setBattle(createBattle(PURSUIT_BATTLE))
+    } else if (initialStage === 's6_battle' && !tutorial) {
+      setTutorial(createTutorial())
+    } else if (initialStage === 's6_yuenu_battle' && !battle) {
+      setBattle(createBattle(YUENU_BREAKOUT_BATTLE))
+    } else if (initialStage === 's9_battle' && !battle) {
+      setBattle(createBattle(farmBattleConfig))
+    } else if (initialStage === 'c4_battle' && !battle) {
+      setBattle(createBattle(c4BattleConfig))
+    }
+  }, [initialStage])
 
   const restart = () => {
     setStage('title')
@@ -294,7 +311,7 @@ export default function App() {
         const latest = findLatestSave()
         return (
           <TitleScreen
-            onStart={() => setStage('s1_anfa')}
+            onStart={() => { unlockAudio(); setStage('s1_anfa') }}
             onLoad={applySave}
             shichengUnlockedCardIds={latest ? shichengUnlockedFor(latest.stage) : []}
           />
