@@ -1,4 +1,5 @@
 // 《秦灭六国》Demo — 音频：BGM 管理（淡入淡出）+ Web Audio 合成音效
+import { MEDIA_CDN } from '../lib/cdn'
 
 export type BgmName = 'ambush' | 'farm' | 'court'
 
@@ -17,7 +18,7 @@ let muted = false
 let voiceRequestId = 0
 
 function url(name: BgmName) {
-  return `${import.meta.env.BASE_URL}${TRACKS[name]}`
+  return `${MEDIA_CDN}${TRACKS[name]}`
 }
 
 function fade(el: HTMLAudioElement, to: number, ms: number, then?: () => void) {
@@ -102,7 +103,7 @@ function normalizeVoiceText(text: string): string {
 
 function loadVoiceManifest(): Promise<VoiceManifestEntry[]> {
   if (!voiceManifestPromise) {
-    voiceManifestPromise = fetch(`${import.meta.env.BASE_URL}voice/manifest.json`)
+    voiceManifestPromise = fetch(`${MEDIA_CDN}voice/manifest.json`)
       .then((response) => {
         if (!response.ok) throw new Error(`voice manifest: ${response.status}`)
         return response.json() as Promise<VoiceManifestEntry[]>
@@ -124,7 +125,7 @@ function startVoice(relativePath: string) {
     voiceEl.pause()
     voiceEl.src = ''
   }
-  const el = new Audio(`${import.meta.env.BASE_URL}${relativePath}`)
+  const el = new Audio(`${MEDIA_CDN}${relativePath}`)
   el.volume = 0.7
   el.muted = muted
   voiceEl = el
@@ -208,7 +209,7 @@ export function playSfxFile(
       previous.src = ''
     }
   }
-  const el = new Audio(`${import.meta.env.BASE_URL}${relativePath}`)
+  const el = new Audio(`${MEDIA_CDN}${relativePath}`)
   el.volume = opts.volume ?? 0.6
   el.loop = opts.loop ?? false
   el.muted = muted
