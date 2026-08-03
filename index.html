@@ -17,10 +17,18 @@
     <meta name="twitter:title" content="秦灭六国 · 玩法 Demo" />
     <meta name="twitter:description" content="战国末年叙事 RPG · 无等级 · 无装备 · 目标不止全歼" />
     <meta name="twitter:image" content="./assets/title_keyart.webp" />
+    <!-- 提前拉取标题页主视觉，避免首屏黑底等待 -->
+    <link rel="preload" as="image" href="https://stats.puck-muling.top/game/assets/title_keyart.webp" />
+    <style>
+      /* JS/CSS 就绪前保持深色底，避免白屏/黑屏闪烁 */
+      html, body { background: #1a1b1f; margin: 0; }
+    </style>
     <script async src="https://stats.puck-muling.top/script.js" data-website-id="63c0fb58-53c8-4d65-b989-269f049699d6"></script>
   </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+    <!-- itch.io iframe auto-resize -->
+    <script src="https://static.itch.io/iframe-minifier.js"></script>
   </body>
 </html>

@@ -6,6 +6,7 @@ import {
   actionsFor,
   applyHeroAction,
   canAct,
+  getActiveEnemies,
   resolveEnemyPhase,
   type ActionId,
   type BattleConfig,
@@ -573,7 +574,8 @@ export default function BattleScene({
             : true,
     }
   })
-  const enemyViews: BattlefieldEnemy[] = battle.enemies.map((enemy) => ({
+  const activeEnemyStates = getActiveEnemies(battle.enemies)
+  const enemyViews: BattlefieldEnemy[] = activeEnemyStates.map((enemy) => ({
     uid: enemy.uid,
     name: enemy.name,
     sprite: ENEMY_SPRITE_BY_SPEC[enemy.specKey] ?? DEFAULT_ENEMY_SPRITE,
@@ -589,8 +591,8 @@ export default function BattleScene({
           ? 'leader'
           : 'normal',
   }))
-  const currentEnemyLabel = [...new Set(battle.enemies.map((enemy) => enemy.name))].join(' / ') || enemyLabel
-  const urgentIntent = [...battle.enemies]
+  const currentEnemyLabel = [...new Set(activeEnemyStates.map((enemy) => enemy.name))].join(' / ') || enemyLabel
+  const urgentIntent = [...activeEnemyStates]
     .filter((enemy) => enemy.intent.dmg > 0)
     .sort((left, right) => right.intent.dmg - left.intent.dmg)[0]
   const tacticalNotice = urgentIntent?.intent.target
@@ -663,6 +665,7 @@ export default function BattleScene({
                       : '等待行动'
             }
             enemyLabel={currentEnemyLabel}
+            totalEnemyCount={battle.enemies.length}
             heroes={heroViews}
             enemies={enemyViews}
             targetMode={!isAnimating && pendingDef?.target === 'enemy' ? 'enemy' : !isAnimating && pendingDef?.target === 'ally' ? 'ally' : null}

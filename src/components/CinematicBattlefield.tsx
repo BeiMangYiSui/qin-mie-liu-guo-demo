@@ -40,6 +40,7 @@ export default function CinematicBattlefield({
   roundLabel,
   turnLabel,
   enemyLabel,
+  totalEnemyCount,
   heroes,
   enemies,
   targetMode,
@@ -64,6 +65,7 @@ export default function CinematicBattlefield({
   roundLabel: string
   turnLabel: string
   enemyLabel: string
+  totalEnemyCount?: number
   heroes: BattlefieldHero[]
   enemies: BattlefieldEnemy[]
   targetMode: 'enemy' | 'ally' | null
@@ -85,13 +87,10 @@ export default function CinematicBattlefield({
   onEnemyClick: (uid: number) => void
   onHeroClick: (id: string) => void
 }) {
-  const presentHeroCount = Math.max(heroes.filter((hero) => hero.present).length, 1)
-  const heroStyle = {
-    '--formation-count': presentHeroCount,
-  } as CSSProperties
-  const enemyStyle = {
-    '--formation-count': Math.max(enemies.length, 1),
-  } as CSSProperties
+  const visibleHeroes = heroes.filter((hero) => hero.present).slice(0, 3)
+  const visibleEnemies = enemies.slice(0, 3)
+  const presentHeroCount = Math.max(visibleHeroes.length, 1)
+  const queuedEnemyCount = Math.max(0, (totalEnemyCount ?? enemies.length) - visibleEnemies.length)
 
   return (
     <section ref={containerRef as RefObject<HTMLElement>} className={`cinematic-battlefield ${smoke ? 'is-smoked' : ''}`}>
@@ -107,11 +106,13 @@ export default function CinematicBattlefield({
       <div className="cinematic-battlefield__enemy-label">
         <Swords className="h-3.5 w-3.5" />
         {enemyLabel}
-        <span>{enemies.length} 人</span>
+        <span>
+          {visibleEnemies.length} 人在场{queuedEnemyCount > 0 ? ` · ${queuedEnemyCount} 人候阵` : ''}
+        </span>
       </div>
 
-      <div className="cinematic-formation cinematic-formation--heroes" style={heroStyle}>
-        {heroes.map((hero) => {
+      <div className="cinematic-formation cinematic-formation--heroes">
+        {visibleHeroes.map((hero) => {
           const targeted = targetMode === 'ally' && hero.present && !hero.down && hero.targetable !== false
           const isActing = actingHero === hero.id
           const actorClass = isActing
@@ -171,8 +172,8 @@ export default function CinematicBattlefield({
         })}
       </div>
 
-      <div className="cinematic-formation cinematic-formation--enemies" style={enemyStyle}>
-        {enemies.map((enemy) => {
+      <div className="cinematic-formation cinematic-formation--enemies">
+        {visibleEnemies.map((enemy) => {
           const targeted = targetMode === 'enemy'
           const hit = hitEnemyIds.includes(enemy.uid) || impactTarget === enemy.uid
           return (

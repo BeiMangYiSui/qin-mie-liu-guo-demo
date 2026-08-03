@@ -1,37 +1,73 @@
-# 秦灭六国 · 玩法 Demo
+# React + TypeScript + Vite
 
-> 历史已定，抉择在你。
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-一款纯浏览器运行的叙事 RPG，无需下载，打开即玩。
+Currently, two official plugins are available:
 
-## 试玩
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
 
-🎮 **https://shixiaofei-sunny.github.io/qin-mie-liu-guo-demo/**
+## React Compiler
 
-## 简介
+The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
 
-扮演秦军秘密行动头领北芒，与医者小满、剑士青翎共历秦灭六国前夜。
+## Expanding the ESLint configuration
 
-- 无等级、无装备、无刷怪
-- 多分支剧情，你的选择锁定后续选项
-- 三档结算评级 + 史乘系统
-- 序章《郑地伏杀》+ 第一章《新郑覆旗》，约 70 分钟体验
+If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
 
-## 技术栈
+```js
+export default defineConfig([
+  globalIgnores(['dist']),
+  {
+    files: ['**/*.{ts,tsx}'],
+    extends: [
+      // Other configs...
 
-React 19 + TypeScript + Vite 7 + Tailwind CSS
+      // Remove tseslint.configs.recommended and replace with this
+      tseslint.configs.recommendedTypeChecked,
+      // Alternatively, use this for stricter rules
+      tseslint.configs.strictTypeChecked,
+      // Optionally, add this for stylistic rules
+      tseslint.configs.stylisticTypeChecked,
 
-## 本地运行
-
-```bash
-npm ci
-npm run dev
+      // Other configs...
+    ],
+    languageOptions: {
+      parserOptions: {
+        project: ['./tsconfig.node.json', './tsconfig.app.json'],
+        tsconfigRootDir: import.meta.dirname,
+      },
+      // other options...
+    },
+  },
+])
 ```
 
-## 反馈
+You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
 
-BUG 反馈或建议欢迎提 Issue。
+```js
+// eslint.config.js
+import reactX from 'eslint-plugin-react-x'
+import reactDom from 'eslint-plugin-react-dom'
 
-## License
-
-MIT
+export default defineConfig([
+  globalIgnores(['dist']),
+  {
+    files: ['**/*.{ts,tsx}'],
+    extends: [
+      // Other configs...
+      // Enable lint rules for React
+      reactX.configs['recommended-typescript'],
+      // Enable lint rules for React DOM
+      reactDom.configs.recommended,
+    ],
+    languageOptions: {
+      parserOptions: {
+        project: ['./tsconfig.node.json', './tsconfig.app.json'],
+        tsconfigRootDir: import.meta.dirname,
+      },
+      // other options...
+    },
+  },
+])
+```

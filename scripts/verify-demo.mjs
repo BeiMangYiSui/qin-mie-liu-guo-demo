@@ -229,6 +229,13 @@ assert.equal(delayedBreakout.phase, 'lost', '三回合仍未破围必须立即�
 
 const huipaiFinal = battle.createBattle(scenarios.HUIPAI_FINAL_BATTLE)
 assert.equal(huipaiFinal.enemies.length, 4, '灭郑终局必须有完整的回旆盟敌阵')
+assert.equal(battle.getActiveEnemies(huipaiFinal.enemies).length, 3, '同屏敌人必须限制为三人，其余敌人候阵')
+const queuedHuipaiEnemy = huipaiFinal.enemies[3]
+const huipaiEnemyTurn = structuredClone(huipaiFinal)
+huipaiEnemyTurn.phase = 'enemy'
+const huipaiEnemySteps = battle.resolveEnemyPhase(huipaiEnemyTurn, scenarios.HUIPAI_FINAL_BATTLE).steps
+assert.equal(huipaiEnemySteps.length, 3, '候阵敌人不得在画面外发动攻击')
+assert.ok(!huipaiEnemySteps.some((step) => step.uid === queuedHuipaiEnemy.uid), '第四名敌人必须等前排出现空位后再行动')
 assert.ok(huipaiFinal.enemies.reduce((sum, enemy) => sum + enemy.hp, 0) >= 60, '回旆盟终局战不能是弱敌清场')
 assert.ok(huipaiFinal.enemies.some((enemy) => enemy.intent.type === 'hidden'), '回旆盟终局首回合必须出现暗器威胁')
 assert.deepEqual(

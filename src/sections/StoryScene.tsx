@@ -4,6 +4,7 @@ import type { DialogueLine, LineType, StoryScene as Scene } from '../game/story'
 import type { StoryFlags } from '../game/save'
 import { playSfxFile, playVoiceLine, preloadSceneVoices, stopVoice, unlockAudio, unlockBgm } from '../game/audio'
 import { MEDIA_CDN } from '../lib/cdn'
+import { useLoadedImage } from '../hooks/useLoadedImage'
 import SkipButton from '../components/SkipButton'
 import S7ShotCard, { resolveS7Shot } from '../ui/S7ShotCard'
 import {
@@ -168,6 +169,8 @@ export default function StoryScene({
   const respVisible = postChoiceLines.slice(0, respIdx)
   const respCurrent = chosen && respIdx < postChoiceLines.length ? postChoiceLines[respIdx] : null
   const background = scene.bg
+  // 新背景下载完成前不切图，避免切场景瞬间黑屏
+  const readyBackground = useLoadedImage(background)
   const s7Shot = current ? resolveS7Shot(scene.id, current) : null
   const showS7Shot = Boolean(s7Shot && failedS7Shot !== s7Shot.src)
 
@@ -180,11 +183,11 @@ export default function StoryScene({
       className="relative min-h-screen flex flex-col overflow-hidden bg-qin-charcoal text-qin-parchment cursor-pointer select-none"
       onClick={advance}
     >
-      {background && (
+      {readyBackground && (
         <img
-          src={background}
+          src={readyBackground}
           alt=""
-          className="pointer-events-none absolute inset-0 h-full w-full object-cover"
+          className="pointer-events-none absolute inset-0 h-full w-full object-cover animate-[fadein_.45s_ease]"
           onError={(event) => {
             event.currentTarget.style.display = 'none'
           }}

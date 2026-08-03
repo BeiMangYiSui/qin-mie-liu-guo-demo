@@ -656,9 +656,10 @@
   --actor-scale: 1;
   position: relative;
   display: block;
-  width: min(10.75rem, calc(100% / var(--formation-count) + 1.4rem));
+  /* 只随视口断点变化，不再受阵营人数或战场容器滚动条影响。 */
+  width: clamp(7.8rem, 12.5vw, 10.4rem);
   height: 100%;
-  flex: 0 1 auto;
+  flex: 0 0 auto;
   border: 0;
   color: #e9e5da;
   background: transparent;
@@ -717,6 +718,7 @@
 
 .cinematic-actor--enemy {
   --actor-scale: 1.38;
+  animation: cinematicEnemyEnter 280ms cubic-bezier(0.2, 0.8, 0.35, 1) both;
 }
 
 .cinematic-actor--enemy.is-arsonist .cinematic-actor__figure img {
@@ -1410,6 +1412,17 @@
   }
 }
 
+@keyframes cinematicEnemyEnter {
+  from {
+    transform: translateX(1.1rem);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
 @keyframes cinematicTurnRing {
   0%,
   100% {
@@ -1618,7 +1631,7 @@
   }
 
   .cinematic-actor {
-    width: min(7.2rem, calc(100% / var(--formation-count) + 1.5rem));
+    width: clamp(4rem, 20vw, 7.2rem);
   }
 
   .cinematic-actor + .cinematic-actor {
@@ -1679,6 +1692,7 @@
 
 @media (prefers-reduced-motion: reduce) {
   .cinematic-battlefield__rain,
+  .cinematic-actor--enemy,
   .cinematic-actor__figure img,
   .cinematic-actor.is-active::before,
   .cinematic-actor.is-danger .cinematic-actor__intent,

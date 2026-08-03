@@ -7,6 +7,7 @@ import { findLatestSave, listSaveSlots, type SaveData } from '../game/save'
 import ShichengPage from '../ui/ShichengPage'
 import type { ShichengCard } from '../ui/shichengData'
 import { SOCIAL_LINKS, SOCIAL_READY } from '../lib/social'
+import { useLoadedImage } from '../hooks/useLoadedImage'
 
 interface Props {
   onStart: () => void
@@ -27,6 +28,8 @@ export default function TitleScreen({
   const saveSlots = listSaveSlots()
   const hasSave = saveSlots.some((save) => save.status === 'ready')
   const hasStoredSave = saveSlots.some((save) => save.status !== 'empty')
+  // 主视觉下载完成前不显示黑图，加载好后淡入
+  const keyartSrc = useLoadedImage('https://stats.puck-muling.top/game/assets/title_keyart.webp')
 
   const handleLoad = (data: SaveData) => {
     setShowLoad(false)
@@ -40,14 +43,16 @@ export default function TitleScreen({
 
   return (
     <div className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-qin-charcoal text-qin-parchment">
-      <img
-        src="https://stats.puck-muling.top/game/assets/title_keyart.webp"
-        alt=""
-        className="pointer-events-none absolute inset-0 h-full w-full object-cover"
-        onError={(event) => {
-          event.currentTarget.style.display = 'none'
-        }}
-      />
+      {keyartSrc && (
+        <img
+          src={keyartSrc}
+          alt=""
+          className="pointer-events-none absolute inset-0 h-full w-full object-cover animate-[fadein_.6s_ease]"
+          onError={(event) => {
+            event.currentTarget.style.display = 'none'
+          }}
+        />
+      )}
       <div className="pointer-events-none absolute inset-0 bg-qin-ink/40" />
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-qin-ink/25 via-qin-ink/55 to-qin-ink/65" />
       <div className="relative z-10 flex flex-col items-center gap-6 px-6 text-center [text-shadow:0_2px_8px_#000]">

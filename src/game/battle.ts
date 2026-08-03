@@ -98,6 +98,13 @@ export interface EnemyPhaseResult {
   steps: EnemyPhaseStep[]
 }
 
+/** 战场右侧固定为三人阵位；其余敌人留在候阵队列，前排减员后依次补位。 */
+export const MAX_ACTIVE_ENEMIES = 3
+
+export function getActiveEnemies(enemies: readonly EnemyState[]): EnemyState[] {
+  return enemies.slice(0, MAX_ACTIVE_ENEMIES)
+}
+
 export type ActionId =
   | 'tuji'
   | 'daduan'
@@ -377,7 +384,8 @@ export function resolveEnemyPhase(prev: BattleState, cfg: BattleConfig): EnemyPh
 
 function runEnemyPhase(s: BattleState, cfg: BattleConfig): EnemyPhaseStep[] {
   const steps: EnemyPhaseStep[] = []
-  for (const e of s.enemies) {
+  // 候阵敌人尚未进入画面，也不会隔空发动攻击；有空位后会自然补入前三名。
+  for (const e of getActiveEnemies(s.enemies)) {
     if (e.hp <= 0) continue
     if (e.intent.type === 'burn') {
       s.censusBurned = true

@@ -28,6 +28,8 @@ import {
 import { EVAC_BATTLE_CONFIG } from './game/defenseBattle'
 import { createTutorial, tutorialOutcome, type TutorialState } from './game/tutorial'
 import { isMuted, playBgm, setMuted, unlockAudio, type BgmName } from './game/audio'
+import { preloadSceneBackgroundsOnce } from './lib/preload'
+import { useLoadedImage } from './hooks/useLoadedImage'
 import GameMenu from './components/GameMenu'
 import ChapterCard from './ui/ChapterCard'
 import C7ChoicePanel from './ui/C7ChoicePanel'
@@ -138,13 +140,15 @@ function shichengUnlockedFor(stage: Stage): ShichengCard['id'][] {
 
 /** 挂载点通用外壳：背景图 + 压暗 + 居中容器 */
 function MountShell({ bg, children }: { bg?: string; children: ReactNode }) {
+  // 新背景下载完成前保留旧图，避免切场景瞬间黑屏
+  const readyBg = useLoadedImage(bg)
   return (
     <div className="relative min-h-screen overflow-hidden bg-qin-ink px-4 py-10">
-      {bg && (
+      {readyBg && (
         <img
-          src={bg}
+          src={readyBg}
           alt=""
-          className="pointer-events-none absolute inset-0 h-full w-full object-cover"
+          className="pointer-events-none absolute inset-0 h-full w-full object-cover animate-[fadein_.45s_ease]"
           onError={(event) => {
             event.currentTarget.style.display = 'none'
           }}
@@ -195,6 +199,11 @@ export default function App() {
   useEffect(() => {
     playBgm(STAGE_BGM[stage])
   }, [stage])
+
+  // 标题页展示期间后台预取全部场景背景，后续进场景不再黑屏等待
+  useEffect(() => {
+    preloadSceneBackgroundsOnce()
+  }, [])
 
   // 当从 URL 参数跳转到战斗 stage 时，自动构造 battle/tutorial state
   useEffect(() => {
