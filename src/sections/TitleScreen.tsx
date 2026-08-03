@@ -1,7 +1,8 @@
 import { useState } from 'react'
-import { BookOpenText, FolderOpen, MessageCircle, Send, Sword, Tv } from 'lucide-react'
+import { BookOpenText, FolderOpen, MessageCircle, Send, Sword, Tv, MessageSquare } from 'lucide-react'
 import SaveLoadModal from '../components/SaveLoadModal'
 import WechatQrModal from '../components/WechatQrModal'
+import FeedbackModal from '../components/FeedbackModal'
 import { findLatestSave, listSaveSlots, type SaveData } from '../game/save'
 import ShichengPage from '../ui/ShichengPage'
 import type { ShichengCard } from '../ui/shichengData'
@@ -22,6 +23,7 @@ export default function TitleScreen({
   const [showShicheng, setShowShicheng] = useState(false)
   const [showQr, setShowQr] = useState(false)
   const [showTgQr, setShowTgQr] = useState(false)
+  const [showFeedback, setShowFeedback] = useState(false)
   const saveSlots = listSaveSlots()
   const hasSave = saveSlots.some((save) => save.status === 'ready')
   const hasStoredSave = saveSlots.some((save) => save.status !== 'empty')
@@ -124,6 +126,13 @@ export default function TitleScreen({
                 <Tv className="size-4" />
                 B站
               </a>
+              <button
+                onClick={() => setShowFeedback(true)}
+                className="flex items-center gap-1.5 text-sm tracking-[0.15em] text-qin-bronze transition-colors hover:text-qin-bronze-light"
+              >
+                <MessageSquare className="size-4" />
+                反馈
+              </button>
             </div>
           </div>
         )}
@@ -150,6 +159,7 @@ export default function TitleScreen({
 
       {showQr && <WechatQrModal onClose={() => setShowQr(false)} />}
       {showTgQr && <WechatQrModal onClose={() => setShowTgQr(false)} type="telegram" />}
+      {showFeedback && <FeedbackModal onClose={() => setShowFeedback(false)} />}
     </div>
   )
 }
