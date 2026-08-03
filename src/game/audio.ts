@@ -1,5 +1,5 @@
 // 《秦灭六国》Demo — 音频：BGM 管理（淡入淡出）+ Web Audio 合成音效
-import { MEDIA_CDN } from '../lib/cdn'
+import { cdnUrl } from '../lib/cdn'
 
 export type BgmName = 'ambush' | 'farm' | 'court'
 
@@ -18,7 +18,7 @@ let muted = false
 let voiceRequestId = 0
 
 function url(name: BgmName) {
-  return `${MEDIA_CDN}${TRACKS[name]}`
+  return cdnUrl(TRACKS[name])
 }
 
 function fade(el: HTMLAudioElement, to: number, ms: number, then?: () => void) {
@@ -105,7 +105,7 @@ function normalizeVoiceText(text: string): string {
 
 function loadVoiceManifest(): Promise<VoiceManifestEntry[]> {
   if (!voiceManifestPromise) {
-    voiceManifestPromise = fetch(`${MEDIA_CDN}voice/manifest.json`)
+    voiceManifestPromise = fetch(cdnUrl('voice/manifest.json'))
       .then((response) => {
         if (!response.ok) throw new Error(`voice manifest: ${response.status}`)
         return response.json() as Promise<VoiceManifestEntry[]>
@@ -130,7 +130,7 @@ function startVoice(relativePath: string) {
   // 复用 Audio 元素减少 new Audio 开销（移动端首次 new 会明显延迟）
   const el = persistentVoiceEl ?? new Audio()
   el.preload = 'auto'
-  el.src = `${MEDIA_CDN}${relativePath}`
+  el.src = cdnUrl(relativePath)
   el.volume = 0.7
   el.muted = muted
   voiceEl = el
@@ -147,7 +147,7 @@ export async function preloadSceneVoices(sceneId: string) {
   const scenePrefix = sceneId.split('#', 1)[0]
   const urls = manifest
     .filter((m) => m.scene === scenePrefix)
-    .map((m) => `${MEDIA_CDN}${m.file}`)
+    .map((m) => cdnUrl(m.file))
   // 并行 fetch，浏览器会自动缓存
   await Promise.allSettled(
     urls.map((url) =>
@@ -230,7 +230,7 @@ export function playSfxFile(
       previous.src = ''
     }
   }
-  const el = new Audio(`${MEDIA_CDN}${relativePath}`)
+  const el = new Audio(cdnUrl(relativePath))
   el.volume = opts.volume ?? 0.6
   el.loop = opts.loop ?? false
   el.muted = muted
