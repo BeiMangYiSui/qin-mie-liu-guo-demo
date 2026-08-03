@@ -6,6 +6,8 @@
 export const SOCIAL_LINKS = {
   /** 微信二维码图片路径（放在 public/assets/ 下） */
   wechatQr: 'https://stats.puck-muling.top/game/assets/wechat-qr.png',
+  /** 微信搜索 ID（玩家可手动搜索添加） */
+  wechatId: 'beimangyisui',
   /** Telegram 二维码图片路径 */
   telegramQr: 'https://stats.puck-muling.top/game/assets/telegram-qr.png',
   /** Telegram 用户名链接 */
