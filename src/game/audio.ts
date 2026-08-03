@@ -82,6 +82,8 @@ export function isMuted() {
 // 路径规则：voice/{sceneId}/{idx:02d}_{speaker}.mp3（与 manifest.json 对齐）
 
 let voiceEl: HTMLAudioElement | null = null
+// 复用 Audio 元素：避免每次 playVoiceLine 都 new Audio 带来的开销
+let persistentVoiceEl: HTMLAudioElement | null = null
 // 移动端音频解锁标记：首次用户交互后解锁，后续 play() 不再被拦截
 let audioUnlocked = false
 
@@ -125,14 +127,33 @@ function startVoice(relativePath: string) {
     voiceEl.pause()
     voiceEl.src = ''
   }
-  const el = new Audio(`${MEDIA_CDN}${relativePath}`)
+  // 复用 Audio 元素减少 new Audio 开销（移动端首次 new 会明显延迟）
+  const el = persistentVoiceEl ?? new Audio()
+  el.preload = 'auto'
+  el.src = `${MEDIA_CDN}${relativePath}`
   el.volume = 0.7
   el.muted = muted
   voiceEl = el
+  persistentVoiceEl = el
   el.play().catch(() => {
     // 移动端自动播放被拦截：标记未解锁，等下次用户交互重试
     if (voiceEl === el) voiceEl = null
   })
+}
+
+/** 预取某个场景的所有配音文件，让首次点击播放近乎即时 */
+export async function preloadSceneVoices(sceneId: string) {
+  const manifest = voiceManifest ?? (await loadVoiceManifest())
+  const scenePrefix = sceneId.split('#', 1)[0]
+  const urls = manifest
+    .filter((m) => m.scene === scenePrefix)
+    .map((m) => `${MEDIA_CDN}${m.file}`)
+  // 并行 fetch，浏览器会自动缓存
+  await Promise.allSettled(
+    urls.map((url) =>
+      fetch(url, { mode: 'no-cors' }).catch(() => {}),
+    ),
+  )
 }
 
 export function playVoice(relativePath: string) {

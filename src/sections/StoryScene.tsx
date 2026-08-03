@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { ChevronRight } from 'lucide-react'
 import type { DialogueLine, LineType, StoryScene as Scene } from '../game/story'
 import type { StoryFlags } from '../game/save'
-import { playSfxFile, playVoiceLine, stopVoice, unlockAudio, unlockBgm } from '../game/audio'
+import { playSfxFile, playVoiceLine, preloadSceneVoices, stopVoice, unlockAudio, unlockBgm } from '../game/audio'
 import { MEDIA_CDN } from '../lib/cdn'
 import SkipButton from '../components/SkipButton'
 import S7ShotCard, { resolveS7Shot } from '../ui/S7ShotCard'
@@ -104,6 +104,12 @@ export default function StoryScene({
     const patch = flagPatchForChoice(choiceFlag, tag)
     if (Object.keys(patch).length > 0) onFlagsChange?.(patch)
   }
+
+  // 进入新场景时预取本场景所有配音文件，让点击后播放近乎即时
+  useEffect(() => {
+    void preloadSceneVoices(scene.id)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [scene.id])
 
   // 配音触发：监听 scene.id / idx / respIdx 变化，统一播放当前 active 行
   useEffect(() => {
