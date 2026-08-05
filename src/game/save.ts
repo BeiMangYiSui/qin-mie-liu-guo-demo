@@ -1,4 +1,69 @@
-// 《秦灭六国》Demo — 存档系统（仅手动，3 个槽位，localStorage 持久化）
+// 《秦灭六国》Demo — 存档系统（仅手动，3 个槽位）
+// Web 版：localStorage
+// 小游戏版（MINIGAME_BUILD=true）：通过 platform/storage 适配器走 wx.setStorageSync / tt.setStorageSync
+//
+// vite.config.minigame.{ts,douyin.ts} 同时 alias 了 '@/platform' 与 '../platform'
+
+import { IS_MINI_GAME } from '@/shared/runtime-flag'
+import { storage as platformStorage } from '@/platform'
+
+/**
+ * 存档底层抽象：浏览器版对应 window.localStorage，小游戏版对应
+ * 平台适配器（wx.setStorageSync / tt.setStorageSync）。两者接口高度一致，
+ * 但 DOM.Storage 还包含 length / clear / key 等不必要成员，所以单独定义。
+ */
+interface MiniStorageLike {
+  getItem(key: string): string | null
+  setItem(key: string, value: string): void
+  removeItem(key: string): void
+}
+
+/**
+ * 拿到当前可用的 localStorage（运行时每次调用都查一下，兼容 Node 测试里后补 mock）。
+ * 浏览器下 typeof window !== 'undefined' 在模块初始化与运行时都成立；
+ * Node 测试下模块初始化时返回 null，测试脚本 mock globalThis.localStorage 后此函数能拿到。
+ */
+function getLocalStorage(): MiniStorageLike | null {
+  if (typeof window !== 'undefined' && window.localStorage) {
+    return window.localStorage
+  }
+  const ls = (globalThis as { localStorage?: MiniStorageLike | null }).localStorage
+  return ls ?? null
+}
+
+const storage: MiniStorageLike = IS_MINI_GAME
+  ? {
+      getItem: (key) => platformStorage.get(key),
+      setItem: (key, value) => platformStorage.set(key, value),
+      removeItem: (key) => platformStorage.remove(key),
+    }
+  : getLocalStorage() ?? {
+      getItem: () => null,
+      setItem: () => {},
+      removeItem: () => {},
+    }
+
+/**
+ * 运行时访问 storage 的入口：
+ * - 小游戏版：直接走 platform adapter（不变）
+ * - 浏览器/Node 版：每次调用都重新查 localStorage，兼容 Node 测试在 save.ts 加载后 mock 的场景
+ */
+const safeStorage: MiniStorageLike = IS_MINI_GAME
+  ? storage
+  : {
+      getItem: (key) => {
+        const ls = getLocalStorage()
+        return ls ? ls.getItem(key) : null
+      },
+      setItem: (key, value) => {
+        const ls = getLocalStorage()
+        if (ls) ls.setItem(key, value)
+      },
+      removeItem: (key) => {
+        const ls = getLocalStorage()
+        if (ls) ls.removeItem(key)
+      },
+    }
 
 export type Stage =
   | 'title'
@@ -268,7 +333,7 @@ export function inspectSave(slot: number): SaveSlotState {
   if (slot < 0 || slot >= SLOT_COUNT) return { status: 'empty', slot }
 
   try {
-    const raw = localStorage.getItem(KEY_PREFIX + slot)
+    const raw = safeStorage.getItem(KEY_PREFIX + slot)
     if (!raw) return { status: 'empty', slot }
     const value: unknown = JSON.parse(raw)
     const compatibility = checkSaveCompatibility(value)
@@ -320,13 +385,13 @@ export function writeSave(slot: number, data: SaveDraftData & { stage: Stage }):
     slot,
     savedAt: Date.now(),
   }
-  localStorage.setItem(KEY_PREFIX + slot, JSON.stringify(full))
+  safeStorage.setItem(KEY_PREFIX + slot, JSON.stringify(full))
   return full
 }
 
 export function deleteSave(slot: number) {
   if (slot < 0 || slot >= SLOT_COUNT) return
-  localStorage.removeItem(KEY_PREFIX + slot)
+  safeStorage.removeItem(KEY_PREFIX + slot)
 }
 
 export function findLatestSave(): SaveData | null {
@@ -367,13 +432,13 @@ export function writeAutoSave(data: SaveDraftData & { stage: Stage }): SaveData 
     slot: -1,
     savedAt: Date.now(),
   }
-  localStorage.setItem(AUTO_SAVE_KEY, JSON.stringify(full))
+  safeStorage.setItem(AUTO_SAVE_KEY, JSON.stringify(full))
   return full
 }
 
 export function loadAutoSave(): SaveData | null {
   try {
-    const raw = localStorage.getItem(AUTO_SAVE_KEY)
+    const raw = safeStorage.getItem(AUTO_SAVE_KEY)
     if (!raw) return null
     const value: unknown = JSON.parse(raw)
     if (checkSaveCompatibility(value) !== 'compatible' || !isRecord(value)) return null
@@ -392,5 +457,5 @@ export function loadAutoSave(): SaveData | null {
 }
 
 export function clearAutoSave() {
-  localStorage.removeItem(AUTO_SAVE_KEY)
+  safeStorage.removeItem(AUTO_SAVE_KEY)
 }

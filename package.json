@@ -10,7 +10,17 @@
     "test": "node scripts/verify-demo.mjs",
     "test:ui": "node scripts/verify-ui-mechanics.mjs",
     "check": "npm run test && npm run lint && npm run build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "soft-copyright:source": "node scripts/build-soft-copyright-source.mjs",
+    "soft-copyright:doc": "node scripts/build-soft-copyright-doc.mjs",
+    "soft-copyright": "node scripts/build-soft-copyright-source.mjs && node scripts/build-soft-copyright-doc.mjs",
+    "apply:wechat-appid": "node scripts/apply-wechat-appid.mjs",
+    "compress:assets": "node scripts/compress-game-assets.mjs",
+    "compress:assets:dry-run": "node scripts/compress-game-assets.mjs --dry-run",
+    "build:minigame:wx": "tsc -b && vite build --config vite.config.minigame.ts && node scripts/post-minigame-clean.mjs",
+    "build:minigame:douyin": "tsc -b && vite build --config vite.config.minigame.douyin.ts && node scripts/post-minigame-clean.douyin.mjs",
+    "clean:minigame:wx": "rm -rf dist-minigame",
+    "clean:minigame:douyin": "rm -rf dist-minigame-douyin"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
