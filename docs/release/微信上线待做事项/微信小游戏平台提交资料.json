@@ -1,0 +1,62 @@
+{
+  "generatedAt": "2026-08-05",
+  "platform": "wechat_minigame",
+  "developer": {
+    "subjectType": "individual",
+    "name": "师朋飞",
+    "phone": "13062757594",
+    "email": "2607430010@qq.com",
+    "address": "重庆市两江新区嘉悦江庭",
+    "wechatAppId": null
+  },
+  "game": {
+    "name": "秦灭六国",
+    "softwareFullName": "秦灭六国游戏软件",
+    "softwareShortName": "秦灭六国",
+    "softwareVersion": "V1.0",
+    "releaseVersion": "1.0.0",
+    "orientation": "landscape",
+    "recommendedAge": "12+",
+    "shortDescription": "战国末年剧情策略游戏，通过调查、抉择与回合制战斗推进秦灭韩之役。",
+    "businessModel": "free_no_ads_no_iap",
+    "hasLogin": false,
+    "hasAds": false,
+    "hasPayments": false,
+    "hasUgc": false,
+    "hasChat": false,
+    "storage": "local_device_only"
+  },
+  "privacy": {
+    "requiredPrivateInfos": [],
+    "systemPermissions": [],
+    "thirdPartySdks": [],
+    "developerServerUpload": false,
+    "localData": [
+      "关卡阶段",
+      "剧情选择",
+      "战斗节点",
+      "设置状态",
+      "存档时间"
+    ]
+  },
+  "materials": {
+    "privacyPolicy": "03-隐私政策与个人信息清单.md",
+    "terms": "04-用户服务协议.md",
+    "ageRating": "05-适龄提示与未成年人保护.md",
+    "selfInspection": "06-游戏自审自查报告.md",
+    "copyrightDeclaration": "07-版权承诺与素材证据清单.md",
+    "reviewGuide": "08-审核体验说明与截图计划.md",
+    "filingDraft": "02-小程序备案信息预填表.md",
+    "iconCandidate": "../抖音上线待做事项/抖音小游戏上线草稿_2026-08-05/秦灭六国_图标_512.png"
+  },
+  "blockingItems": [
+    "微信小游戏账号与 AppID",
+    "软件著作权 V1.0",
+    "可运行的微信小游戏 Canvas/引擎版本",
+    "包体与资源方案",
+    "美术和音频版权证据",
+    "小程序/小游戏备案",
+    "版号与公开运营路径确认",
+    "最终真机截图与版本审核"
+  ]
+}

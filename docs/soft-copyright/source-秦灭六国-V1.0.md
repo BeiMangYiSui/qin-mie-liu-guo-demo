@@ -1,0 +1,8361 @@
+# 软著源程序鉴别材料
+
+> 软件名称：秦灭六国
+> 软件版本：V1.0
+> 鉴别材料类型：源程序
+> 汇编顺序：game/story.ts → game/battle.ts → game/scenarios.ts → game/tutorial.ts → game/save.ts → game/defenseBattle.ts → game/battleRetry.ts → game/audio.ts → game/animationEngine.ts → ui/flags.ts → ui/caseFragmentData.ts → ui/c7ChoiceData.ts → ui/c8ReportData.ts → ui/fireRescueData.ts → ui/pursuitInterceptData.ts → ui/scrollInspectData.ts → ui/settleData.ts → ui/shichengData.ts → ui/UiMechanicsPreview.tsx → ui/ChapterCard.tsx → ui/CaseFragmentBoard.tsx → ui/C7ChoicePanel.tsx → ui/C8ReportPanel.tsx → ui/SettlePanel.tsx → ui/ShichengPage.tsx → ui/WitnessStatementPanel.tsx → ui/FireRescue.tsx → ui/PursuitIntercept.tsx → ui/DefenseBattlePanel.tsx → ui/ScrollInspect.tsx → sections/TitleScreen.tsx → sections/StoryScene.tsx → sections/BattleScene.tsx → sections/TutorialBattleScene.tsx
+> 
+
+---
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 1 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 1 页
+===========================
+// === file: src/game/story.ts ===
+// 《秦灭六国》Demo — 剧情数据（v3.5 冻结文案灌入版）
+//
+// 文案基线：demo/demo-对白旁白通览-v3.md（v3.5，已冻结）。台词逐字灌入，仅把引号统一为中文弯引号。
+// 文本轨（每条 line 的 type 字段）：
+//   narration 旁白 / inner 内心（带角色）/ dialogue 对白 / stage 演出（动作提示）/ caption 字幕（纯画面文字）
+// 括号施工注（注：…／教学战：…／细节：…／选择点：…等）不进游戏文本，收在场景 notes 字段。
+// 场景 id 与剧情 flag 遵循 docs/秦灭六国-三路任务分配.md §0 接口约定。
+
+import type { FlagLineVariant } from '../ui/flags'
+import { C8_REPORT_VARIANTS, resolveC8ReportVariant } from '../ui/c8ReportData'
+import { FIRE_TEXT } from '../ui/fireRescueData'
+import { SETTLE_TEXT } from '../ui/settleData'
+
+// 任务 E §1 数据去重：史乘卡唯一数据源为 ui/shichengData，这里仅转出口径
+export { SHICHENG_CARDS } from '../ui/shichengData'
+export type { ShichengCard } from '../ui/shichengData'
+
+export type LineType = 'narration' | 'inner' | 'dialogue' | 'stage' | 'caption'
+
+export interface DialogueLine {
+  type: LineType
+  speaker: string
+  text: string
+}
+
+export interface ChoiceOption {
+  label: string
+  desc: string
+  tag: string
+  response: DialogueLine[]
+}
+
+export interface SceneChoice {
+  prompt: string
+  options: ChoiceOption[]
+  /** 选项回应播完后、场景结束前，各分支共用的收尾行（如 S10 阿芒内心＋序章完） */
+  after?: DialogueLine[]
+}
+
+/** 战斗或挂载组件之后继续播放的场景后段（S3 查案后、S6/S9/C4 战后、C7 抉择回响） */
+export interface SceneContinuation {
+  trigger: 'mount' | 'battle' | 'choice'
+  lines: DialogueLine[]
+  lineVariants?: readonly FlagLineVariant<DialogueLine>[]
+}
+
+export interface StoryScene {
+  id: string
+  chapter: string
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 2 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 2 页
+===========================
+  place: string
+  /** 场景背景图（/assets/ 下文件名）；缺图时挂最接近的并在交付报告标注 */
+  bg?: string
+  /** 施工注（不进游戏文本） */
+  notes?: string[]
+  lines: DialogueLine[]
+  /** 按 flag 整表替换 lines（C8 军报变体）；StoryScene 组件可用 prop 覆盖 */
+  lineVariants?: readonly FlagLineVariant<DialogueLine>[]
+  choice?: SceneChoice
+  continuation?: SceneContinuation
+}
+
+const N = (text: string): DialogueLine => ({ type: 'narration', speaker: '旁白', text })
+/** 军报宣读行：与配音 manifest 的「军报」说话人对齐（Radio_Host 宣读腔） */
+const NJ = (text: string): DialogueLine => ({ type: 'narration', speaker: '军报', text })
+const D = (speaker: string, text: string): DialogueLine => ({ type: 'dialogue', speaker, text })
+const I = (speaker: string, text: string): DialogueLine => ({ type: 'inner', speaker, text })
+const ST = (speaker: string, text: string): DialogueLine => ({ type: 'stage', speaker, text })
+const C = (text: string): DialogueLine => ({ type: 'caption', speaker: '旁白', text })
+
+export const PRO = '序章 · 郑地伏杀'
+export const CH1 = '第一章 · 新郑覆旗'
+
+// ———————————————————————————— 序章 ————————————————————————————
+
+export const S1_BEFORE_TESTIMONY_LINES: DialogueLine[] = [
+    N('前 230 年。'),
+    N('郑国下狱。逐客令下。'),
+    N('驿道上，被逐的车队连绵出城，从清晨排到黄昏。'),
+    N('郑国渠修了十年，行将竣工。'),
+    N('三日前，隐密署都尉北芒探知——'),
+    N('郑国深夜，密见韩使。'),
+    N('见了什么，没人知道。'),
+    N('谈了什么，没人听见。'),
+    N('按律，告到总都尉公孙钺。'),
+    D('公孙钺', '“你看见的？”'),
+    D('北芒', '“我看见的。”'),
+    D('公孙钺', '“那就写上。”（顿）“写你看见的。”'),
+]
+
+export const S1_AFTER_TESTIMONY_LINES: DialogueLine[] = [
+    N('传闻先一步到了章台——'),
+    N('韩国派水工，行疲秦之计。'),
+    N('秦王大怒，欲杀郑国。'),
+    N('宗室鼓噪：六国之人，皆为间来。'),
+    N('秦王令——凡六国客卿，不问官职，限期离秦。'),
+    N('李斯在逐。越女亦在逐。'),
+    N('告发的人是他。'),
+    N('他只报了“见了”。'),
+    N('郑国连一句“没见”，都没有说。'),
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 3 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 3 页
+===========================
+]
+
+const s1_anfa: StoryScene = {
+  id: 's1_anfa',
+  chapter: PRO,
+  place: '前 230 年 · 咸阳 · 隐密署',
+  bg: 'https://stats.puck-muling.top/game/assets/bg_heibingtai.webp',
+  notes: ['“亲见”与“传闻”之间插入落笔取证互动，让玩家在序章两分钟内第一次参与。'],
+  lines: [...S1_BEFORE_TESTIMONY_LINES, ...S1_AFTER_TESTIMONY_LINES],
+}
+
+const s2_shenxun: StoryScene = {
+  id: 's2_shenxun',
+  chapter: PRO,
+  place: '咸阳 · 诏狱',
+  bg: 'https://stats.puck-muling.top/game/assets/bg_zhaoyu.webp',
+  lines: [
+    N('诏狱。'),
+    D('公孙钺', '“人，是你报的。”'),
+    ST('公孙钺', '推过狱牌。'),
+    D('公孙钺', '“你去问。”'),
+    N('郑国坐在狱墙下，瘦得只剩一把骨头，一双眼睛却亮得吓人。'),
+    D('北芒', '“韩使深夜见你。谈了什么？”'),
+    D('郑国', '“……”'),
+    D('北芒', '“你不辩，就是认。”'),
+    D('郑国', '“渠上——”（哑声）“今日，进度如何？”'),
+    D('狱卒', '“问了三天。他就这一句。”'),
+    D('狱卒', '“每日在墙上画一道水线。画完，再擦掉。”'),
+    I('北芒', '通敌者不辩，是认罪。'),
+    I('北芒', '可他问的，却是渠。'),
+  ],
+}
+
+const s3_chaqu: StoryScene = {
+  id: 's3_chaqu',
+  chapter: PRO,
+  place: '郑国渠 · 渠口',
+  bg: 'https://stats.puck-muling.top/game/assets/bg_qukou.webp',
+  notes: ['两条★齐后，接 S3 冻结稿内心戏与“我要出境”对白，不动。（查案组件 ScrollInspect 挂载点 s3_chaan）'],
+  lines: [
+    N('渠口。十年的查验记档，堆了半间屋。'),
+    N('北芒带人，翻了一夜。'),
+  ],
+  continuation: {
+    trigger: 'mount',
+    lines: [
+      I('北芒', '无一错漏。'),
+      I('北芒', '渠净，与蓄意坏渠对不上。'),
+      I('北芒', '求死，与畏罪对不上。'),
+      I('北芒', '他不辩——是有比死更不能说的。'),
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 4 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 4 页
+===========================
+      I('北芒', '更像是，有人在封他的口。'),
+      N('入境记档：韩使，有入，无出。'),
+      N('馆驿记档：每隔五日，向韩境传讯一次。'),
+      N('人还在秦。还在等。'),
+      D('北芒', '“我要出境。”'),
+      D('公孙钺', '“作甚？”'),
+      D('北芒', '“追一个等消息的人。”（顿）“韩国密使！”'),
+      D('公孙钺', '“好。”'),
+    ],
+  },
+}
+
+const s4_andun: StoryScene = {
+  id: 's4_andun',
+  chapter: PRO,
+  place: '咸阳 · 客舍',
+  bg: 'https://stats.puck-muling.top/game/assets/bg_keshe.webp',
+  lines: [
+    D('小吏', '“念在多年辛劳，赐一马十金。两日之内，离秦。”'),
+    N('越女交还铜符。一句话没有。'),
+    N('同一道令下，楚人李斯也在收拾——行李已束，笔却不停。'),
+    D('北芒', '“东出函谷，跟商队走。沿途三处接应，暗号是旧例。”'),
+    D('越女', '“你呢？”'),
+    D('北芒', '“我去追查韩使。”'),
+    D('越女', '“你一个人？”'),
+    D('北芒', '“大队人马出不了营。再说——这案子不干净，少一个人沾，少一分祸。”'),
+    N('道别说得像公务。'),
+    D('商队老执事', '“那女客啊——”（挠头）“过了山口，人就没影了。”'),
+  ],
+}
+
+const s5_zhuishi: StoryScene = {
+  id: 's5_zhuishi',
+  chapter: PRO,
+  place: '秦韩交界 · 馆驿',
+  bg: 'https://stats.puck-muling.top/game/assets/bg_zhengdi_dao.webp',
+  notes: ['骑影一节为“玩家看见，北芒没看见”。'],
+  lines: [
+    N('秦韩交界，馆驿。'),
+    N('密使滞留的第九日。'),
+    N('北芒没带大队。孟甲，十来个老卒。'),
+    N('截住了。'),
+  ],
+  continuation: {
+    trigger: 'battle',
+    lines: [
+      N('密使弃囊遁走——'),
+      N('囊中有符信、盘缠，和一卷书。'),
+      D('孟甲', '“追不追？”'),
+      D('北芒', '（展开那卷书）“不追。”（顿）“人，没有这卷书值钱。”'),
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 5 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 5 页
+===========================
+      N('密令副本——署作韩王之命：'),
+      N('「坏渠，绝水，而后自裁。事成，郑氏乃活。」'),
+      N('原件已被郑国烧毁。这一卷，应是密使回韩缴令的凭证。'),
+      N('渠，是他一生心血。坏渠，比死更难。'),
+      N('队后远处，一道骑影。一行新蹄印。'),
+      D('北芒', '“收队。连夜西返。”'),
+    ],
+  },
+}
+
+export const S6_YUENU_ARRIVAL_LINES: DialogueLine[] = [
+  N('绝境回合。'),
+  N('山坡上杀下一人。'),
+  N('她根本没上商队的车。'),
+  D('越女', '“走。”'),
+]
+
+export const S6_AFTER_BREAKOUT_LINES: DialogueLine[] = [
+  N('包围被她一人一剑撕开。'),
+  N('孟甲踉跄着跟上。'),
+  N('弩弦骤响。北芒推开了孟甲。'),
+  N('钉穿胸口。北芒坠下山坡。'),
+  N('有些仗，活下来，就是赢。'),
+]
+
+export const S6_AFTER_BREAKOUT_VARIANTS: NonNullable<StoryScene['lineVariants']> = [
+  {
+    when: { flag: 's6_mengjia_saved', equals: false },
+    lines: [
+      N('包围被她一人一剑撕开。'),
+      N('越女折回辎重旁，将孟甲拖出。左臂被追来的刀锋划开。'),
+      N('弩弦骤响。北芒推开了孟甲。'),
+      N('钉穿胸口。北芒坠下山坡。'),
+      N('有些仗，活下来，就是赢。'),
+    ],
+  },
+]
+
+const s6_fusha: StoryScene = {
+  id: 's6_fusha',
+  chapter: PRO,
+  place: '郑地山道 · 雨夜',
+  bg: 'https://stats.puck-muling.top/game/assets/bg_zhengdi_yuye.webp',
+  notes: [
+    '北芒教学战：护住副本、救出孟甲、守住谷口退路；越女登场后接一场单人破围战。',
+    '固定——孟甲活、副本在、北芒坠坡；可变——谷口失守程度、旧部伤亡、越女负伤、敌方是否带走线索。',
+    '细节：灭口队里，剑路甚不寻常。',
+  ],
+  lines: [
+    N('雨夜。郑地山道。'),
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 6 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 6 页
+===========================
+    N('密使没跑出十里，就被灭了口。'),
+    N('灭口队问出了他们要的答案——'),
+    N('书，在秦人手里。'),
+    N('火把从三面围上来。这不是劫道，是要灭口'),
+    N('乱军中，孟甲被滚木击中。'),
+    D('孟甲', '“校尉！人太多了——”'),
+    D('北芒', '“守谷口！书在我身上——冲我来。”'),
+  ],
+  continuation: {
+    trigger: 'battle',
+    lines: [...S6_YUENU_ARRIVAL_LINES, ...S6_AFTER_BREAKOUT_LINES],
+    lineVariants: S6_AFTER_BREAKOUT_VARIANTS.map((variant) => ({
+      ...variant,
+      lines: [...S6_YUENU_ARRIVAL_LINES, ...variant.lines],
+    })),
+  },
+}
+
+const s7_xiandai: StoryScene = {
+  id: 's7_xiandai',
+  chapter: PRO,
+  place: '两千年后 · 洛阳 · 古墓博物馆',
+  bg: 'https://stats.puck-muling.top/game/assets/bg_luoyang_xiandai.webp',
+  notes: ['那夜山坡上，北芒尉已经死了。醒来的，是另一个人。不解释机制。'],
+  lines: [
+    N('两千年后。洛阳，北邙山。'),
+    N('古墓博物馆。'),
+    N('胸口，同样的位置——'),
+    N('一阵剧痛。'),
+    C('三个镜头——'),
+    C('一枚鸟羽纹的铜符。'),
+    C('一场失控的高热。'),
+    C('梦里有人喊：北芒尉。'),
+  ],
+}
+
+const s8_nongjia: StoryScene = {
+  id: 's8_nongjia',
+  chapter: PRO,
+  place: '郑地山脚 · 农家',
+  bg: 'https://stats.puck-muling.top/game/assets/bg_nongjia.webp',
+  notes: ['自本场起，叙述与名册称“阿芒”。'],
+  lines: [
+    N('透骨钉穿胸，撑不到大营。'),
+    N('伏击者身份不明，大营也未必安全——'),
+    N('孟甲与越女，只能把他送进山脚农家。'),
+    N('农家里还借住着一个韩地医者，名叫小满。'),
+    N('她本要入秦——为诏狱里那个修渠的人。'),
+    N('函谷戒严，无有路引。她入不了秦。'),
+    ST('小满', '剪开衣襟——甲制，是秦军的。'),
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 7 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 7 页
+===========================
+    D('农家老翁', '（按住她的手腕）“这是秦人。”'),
+    D('小满', '“眼下，他只是伤者。”'),
+    N('透骨钉取出，收入药囊。'),
+    D('阿芒', '（醒来，看见她）“……青翎。”'),
+    D('青翎', '（按住剑）“你叫我什么？”'),
+    D('孟甲', '（上前）“校尉。回营的暗号？”'),
+    D('阿芒', '“……”'),
+    D('孟甲', '“咱们最后分开的渡口？”'),
+    D('阿芒', '“……”'),
+    D('青翎', '“你给我备的三处接应，”（盯着他）“我一处都没去。”'),
+    D('阿芒', '“……”（接不住。）'),
+  ],
+}
+
+const s9_tongxing: StoryScene = {
+  id: 's9_tongxing',
+  chapter: PRO,
+  place: '郑地山脚 · 农家',
+  bg: 'https://stats.puck-muling.top/game/assets/bg_nongjia.webp',
+  notes: [
+    '战斗：阿芒未愈，只能勉强持剑。',
+    '她认定的是失忆。她不知道，那夜山坡上，北芒尉已经死了。',
+    '青翎台词之间原有一处独立成行（顿）停顿标记，游戏文本不显示。',
+  ],
+  lines: [N('追兵搜到了农家。')],
+  continuation: {
+    trigger: 'battle',
+    lines: [
+      N('一个照面，他横剑，封住了她的右后方。'),
+      N('像做过千百次。'),
+      D('青翎', '（收剑。走近，盯着他，看了很久）“那手剑，天下只有一个人会使。”'),
+      D('青翎', '“那个名字——”（压低）“知道的人，不超过一只手。”'),
+      D('青翎', '“剑没忘。人忘了。”'),
+      D('青翎', '“北芒——你都忘了吗？”'),
+      N('孟甲领着三人回营复命。'),
+      I('阿芒', '不识路，不认人，答不上暗号。在这年头，我活不过三天。'),
+      D('小满', '“郑水工还在诏狱。总得有人去看他。”（顿）“那年他在鸿沟治水，我在营里帮忙治疫。我认得他。”'),
+      D('青翎', '“这条命是我拖回来的。”（顿）“我跟着你——看它落在哪。”'),
+    ],
+  },
+}
+
+const s10_guace: StoryScene = {
+  id: 's10_guace',
+  chapter: PRO,
+  place: '秦军前锋营 · 都尉帐',
+  bg: 'https://stats.puck-muling.top/game/assets/bg_junzhang.webp',
+  notes: ['选择点：求情——减一等；不开口——照数领罚。（写 flag plead_soldier）'],
+  lines: [
+    D('公孙钺', '“头伤，忘事？”'),
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 8 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 8 页
+===========================
+    D('阿芒', '“……嗯。”'),
+    D('公孙钺', '（没抬头）“她没走？”'),
+    D('阿芒', '“没走。”'),
+    D('公孙钺', '（提笔）“越女，记随军剑客。小满，记随军医者。暂挂玄羽偏册。”'),
+    D('公孙钺', '“名册我担着。诏令问下来，先问我。”'),
+    ST('旁白', '他再没问第二句。'),
+    N('同营，一名秦卒——伏击夜与队伍失散，慌了，不敢走大路，绕山迷了向，误了归期。'),
+    D('军吏', '“失期。按律，笞八十。”'),
+  ],
+  choice: {
+    prompt: '求情——减一等；不开口——照数领罚。',
+    options: [
+      { tag: 'plead', label: '求情', desc: '减一等。', response: [] },
+      { tag: 'silent', label: '不开口', desc: '照数领罚。', response: [] },
+    ],
+    after: [
+      I('阿芒', '法不问缘由。'),
+      I('阿芒', '秦法的重量，第一次落到我手里。'),
+      N('序章《郑地伏杀》·完。'),
+    ],
+  },
+}
+
+// ———————————————————————————— 第一章 ————————————————————————————
+
+const c1_pinan: StoryScene = {
+  id: 'c1_pinan',
+  chapter: CH1,
+  place: '秦军前锋营 · 都尉帐',
+  bg: 'https://stats.puck-muling.top/game/assets/bg_junzhang.webp',
+  lines: [
+    N('那一夜的最后一段——他没有。'),
+    N('书夺到手之后，发生了什么？书，又在哪？'),
+    D('孟甲', '“校尉的行囊，有个暗层。”（顿）“要紧的东西，你一向分两层放。”'),
+    D('青翎', '（把行囊放到他面前）“你的东西。”（顿）“我没动。”'),
+    D('小满', '（取出透骨钉，递过去）“……”'),
+    D('青翎', '（接过，看钉尾）“钉尾，没有军匠的号。”（顿）“这不是官造——是私坊的活儿。”'),
+  ],
+  continuation: {
+    trigger: 'mount',
+    lines: [
+      N('三证合勘。孟甲指点，暗层开启。'),
+      N('副本在。'),
+      N('外层明卷即使被夺，伏兵也没有发现这道封线。'),
+      N('不是通敌，是要挟。'),
+      N('钉，私坊所铸；剑，不是韩军路数。'),
+      N('动手的不像韩军，更像私兵。'),
+    ],
+  },
+}
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 9 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 9 页
+===========================
+
+const c2_zhangtai: StoryScene = {
+  id: 'c2_zhangtai',
+  chapter: CH1,
+  place: '咸阳 · 章台',
+  bg: 'https://stats.puck-muling.top/game/assets/bg_zhangtai.webp',
+  lines: [
+    N('章台。两证一疏。'),
+    D('姚贾', '（验那副符信）“符信是真的。”（顿）“人，是韩国密使。”'),
+    N('同日，李斯亦上了一疏——'),
+    N('“泰山不让土壤，故能成其大；河海不择细流，故能就其深。”'),
+    N('实证给了转圜的台阶，雄文给了除令的理由。'),
+    D('秦王', '“郑国复职的诏，先压下。”（顿）“郑氏一族入秦之前，今日之事，不出此殿。”'),
+    I('阿芒', '史书上说，郑国为韩，行疲秦之计。'),
+    I('阿芒', '可眼前的每一页证据，都在说另一件事——'),
+    I('阿芒', '史书只记了结果。'),
+    I('阿芒', '却没有记下这场要挟。'),
+  ],
+}
+
+const c3_guoshu: StoryScene = {
+  id: 'c3_guoshu',
+  chapter: CH1,
+  place: '新郑 · 韩宫',
+  bg: 'https://stats.puck-muling.top/game/assets/bg_hangong.webp',
+  lines: [
+    N('秦王决意灭韩。'),
+    N('大军东出之际，姚贾携国书先行。'),
+    D('姚贾', '（对韩王）“释放郑氏一族，安然归秦。”（顿）“若少一人——誓灭韩国，鸡犬不留。”'),
+    D('韩王', '（验看录副与封泥拓印，手抖）“这印……”（霍然起身）“这不是寡人的印！”'),
+    D('韩王', '“封泥背印——”（咬牙）“是宗室府的旧记。”'),
+    D('韩王', '“查。”（哑声）“……放人。”'),
+    N('同日，秦王另下一令——玄羽小队，潜入韩境，接应护送。'),
+    N('军情简报一角：魏地游士司马朔，在新郑活动。'),
+    N('国书即战书。'),
+    N('郑氏一族，被拘在宗室别庄，见过押他们的府兵——能指认宗室府的关键人证。'),
+    N('王令出了宫门，却管不住宗室府的兵。'),
+    N('王令出宫那夜。'),
+    N('死战派的私兵，已先一步出城。'),
+  ],
+}
+
+/** C4 战术后段：守谷口老卒回响（随 S10 求情 flag 双版本） */
+const C4_AFTER_PLEAD: DialogueLine[] = [
+  D('守谷口老卒', '“那次，你替我说情。”'),
+  D('守谷口老卒', '“这次，我替你守口。”'),
+  N('郑氏入秦之日，秦王明发——'),
+  N('除逐客令。郑国出狱，复职返渠。李斯复官。越女入正册。'),
+  N('郑国出狱那天，族人正好入秦。'),
+  N('他什么都没问。'),
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 10 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 10 页
+============================
+  N('往北看了一眼，便上了渠。'),
+  N('同一处山道。'),
+  N('上次，人没守住。'),
+  N('这次，守住了。'),
+]
+
+const C4_AFTER_SILENT: DialogueLine[] = [
+  D('守谷口老卒', '“那次，你没开口。”'),
+  D('守谷口老卒', '“今日我守这里。不为还债，为军令。”'),
+  ...C4_AFTER_PLEAD.slice(2),
+]
+
+const c4_husong: StoryScene = {
+  id: 'c4_husong',
+  chapter: CH1,
+  place: '郑地山道',
+  bg: 'https://stats.puck-muling.top/game/assets/bg_zhengdi_dao.webp',
+  notes: [
+    '三选一战术，伤损锁进 C7：上山→C7 护疫营不可选；入谷→C7 截残军不可选；断后→C7 保户籍不可选。',
+    '郑氏零伤亡恒定。最坏结局：人人几乎残血。',
+  ],
+  lines: [
+    N('郑地山道。'),
+    N('这条道上，有过一个“北芒”。'),
+    N('死战派的私兵从山上压下来——'),
+    N('灭人证的口，泄困兽之愤。'),
+    N('护住车。守到秦军前锋抵达。'),
+  ],
+  choice: {
+    prompt: '三选一战术。',
+    options: [
+      { tag: 'ambush', label: '上山', desc: '孟甲：“我带老卒占两侧高地。”——守得稳，伤亡重。', response: [] },
+      { tag: 'valley', label: '入谷', desc: '青翎：“我引他们进谷。”——杀伤最大，她负伤。', response: [] },
+      { tag: 'rear', label: '断后', desc: '阿芒：“我断后。”——族人最安全，他伤最重。', response: [] },
+    ],
+  },
+  continuation: {
+    trigger: 'battle',
+    lines: C4_AFTER_PLEAD,
+    lineVariants: [{ when: { flag: 'plead_soldier', equals: false }, lines: C4_AFTER_SILENT }],
+  },
+}
+
+const c5_shouxiang: StoryScene = {
+  id: 'c5_shouxiang',
+  chapter: CH1,
+  place: '新郑 · 城门',
+  bg: 'https://stats.puck-muling.top/game/assets/bg_xinzheng.webp',
+  lines: [
+    N('大军压境。韩廷裂成三块——'),
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 11 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 11 页
+============================
+    N('要殉国的，要体面的，要北逃的。'),
+    N('北逃的，结成了回旆盟——不肯认亡国、图谋复国的一伙。替他们安排退路的，是魏人司马朔。'),
+    N('韩王安，素车出降。'),
+    N('六国第一个亡国之君。'),
+    N('没人知道亡国该怎么办——'),
+    N('降书、城门、武库、粮仓、户籍。'),
+    N('秦军多跨一步，是抢。少跨一步，是乱。'),
+    N('进城。韩人闭门。征粮起摩擦。'),
+    N('积尸未敛，污水漫街，伤者涌入。'),
+    N('疫，先于安靖而至。'),
+  ],
+}
+
+const c6_yiying: StoryScene = {
+  id: 'c6_yiying',
+  chapter: CH1,
+  place: '新郑东城 · 疫营',
+  bg: 'https://stats.puck-muling.top/game/assets/bg_yiying.webp',
+  lines: [
+    D('韩地伤兵', '（她正替他裹伤）“你是韩人。”（盯着她）“为什么帮秦军？”'),
+    D('小满', '“我不是替秦军救人。”（顿）“我救的，是人。”'),
+    D('阿芒', '“军令下来了。疫营即刻撤往城外。”'),
+    D('小满', '“军令要城。”（顿）“这里要命。”'),
+    D('韩老伯', '（逢人便问）“闺女，见着我家蕙儿没有？”'),
+    D('小满', '“叫什么？”'),
+    D('韩老伯', '“韩蕙。蕙草的蕙。十六了，左眉一颗小痣。”'),
+    D('韩老媪', '“城破那天，南市走散的……”'),
+    D('小满', '（记在简上）“我替你们留意。”'),
+    N('城西骤然响起三声急鼓。不是秦军的号令。'),
+    D('孟甲', '（掀帘而入）“回旆盟反扑。官署、武库、北门，三路同时有人。”'),
+    D('青翎', '（扣住袖中飞针）“韩王已经降了。他们不是守国，是拿满城的人给自己断后。”'),
+    D('阿芒', '“孟甲留下守住疫营。小满带药，青翎看弩手。”（拔剑）“我们三个，打散他们。”'),
+  ],
+}
+
+/** C7 抉择回响（三处），随 c7_choice 播一段 */
+const C7_ECHO: Record<'register' | 'troops' | 'camp', DialogueLine[]> = {
+  register: [N('保户籍——若户籍得存，可循册查到韩蕙被编入南市安置营。父女重逢。')],
+  troops: [N('截残军——赵地的回旆盟，弱一分。')],
+  camp: [N('护疫营——获救的韩医随队北上。魏地，多一队援手的医者。')],
+}
+
+const c7_huoqi: StoryScene = {
+  id: 'c7_huoqi',
+  chapter: CH1,
+  place: '新郑 · 官署',
+  bg: 'https://stats.puck-muling.top/game/assets/bg_guanshu_huo.webp',
+  notes: [
+    '三选一：保户籍／截残军／护疫营撤离。不可全得。其中一项，已被上一战的伤损锁死。',
+    '抉择面板用 C7ChoicePanel（锁定逻辑 C7_LOCKED_CHOICE_BY_TACTIC）；保户籍接挂载点 c7_fire，护疫营接挂载点 c7_evac。',
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 12 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 12 页
+============================
+  ],
+  lines: [
+    N('回旆盟败了。'),
+    N('执旐者倒在街口，司马朔却带着残众钻入坊巷。'),
+    N('败兵没有向北门集结。他们分成三股，一路逃，一路杀，一路把火种抛进身后的屋舍。'),
+    N('城里起火。'),
+    N('官署、疫营、北门，几乎同时传来急报。'),
+    N('回旆盟烧的不只是简册——'),
+    N('是这座城留下姓名的方式。'),
+    D('青翎', '（俯身，验看官署前被杀秦卒的剑伤，起身）“这手剑，不是韩军路数。”（顿）“郑地山道上，我见过。”（顿）“同一伙人——回旆盟。”'),
+  ],
+  continuation: {
+    trigger: 'choice',
+    lines: C7_ECHO.register,
+    lineVariants: [
+      { when: { flag: 'c7_choice', equals: 'troops' }, lines: C7_ECHO.troops },
+      { when: { flag: 'c7_choice', equals: 'camp' }, lines: C7_ECHO.camp },
+    ],
+  },
+}
+
+/** C8 军报变体：先按 c7_choice 选段；register 段内按 c7_saved_registers 是否含户籍、camp 段内按 evac_survival 分两版 */
+const C8_BODY = {
+  head: [
+    N('韩旗降下。'),
+    N('仅过十日，新郑市门，照常打开。'),
+    N('玄羽小队，军功入册——'),
+    N('斩死战派，全救人质。'),
+  ],
+  tail: [
+    N('同旬，关中传来消息——'),
+    N('郑国渠，全线通水。'),
+    D('小满', '“下一座城？”'),
+    D('阿芒', '“邯郸。”'),
+    D('青翎', '（望北）“比这里冷。”'),
+    N('一个国亡了。'),
+    N('一条渠成了。'),
+  ],
+  registerSaved: NJ(resolveC8ReportVariant('register', ['huji']).result),
+  registerLost: NJ(resolveC8ReportVariant('register', []).result),
+  troops: NJ(C8_REPORT_VARIANTS.troops.result),
+  campHigh: NJ(resolveC8ReportVariant('camp', [], 'high').result),
+  campLow: NJ(resolveC8ReportVariant('camp', [], 'low').result),
+}
+
+const c8_zhangmo: StoryScene = {
+  id: 'c8_zhangmo',
+  chapter: CH1,
+  place: '新郑 · 市门',
+  bg: 'https://stats.puck-muling.top/game/assets/bg_xinzheng.webp',
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 13 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 13 页
+============================
+  notes: ['军报按 C7 选择与战果变体；章末结算挂载点 c8_settle（SettlePanel 占位）。'],
+  lines: [...C8_BODY.head, C8_BODY.registerLost, ...C8_BODY.tail],
+  lineVariants: [
+    {
+      when: [
+        { flag: 'c7_choice', equals: 'register' },
+        { flag: 'c7_saved_registers', contains: 'huji' },
+      ],
+      lines: [...C8_BODY.head, C8_BODY.registerSaved, ...C8_BODY.tail],
+    },
+    { when: { flag: 'c7_choice', equals: 'troops' }, lines: [...C8_BODY.head, C8_BODY.troops, ...C8_BODY.tail] },
+    {
+      when: [
+        { flag: 'c7_choice', equals: 'camp' },
+        { flag: 'evac_survival', equals: 'high' },
+      ],
+      lines: [...C8_BODY.head, C8_BODY.campHigh, ...C8_BODY.tail],
+    },
+    { when: { flag: 'c7_choice', equals: 'camp' }, lines: [...C8_BODY.head, C8_BODY.campLow, ...C8_BODY.tail] },
+  ],
+}
+
+export const SCENES: Record<string, StoryScene> = {
+  s1_anfa,
+  s2_shenxun,
+  s3_chaqu,
+  s4_andun,
+  s5_zhuishi,
+  s6_fusha,
+  s7_xiandai,
+  s8_nongjia,
+  s9_tongxing,
+  s10_guace,
+  c1_pinan,
+  c2_zhangtai,
+  c3_guoshu,
+  c4_husong,
+  c5_shouxiang,
+  c6_yiying,
+  c7_huoqi,
+  c8_zhangmo,
+}
+
+// ———————————————————————————— 增补挂载点（占位接入，组件由另一路开发） ————————————————————————————
+
+/** §0 组件占位：Codex 造，story.ts 只挂占位与数据 */
+export interface MountPoint {
+  id: 's3_chaan' | 'c1_case' | 'c7_fire' | 'c7_troops' | 'c7_evac' | 'c8_settle' | 'shicheng'
+  component: 'ScrollInspect' | 'CaseFragmentBoard' | 'FireRescue' | 'PursuitIntercept' | 'SettlePanel' | 'ShichengPage' | 'EvacBattle'
+  host: string
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 14 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 14 页
+============================
+}
+
+export const MOUNT_POINTS: readonly MountPoint[] = [
+  { id: 's3_chaan', component: 'ScrollInspect', host: 's3_chaqu' },
+  { id: 'c1_case', component: 'CaseFragmentBoard', host: 'c1_pinan' },
+  { id: 'c7_fire', component: 'FireRescue', host: 'c7_huoqi' },
+  { id: 'c7_troops', component: 'PursuitIntercept', host: 'c7_huoqi' },
+  { id: 'c7_evac', component: 'EvacBattle', host: 'c7_huoqi' },
+  { id: 'c8_settle', component: 'SettlePanel', host: 'c8_zhangmo' },
+  { id: 'shicheng', component: 'ShichengPage', host: 'title' },
+]
+
+// —— s3_chaan 查案（ScrollInspect 数据，附录「S3 查案」逐字） ——
+
+export interface ChaanFinding {
+  ledger: string
+  text: string
+  star: boolean
+}
+
+export const S3_CHAAN = {
+  ledgers: ['渠口查验记档·十年', '隐密署入境记档', '秦韩馆驿传讯记档'],
+  findings: [
+    { ledger: '渠口', text: '渠口——十年，无一错漏。', star: false },
+    { ledger: '入境', text: '入境——韩使，有入，无出。', star: true },
+    { ledger: '馆驿', text: '馆驿——每隔五日，向韩境传讯一次。', star: true },
+  ] as ChaanFinding[],
+  fallback: '没有了。简上只有这些。',
+}
+
+// —— shicheng 史乘·对照卡（卡面数据已去重至 ui/shichengData；解锁逻辑属 ShichengPage 组件） ——
+
+export const SHICHENG_FOOTER = '本故事借史为骨，时序有改编。'
+export const SHICHENG_LOCKED = '此页，尚未经历。'
+
+// —— c7_fire 保户籍·火场（FireRescue 数据，附录「C7 两分支」逐字） ——
+
+/** 简册堆 id（写入 flag c7_saved_registers 的取值约定；FireRescue 组件沿用） */
+export const C7_REGISTER_PILES = ['huji', 'liangce', 'ditu', 'xingyu', 'junji'] as const
+
+export const C7_FIRE = {
+  pileLabels: { huji: '户籍', liangce: '粮册', ditu: '地图', xingyu: '刑狱', junji: '军籍' } as Record<string, string>,
+  intro: ['官署里，火已经上了梁。', FIRE_TEXT.instruction],
+  notes: ['界面：五堆——户籍／粮册／地图／刑狱／军籍；火势条蔓延；抢出三册强制撤。'],
+  forcedEvac: FIRE_TEXT.withdraw,
+  savedHuji: '户籍主档还在。这座城的人，名字还在。',
+  lostHuji: '册灰落在水缸里，黑了一层。有些名字，没人记得了。',
+}
+
+// —— c7_evac 护疫营·撤离战（数据与占位，附录「C7 两分支」逐字；战斗配置由另一路复用 C4 框架） ——
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 15 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 15 页
+============================
+
+export const C7_EVAC = {
+  intro: ['乱兵冲着医篷来了——伤兵抢药，溃兵抢命。'],
+  notes: ['战斗：护住医篷，撑到撤离。', '撤离战配置：占位，复用 C4 护送战框架；存活率写 flag evac_survival。'],
+  xiaomanLine: D('小满', '“军令要城。”（顿）“这里要命。”'),
+  survivalHigh: '医篷保住了。躺着的，多半还能起来。',
+  survivalLow: '医篷塌了半边。抬出去的，比抬进来的少。',
+}
+
+// —— 战败旁白（战前自动存档，战败回卷＋一句；附录逐字） ——
+
+export const DEFEAT_NARRATION = {
+  s5: '密使脱缰——再截一次。',
+  s6: '山道被围死了——再守一次。',
+  yuenu: '剑路被合围压住——越女退回坡上，再破一次阵。',
+  s9: '追兵堵死了门——再挡一回。',
+  c4: '谷口破了——从头再守一次。',
+  huipai: '回旆盟冲破街口——新郑陷入乱火。重整阵线，再战一次。',
+} as const
+
+// —— c8_settle 章末结算（SettlePanel 数据，附录「章末结算」逐字；评级逻辑纯 flag，占位） ——
+
+export interface SettleRating {
+  id: 'top' | 'mid' | 'even'
+  label: string
+  line: string
+}
+
+export const C8_SETTLE = {
+  title: SETTLE_TEXT.title,
+  columns: ['战绩', '抉择', '支线', '史乘'],
+  plead: { pleaded: '失期秦卒：求过情（减一等）。', silent: '未开口（笞八十，照领）。' },
+  c7: SETTLE_TEXT.c7Outcome,
+  hanhui: SETTLE_TEXT.hanhui,
+  soldier: '失期秦卒：谷口，守住了。',
+  ratings: [
+    { id: 'top', label: '头功', line: SETTLE_TEXT.ratingLine.head },
+    { id: 'mid', label: '次功', line: SETTLE_TEXT.ratingLine.second },
+    { id: 'even', label: '功过相抵', line: SETTLE_TEXT.ratingLine.balanced },
+  ] as SettleRating[],
+}
+
+
+// === file: src/game/battle.ts ===
+// 《秦灭六国》Demo — 通用轻量回合制战斗引擎（纯函数，无 React 依赖）
+// 设计约束：三人能力固定；敌方行动意图在回合开始时公开；
+// 胜利条件由场景配置决定（夺控绞盘 / 击退敌军），不以全歼为唯一目标。
+
+export type HeroId = 'beimang' | 'mengjia' | 'xiaoman' | 'yuenu'
+
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 16 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 16 页
+============================
+export interface HeroState {
+  id: HeroId
+  name: string
+  hp: number
+  maxHp: number
+  present: boolean
+}
+
+export interface EnemyIntent {
+  type: 'attack' | 'hidden' | 'burn'
+  target?: HeroId
+  dmg: number
+  label: string
+}
+
+export interface EnemyState {
+  uid: number
+  specKey: string
+  name: string
+  hp: number
+  maxHp: number
+  intent: EnemyIntent
+  weakened: number
+}
+
+export interface EnemySpec {
+  name: string
+  hp: number
+  dmg: [number, number]
+  /** 决定敌方立绘、位移轨迹和命中特效；暗器意图仍会覆盖为远程暗器演出。 */
+  weapon?: 'sword' | 'crossbow' | 'mounted' | 'hidden'
+  /** 配置后，敌人会隔回合使用一次高伤暗器。 */
+  hiddenDmg?: [number, number]
+}
+
+export interface BattleConfig {
+  mode: 'winch' | 'annihilate' | 'defend'
+  enemySpecs: Record<string, EnemySpec>
+  initialEnemies: string[]
+  reinforcements?: { round: number; spec: string; log: string }[]
+  arsonist?: { round: number; spec: string; log: string } // 第一章纵火者
+  defendRounds?: number // defend 模式：守到该回合数即胜（C4 护送 / c7_evac 撤离复用）
+  /** 限时短战：超过该回合仍未达成目标则立即判负，避免演出拖成长战。 */
+  roundLimit?: number
+  roundLimitLossLog?: string
+  heroHp?: Partial<Record<HeroId, { hp: number; maxHp: number }>>
+  heroPresent?: Partial<Record<HeroId, boolean>>
+  heroNames?: Partial<Record<HeroId, string>>
+  bg?: string // 战斗背景图（缺省按 mode 推导）
+  weather?: 'clear' | 'rain'
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 17 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 17 页
+============================
+  environmentSfx?: 'sfx/farmyard_fight.mp3' | 'sfx/city_siege.mp3'
+  winLog?: string // 胜利文案（缺省按 mode 推导）
+  introLogs: string[]
+}
+
+export interface BattleLog {
+  round: number
+  text: string
+}
+
+export interface BattleState {
+  round: number
+  mode: 'winch' | 'annihilate' | 'defend'
+  heroes: Record<HeroId, HeroState>
+  enemies: EnemyState[]
+  winch: number
+  smoke: boolean
+  smokeCooldown: number
+  guardTarget: HeroId | null
+  guardHero: HeroId | null
+  censusBurned: boolean
+  xiaomanArriveRound: number | null
+  acted: HeroId[]
+  log: BattleLog[]
+  phase: 'player' | 'enemy' | 'won' | 'lost'
+  uidSeq: number
+  lastHit: { uid: number; damage: number } | null
+  winLog: string
+}
+
+export interface EnemyPhaseStep {
+  uid: number
+  kind: 'attack' | 'hidden' | 'miss' | 'burn'
+  style?: 'melee' | 'hidden' | 'crossbow' | 'mounted'
+  target?: HeroId
+  dmg: number
+  text: string
+}
+
+export interface EnemyPhaseResult {
+  state: BattleState
+  steps: EnemyPhaseStep[]
+}
+
+/** 战场右侧固定为三人阵位；其余敌人留在候阵队列，前排减员后依次补位。 */
+export const MAX_ACTIVE_ENEMIES = 3
+
+export function getActiveEnemies(enemies: readonly EnemyState[]): EnemyState[] {
+  return enemies.slice(0, MAX_ACTIVE_ENEMIES)
+}
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 18 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 18 页
+============================
+
+export type ActionId =
+  | 'tuji'
+  | 'daduan'
+  | 'duokong'
+  | 'zhiliao'
+  | 'buyan'
+  | 'zhidu'
+  | 'feizhen'
+  | 'jiejian'
+  | 'huwei'
+
+export interface ActionDef {
+  id: ActionId
+  name: string
+  target: 'enemy' | 'ally' | 'none'
+  desc: string
+}
+
+export const ACTIONS: Record<ActionId, ActionDef> = {
+  tuji: { id: 'tuji', name: '突击', target: 'enemy', desc: '直剑突进，伤 6–8。' },
+  daduan: { id: 'daduan', name: '打断', target: 'enemy', desc: '伤 2，取消目标本回合意图。' },
+  duokong: { id: 'duokong', name: '夺控绞盘', target: 'none', desc: '绞盘进度 +1。到 3，城门开。' },
+  zhiliao: { id: 'zhiliao', name: '治疗', target: 'ally', desc: '为一名同伴止血，回复 8。' },
+  buyan: { id: 'buyan', name: '布烟', target: 'none', desc: '药烟弥漫，敌方本回合攻击落空。冷却 3 回合。' },
+  zhidu: { id: 'zhidu', name: '掷毒', target: 'enemy', desc: '撒出毒粉，伤 3–5。医者的自卫手段。' },
+  feizhen: { id: 'feizhen', name: '飞针封穴', target: 'enemy', desc: '伤 4；若目标正蓄暗器，则伤 6 并取消暗器。' },
+  jiejian: { id: 'jiejian', name: '截剑', target: 'enemy', desc: '伤 5–7，使目标本回合近战伤害减 2。' },
+  huwei: { id: 'huwei', name: '护卫', target: 'ally', desc: '本回合替一名同伴挡刀，伤害减半。' },
+}
+
+export const HERO_ACTIONS: Record<HeroId, ActionId[]> = {
+  beimang: ['tuji', 'daduan', 'duokong'],
+  mengjia: ['jiejian', 'huwei', 'duokong'],
+  xiaoman: ['zhiliao', 'buyan', 'zhidu', 'duokong'],
+  yuenu: ['jiejian', 'feizhen', 'huwei', 'duokong'],
+}
+
+export function actionsFor(s: BattleState, hero: HeroId): ActionId[] {
+  return HERO_ACTIONS[hero].filter((a) => a !== 'duokong' || s.mode === 'winch')
+}
+
+const rand = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min
+
+function aliveHeroes(s: BattleState): HeroState[] {
+  return Object.values(s.heroes).filter((h) => h.present && h.hp > 0)
+}
+
+function makeEnemy(s: BattleState, cfg: BattleConfig, specKey: string): EnemyState {
+  const st = cfg.enemySpecs[specKey]
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 19 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 19 页
+============================
+  return {
+    uid: s.uidSeq,
+    specKey,
+    name: st.name,
+    hp: st.hp,
+    maxHp: st.hp,
+    intent: { type: 'attack', dmg: 0, label: '' },
+    weakened: 0,
+  }
+}
+
+function rollIntent(s: BattleState, cfg: BattleConfig, e: EnemyState): EnemyIntent {
+  if (cfg.arsonist && e.specKey === cfg.arsonist.spec && !s.censusBurned) {
+    return { type: 'burn', dmg: 0, label: '意图：点燃户籍库' }
+  }
+  const targets = aliveHeroes(s)
+  const t = targets[rand(0, targets.length - 1)]
+  const spec = cfg.enemySpecs[e.specKey]
+  // 有暗器的敌人隔回合出手，规律公开且稳定，玩家能据此做战术判断。
+  if (spec.hiddenDmg && (s.round + e.uid) % 2 === 0) {
+    const dmg = rand(spec.hiddenDmg[0], spec.hiddenDmg[1])
+    return { type: 'hidden', target: t.id, dmg, label: `意图：暗器锁定${t.name}（${dmg}，需打断/布烟/飞针/护卫）` }
+  }
+  const base = spec.dmg
+  const dmg = Math.max(1, rand(base[0], base[1]) - e.weakened)
+  return { type: 'attack', target: t.id, dmg, label: `意图：攻击${t.name}（${dmg}）` }
+}
+
+function pushLog(s: BattleState, text: string) {
+  s.log.push({ round: s.round, text })
+}
+
+export function createBattle(cfg: BattleConfig, opts?: { xiaomanLate?: boolean }): BattleState {
+  const hpOf = (id: HeroId, def: number) => cfg.heroHp?.[id] ?? { hp: def, maxHp: def }
+  const s: BattleState = {
+    round: 1,
+    mode: cfg.mode,
+    heroes: {
+      beimang: { id: 'beimang', name: cfg.heroNames?.beimang ?? '北芒', ...hpOf('beimang', 30), present: cfg.heroPresent?.beimang ?? true },
+      mengjia: { id: 'mengjia', name: cfg.heroNames?.mengjia ?? '孟甲', ...hpOf('mengjia', 26), present: cfg.heroPresent?.mengjia ?? false },
+      xiaoman: { id: 'xiaoman', name: cfg.heroNames?.xiaoman ?? '小满', ...hpOf('xiaoman', 24), present: cfg.heroPresent?.xiaoman ?? !opts?.xiaomanLate },
+      yuenu: { id: 'yuenu', name: cfg.heroNames?.yuenu ?? '青翎', ...hpOf('yuenu', 28), present: cfg.heroPresent?.yuenu ?? true },
+    },
+    enemies: [],
+    winch: 0,
+    smoke: false,
+    smokeCooldown: 0,
+    guardTarget: null,
+    guardHero: null,
+    censusBurned: false,
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 20 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 20 页
+============================
+    xiaomanArriveRound: opts?.xiaomanLate ? 3 : null,
+    acted: [],
+    log: [],
+    phase: 'player',
+    uidSeq: 1,
+    lastHit: null,
+    winLog: cfg.winLog ?? (cfg.mode === 'winch' ? '任务完成：北门已开，大军可以入城。' : '敌兵退尽。'),
+  }
+  for (const key of cfg.initialEnemies) {
+    s.enemies.push(makeEnemy(s, cfg, key))
+    s.uidSeq++
+  }
+  s.enemies.forEach((e) => (e.intent = rollIntent(s, cfg, e)))
+  cfg.introLogs.forEach((t) => pushLog(s, t))
+  if (opts?.xiaomanLate) pushLog(s, '小满留在疫营，将于第 3 回合赶到。')
+  return s
+}
+
+export function canAct(s: BattleState, hero: HeroId): boolean {
+  const h = s.heroes[hero]
+  return s.phase === 'player' && h.present && h.hp > 0 && !s.acted.includes(hero)
+}
+
+export function actionAvailable(s: BattleState, a: ActionId): boolean {
+  if (a === 'buyan' && s.smokeCooldown > 0) return false
+  if (a === 'duokong' && (s.mode !== 'winch' || s.winch >= 3)) return false
+  return true
+}
+
+export function applyHeroAction(
+  prev: BattleState,
+  hero: HeroId,
+  action: ActionId,
+  targetUid?: number,
+  targetHero?: HeroId,
+): BattleState {
+  if (!canAct(prev, hero) || !HERO_ACTIONS[hero].includes(action) || !actionAvailable(prev, action)) return prev
+  const def = ACTIONS[action]
+  if (def.target === 'enemy' && (targetUid == null || !prev.enemies.some((enemy) => enemy.uid === targetUid && enemy.hp > 0))) {
+    return prev
+  }
+  if (def.target === 'ally') {
+    if (!targetHero) return prev
+    const target = prev.heroes[targetHero]
+    if (!target.present || target.hp <= 0) return prev
+    if (action === 'zhiliao' && target.hp >= target.maxHp) return prev
+    if (action === 'huwei' && targetHero === hero) return prev
+  }
+  const s: BattleState = structuredClone(prev)
+  s.lastHit = null
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 21 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 21 页
+============================
+  const enemy = targetUid != null ? s.enemies.find((e) => e.uid === targetUid) : undefined
+
+  switch (action) {
+    case 'tuji': {
+      if (!enemy) break
+      const dmg = rand(6, 8)
+      enemy.hp -= dmg
+      s.lastHit = { uid: enemy.uid, damage: dmg }
+      pushLog(s, `北芒突击${enemy.name}，伤 ${dmg}。`)
+      break
+    }
+    case 'daduan': {
+      if (!enemy) break
+      enemy.hp -= 2
+      s.lastHit = { uid: enemy.uid, damage: 2 }
+      enemy.intent = { type: 'attack', dmg: 0, label: '意图：被打断，踉跄' }
+      pushLog(s, `北芒打断${enemy.name}，其本回合行动被取消。`)
+      break
+    }
+    case 'duokong': {
+      s.winch += 1
+      pushLog(s, `${s.heroes[hero].name}扳动绞盘。城门绞链咬合（${s.winch}/3）。`)
+      if (s.winch >= 3) pushLog(s, '绞盘落定，北门轰然开启！')
+      break
+    }
+    case 'zhiliao': {
+      const t = targetHero ? s.heroes[targetHero] : undefined
+      if (!t) break
+      const heal = Math.min(8, t.maxHp - t.hp)
+      t.hp += heal
+      pushLog(s, `小满为${t.name}止血，回复 ${heal}。`)
+      break
+    }
+    case 'buyan': {
+      s.smoke = true
+      s.smokeCooldown = 3
+      pushLog(s, '小满撒出药烟，屋内一片呛咳。敌方本回合难以命中。')
+      break
+    }
+    case 'zhidu': {
+      if (!enemy) break
+      const dmg = rand(3, 5)
+      enemy.hp -= dmg
+      s.lastHit = { uid: enemy.uid, damage: dmg }
+      pushLog(s, `小满扬出毒粉，${enemy.name}掩面后退，伤 ${dmg}。`)
+      break
+    }
+    case 'feizhen': {
+      if (!enemy) break
+      const countersHidden = enemy.intent.type === 'hidden'
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 22 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 22 页
+============================
+      const dmg = countersHidden ? 6 : 4
+      enemy.hp -= dmg
+      s.lastHit = { uid: enemy.uid, damage: dmg }
+      if (countersHidden) {
+        enemy.intent = { type: 'attack', dmg: 0, label: '意图：暗器手被飞针封穴' }
+        pushLog(s, `青翎飞针封穴，截住${enemy.name}的暗器，伤 ${dmg}。`)
+      } else {
+        pushLog(s, `青翎抬手飞针，${enemy.name}中针，伤 ${dmg}。`)
+      }
+      break
+    }
+    case 'jiejian': {
+      if (!enemy) break
+      const dmg = rand(5, 7)
+      enemy.hp -= dmg
+      s.lastHit = { uid: enemy.uid, damage: dmg }
+      enemy.weakened = Math.max(enemy.weakened, 2)
+      if (enemy.intent.type === 'attack') {
+        enemy.intent.dmg = Math.max(1, enemy.intent.dmg - 2)
+        const t = enemy.intent.target ? s.heroes[enemy.intent.target] : undefined
+        if (t) enemy.intent.label = `意图：攻击${t.name}（${enemy.intent.dmg}，被截剑削弱）`
+      }
+      pushLog(s, `${s.heroes[hero].name}截剑${enemy.name}，伤 ${dmg}，其攻势受挫。`)
+      break
+    }
+    case 'huwei': {
+      s.guardTarget = targetHero ?? null
+      s.guardHero = hero
+      pushLog(s, `${s.heroes[hero].name}立于${targetHero ? s.heroes[targetHero].name : ''}身侧，代为挡刀。`)
+      break
+    }
+  }
+
+  const dead = s.enemies.filter((e) => e.hp <= 0)
+  dead.forEach((e) => pushLog(s, `${e.name}倒下。`))
+  s.enemies = s.enemies.filter((e) => e.hp > 0)
+
+  s.acted.push(hero)
+
+  if (checkEnd(s)) return s
+
+  const pending = aliveHeroes(s).filter((x) => !s.acted.includes(x.id))
+  if (pending.length === 0) s.phase = 'enemy'
+  return s
+}
+
+function checkEnd(s: BattleState): boolean {
+  if (s.mode === 'winch' && s.winch >= 3) {
+    s.phase = 'won'
+    pushLog(s, '任务完成：北门已开，大军可以入城。')
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 23 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 23 页
+============================
+    return true
+  }
+  if (s.mode === 'annihilate' && s.enemies.length === 0) {
+    s.phase = 'won'
+    pushLog(s, s.winLog)
+    return true
+  }
+  // defend：一波敌人被打退后直接推进敌方阶段（回合数与增援照走），避免无目标可点而卡死
+  if (s.mode === 'defend' && s.enemies.length === 0 && s.phase === 'player') {
+    s.phase = 'enemy'
+    pushLog(s, '这一波私兵被打退了。山坡上，还有人影在动。')
+    return false
+  }
+  if (aliveHeroes(s).length === 0) {
+    s.phase = 'lost'
+    pushLog(s, '小队全员倒下。任务失败。')
+    return true
+  }
+  return false
+}
+
+export function resolveEnemyPhase(prev: BattleState, cfg: BattleConfig): EnemyPhaseResult {
+  if (prev.phase !== 'enemy') return { state: prev, steps: [] }
+  const state = structuredClone(prev)
+  state.lastHit = null
+  return { state, steps: runEnemyPhase(state, cfg) }
+}
+
+function runEnemyPhase(s: BattleState, cfg: BattleConfig): EnemyPhaseStep[] {
+  const steps: EnemyPhaseStep[] = []
+  // 候阵敌人尚未进入画面，也不会隔空发动攻击；有空位后会自然补入前三名。
+  for (const e of getActiveEnemies(s.enemies)) {
+    if (e.hp <= 0) continue
+    if (e.intent.type === 'burn') {
+      s.censusBurned = true
+      const text = '纵火者点燃了户籍库！简册卷入火中。'
+      pushLog(s, text)
+      steps.push({ uid: e.uid, kind: 'burn', dmg: 0, text })
+      e.intent = { type: 'attack', dmg: 0, label: '' }
+      continue
+    }
+    if ((e.intent.type === 'attack' || e.intent.type === 'hidden') && e.intent.dmg > 0 && e.intent.target) {
+      const isHidden = e.intent.type === 'hidden'
+      const weaponStyle = cfg.enemySpecs[e.specKey]?.weapon
+      const stepStyle: EnemyPhaseStep['style'] = isHidden
+        ? weaponStyle === 'crossbow'
+          ? 'crossbow'
+          : 'hidden'
+        : weaponStyle === 'mounted'
+          ? 'mounted'
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 24 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 24 页
+============================
+          : weaponStyle === 'crossbow'
+            ? 'crossbow'
+            : 'melee'
+      if (s.smoke) {
+        const text = isHidden
+          ? `${e.name}在烟中失了准头，暗器钉入空处。`
+          : stepStyle === 'crossbow'
+            ? `${e.name}在烟中失了准头，弩矢射入空处。`
+            : `${e.name}在烟中挥空。`
+        pushLog(s, text)
+        steps.push({ uid: e.uid, kind: 'miss', style: stepStyle, target: e.intent.target, dmg: 0, text })
+        continue
+      }
+      let target = s.heroes[e.intent.target]
+      let dmg = e.intent.dmg
+      if (target.hp <= 0) {
+        const rest = aliveHeroes(s)
+        if (rest.length === 0) break
+        target = rest[0]
+      }
+      if (s.guardTarget === target.id) {
+        const guard = s.guardHero ? s.heroes[s.guardHero] : null
+        const guardCanBlock = guard?.present && guard.hp > 0 && guard.id !== target.id
+        if (guard && guardCanBlock) {
+          dmg = Math.ceil(dmg / 2)
+          guard.hp -= dmg
+          const text = isHidden
+            ? `${e.name}暗器射向${target.name}，${guard.name}抢身挡下，伤 ${dmg}。`
+            : `${e.name}攻向${target.name}，${guard.name}横剑挡下，伤 ${dmg}。`
+          pushLog(s, text)
+          steps.push({ uid: e.uid, kind: isHidden ? 'hidden' : 'attack', style: stepStyle, target: guard.id, dmg, text })
+          if (guard.hp < 0) guard.hp = 0
+          continue
+        }
+      }
+      {
+        target.hp -= dmg
+        const text = isHidden
+          ? `${e.name}袖中暗器骤发，击中${target.name}，重伤 ${dmg}。`
+          : `${e.name}击中${target.name}，伤 ${dmg}。`
+        pushLog(s, text)
+        steps.push({ uid: e.uid, kind: isHidden ? 'hidden' : 'attack', style: stepStyle, target: target.id, dmg, text })
+        if (target.hp <= 0) {
+          target.hp = 0
+          pushLog(s, `${target.name}倒下！`)
+        }
+      }
+    }
+  }
+
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 25 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 25 页
+============================
+  if (aliveHeroes(s).length === 0) {
+    s.phase = 'lost'
+    pushLog(s, '小队全员倒下。任务失败。')
+    return steps
+  }
+
+  s.round += 1
+  s.acted = []
+  s.smoke = false
+  s.guardTarget = null
+  s.guardHero = null
+  if (s.smokeCooldown > 0) s.smokeCooldown -= 1
+
+  if (cfg.roundLimit != null && s.round > cfg.roundLimit) {
+    s.phase = 'lost'
+    pushLog(s, cfg.roundLimitLossLog ?? '战机已失。任务失败。')
+    return steps
+  }
+
+  // defend 模式：守满回合数即胜（C4 护送：守到秦军前锋抵达）
+  if (s.mode === 'defend' && cfg.defendRounds != null && s.round > cfg.defendRounds) {
+    s.phase = 'won'
+    pushLog(s, '秦军前锋抵达。私兵退走。')
+    return steps
+  }
+
+  if (s.xiaomanArriveRound != null && s.round >= s.xiaomanArriveRound && !s.heroes.xiaoman.present) {
+    s.heroes.xiaoman.present = true
+    pushLog(s, '小满背着药篓赶到战场！')
+  }
+
+  if (cfg.arsonist && s.round === cfg.arsonist.round && !s.censusBurned && !s.enemies.some((e) => e.specKey === cfg.arsonist!.spec)) {
+    const e = makeEnemy(s, cfg, cfg.arsonist.spec)
+    s.uidSeq++
+    e.uid = s.uidSeq
+    s.enemies.push(e)
+    pushLog(s, cfg.arsonist.log)
+  }
+
+  for (const r of cfg.reinforcements ?? []) {
+    if (s.round === r.round && s.enemies.length < 4) {
+      const e = makeEnemy(s, cfg, r.spec)
+      s.uidSeq++
+      e.uid = s.uidSeq
+      s.enemies.push(e)
+      pushLog(s, r.log)
+    }
+  }
+
+  s.enemies.forEach((e) => {
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 26 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 26 页
+============================
+    // 截剑只削弱已经公开的这一招，不再永久叠加削弱后续回合。
+    e.weakened = 0
+    e.intent = rollIntent(s, cfg, e)
+  })
+  // defend 空场：一波已清、增援未至时回合空转，直到下一波出现或守满判胜，避免我方无目标可点卡死
+  if (s.mode === 'defend' && s.enemies.length === 0) {
+    pushLog(s, '坡上暂无人冲下。你们守住阵型。')
+    return steps.concat(runEnemyPhase(s, cfg))
+  }
+  s.phase = 'player'
+  pushLog(s, `—— 第 ${s.round} 回合 ——`)
+  return steps
+}
+
+
+// === file: src/game/scenarios.ts ===
+// 场景战斗配置：S5 追击、S6 越女破围、S9 农家、C4 护送及灭郑终局战。
+
+import type { BattleConfig } from './battle'
+import type { C4Tactic, StoryFlags } from './save'
+
+// S5 追击密使战：截住密使后，北芒与孟甲将其击溃；密使弃囊遁走。
+export const PURSUIT_BATTLE: BattleConfig = {
+  mode: 'annihilate',
+  enemySpecs: {
+    sishi: { name: '护逃死士', hp: 10, dmg: [5, 7], weapon: 'sword' },
+    qishou: { name: '骑影杀手', hp: 14, dmg: [6, 8], weapon: 'mounted', hiddenDmg: [11, 13] },
+  },
+  initialEnemies: ['sishi', 'sishi', 'qishou'],
+  heroPresent: {
+    mengjia: true,
+    xiaoman: false,
+    yuenu: false,
+  },
+  bg: 'https://stats.puck-muling.top/game/assets/bg_guanyi.webp',
+  weather: 'clear',
+  environmentSfx: 'sfx/city_siege.mp3',
+  winLog: '密使弃囊遁走。行囊到手。',
+  introLogs: [
+    '截住了。北芒与孟甲并肩压上。',
+  ],
+}
+
+// S6 绝境后：越女独自从山坡杀入，以一人之剑撕开包围。
+// 北芒中钉是战后固定剧情，因此这里只处理围阵死士，不出现放冷箭的幕后弩手。
+export const YUENU_BREAKOUT_BATTLE: BattleConfig = {
+  mode: 'annihilate',
+  roundLimit: 3,
+  roundLimitLossLog: '三息已过，合围重新闭死。越女退回坡上，再破一次阵。',
+  enemySpecs: {
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 27 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 27 页
+============================
+    weishi: { name: '围阵死士', hp: 5, dmg: [4, 5], weapon: 'sword' },
+    anzhuang: { name: '暗桩杀手', hp: 6, dmg: [4, 5], weapon: 'hidden', hiddenDmg: [9, 11] },
+  },
+  initialEnemies: ['weishi', 'weishi', 'anzhuang'],
+  heroPresent: { beimang: false, mengjia: false, xiaoman: false, yuenu: true },
+  heroNames: { yuenu: '越女' },
+  bg: 'https://stats.puck-muling.top/game/assets/bg_zhengdi_yuye.webp',
+  weather: 'rain',
+  environmentSfx: 'sfx/city_siege.mp3',
+  winLog: '越女一人切开合围，山道上终于露出一条退路。',
+  introLogs: [
+    '她没有等任何人跟上。',
+    '一人，一剑，从坡上直切进灭口队的合围。',
+    '只有三次出手机会：截住近战，飞针封住暗器，撕开阵线。',
+  ],
+}
+
+// S9 农家战：三人首次并肩。阿芒伤未愈（HP 上限打折）。
+export const FARM_BATTLE: BattleConfig = {
+  mode: 'annihilate',
+  enemySpecs: {
+    youxia: { name: '灭口死士', hp: 11, dmg: [5, 7], weapon: 'sword' },
+    toutmu: { name: '灭口头目', hp: 16, dmg: [6, 8], weapon: 'hidden', hiddenDmg: [11, 13] },
+  },
+  initialEnemies: ['youxia', 'youxia', 'youxia', 'toutmu'],
+  weather: 'clear',
+  environmentSfx: 'sfx/farmyard_fight.mp3',
+  heroHp: {
+    beimang: { hp: 14, maxHp: 30 }, // 透骨钉伤未愈
+  },
+  winLog: '追兵退了。农家小院，重归寂静。',
+  introLogs: [
+    '追兵搜到了农家。四名死士，一个活口不留。',
+    '阿芒伤未愈，只能勉强持剑。',
+    '青翎守在门边，小满护住墙角的药篓。',
+  ],
+}
+
+/** S6 的代价带入农家战：谷口失守会加重北芒伤势，孟甲未被玩家救出会让折返救人的青翎带伤。 */
+export function farmBattleForOutcome(flags: StoryFlags): BattleConfig {
+  return {
+    ...FARM_BATTLE,
+    heroHp: {
+      beimang: flags.s6_cart_through === false ? { hp: 10, maxHp: 30 } : { hp: 14, maxHp: 30 },
+      ...(flags.s6_mengjia_saved === false ? { yuenu: { hp: 20, maxHp: 28 } } : {}),
+    },
+    introLogs: [
+      ...FARM_BATTLE.introLogs,
+      ...(flags.s6_cart_through === false ? ['谷口失守后强行突围，阿芒的伤势比预想更重。'] : []),
+      ...(flags.s6_mengjia_saved === false ? ['青翎折返救孟甲时伤了左臂。'] : []),
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 28 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 28 页
+============================
+    ],
+  }
+}
+
+// C4 护送截杀战：护住族人车，守到秦军前锋抵达（坚守 5 回合）。
+// 郑氏零伤亡为恒定脚本结果；最坏结局：人人几乎残血。
+export const ESCORT_BATTLE: BattleConfig = {
+  mode: 'defend',
+  defendRounds: 5,
+  enemySpecs: {
+    sibing: { name: '死战派私兵', hp: 12, dmg: [5, 7], weapon: 'sword' },
+    jingrui: { name: '私兵精锐', hp: 16, dmg: [6, 8], weapon: 'hidden', hiddenDmg: [10, 12] },
+  },
+  initialEnemies: ['sibing', 'sibing', 'jingrui'],
+  weather: 'clear',
+  environmentSfx: 'sfx/city_siege.mp3',
+  reinforcements: [
+    { round: 3, spec: 'sibing', log: '山坡上又压下一名死战派私兵。' },
+    { round: 4, spec: 'jingrui', log: '一名私兵精锐加入围攻。' },
+  ],
+  introLogs: [
+    '死战派的私兵从山上压下来——灭人证的口，泄困兽之愤。',
+    '护住车。守到秦军前锋抵达。',
+  ],
+}
+
+/** C4 战术直接改变战斗开局，不再只在 C7 延迟锁项。 */
+export function escortBattleForTactic(tactic: C4Tactic): BattleConfig {
+  if (tactic === 'ambush') {
+    return {
+      ...ESCORT_BATTLE,
+      initialEnemies: ['sibing', 'jingrui'],
+      introLogs: [...ESCORT_BATTLE.introLogs, '孟甲与老卒先占高地，第一波私兵被乱箭压住。'],
+    }
+  }
+  if (tactic === 'valley') {
+    return {
+      ...ESCORT_BATTLE,
+      initialEnemies: ['sibing', 'jingrui'],
+      reinforcements: ESCORT_BATTLE.reinforcements?.filter((item) => item.round !== 3),
+      heroHp: { yuenu: { hp: 20, maxHp: 28 } },
+      introLogs: [...ESCORT_BATTLE.introLogs, '青翎诱敌入谷，杀伤最大，左臂也添了一道伤。'],
+    }
+  }
+  return {
+    ...ESCORT_BATTLE,
+    heroHp: { beimang: { hp: 19, maxHp: 30 } },
+    introLogs: [...ESCORT_BATTLE.introLogs, '北芒自领断后，车队最安全，他却带伤接战。'],
+  }
+}
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 29 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 29 页
+============================
+
+// C6 末段：韩王已降，回旆盟却趁接防未稳在新郑城内反扑。
+// 这场战斗的胜利不是全歼组织，而是击溃其断后阵线；残众随后分路纵火并逃窜。
+export const HUIPAI_FINAL_BATTLE: BattleConfig = {
+  mode: 'annihilate',
+  enemySpecs: {
+    mengzu: { name: '回旆盟剑客', hp: 14, dmg: [6, 8], weapon: 'sword' },
+    nushou: { name: '回旆盟弩手', hp: 13, dmg: [5, 7], weapon: 'crossbow', hiddenDmg: [11, 13] },
+    zhizao: { name: '回旆盟执旐', hp: 20, dmg: [7, 9], weapon: 'hidden', hiddenDmg: [12, 14] },
+  },
+  initialEnemies: ['mengzu', 'mengzu', 'nushou', 'zhizao'],
+  heroPresent: { mengjia: false },
+  bg: 'https://stats.puck-muling.top/game/assets/bg_xinzheng.webp',
+  weather: 'clear',
+  environmentSfx: 'sfx/city_siege.mp3',
+  winLog: '回旆盟断后阵线崩溃。司马朔带残众散入新郑街巷。',
+  introLogs: [
+    '降城未靖，回旆盟从三条街同时反扑。',
+    '他们以弩手压住路口，执旐者护着司马朔向北撤。',
+    '击溃断后阵线，不能让他们重新夺回城门。',
+  ],
+}
+
+/** 护送战伤势继续带入终局恶战，前段代价会真实压缩容错。 */
+export function huipaiBattleForOutcome(flags: StoryFlags): BattleConfig {
+  if (flags.c4_performance === 'low') {
+    return {
+      ...HUIPAI_FINAL_BATTLE,
+      heroHp: {
+        beimang: { hp: 18, maxHp: 30 },
+        xiaoman: { hp: 17, maxHp: 24 },
+        yuenu: { hp: 18, maxHp: 28 },
+      },
+      introLogs: [...HUIPAI_FINAL_BATTLE.introLogs, '山道旧伤未愈，三人都没有再挨一轮暗器的余地。'],
+    }
+  }
+  if (flags.c4_performance === 'mid') {
+    return {
+      ...HUIPAI_FINAL_BATTLE,
+      heroHp: {
+        beimang: { hp: 24, maxHp: 30 },
+        xiaoman: { hp: 20, maxHp: 24 },
+        yuenu: { hp: 22, maxHp: 28 },
+      },
+    }
+  }
+  return HUIPAI_FINAL_BATTLE
+}
+
+
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 30 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 30 页
+============================
+// === file: src/game/tutorial.ts ===
+// 《秦灭六国》Demo — 序章教学战引擎：郑地伏杀
+// 设计宣言（v6.5）：三项目标（护住副本 / 救出孟甲 / 守住谷口退路）数值上不可全成。
+// 锁死逻辑：总 AP 8；救孟甲 3AP + 守谷口 3AP + 三次打断夺明卷 3AP = 9 > 8。
+
+export interface TEnemy {
+  uid: number
+  name: string
+  kind: 'xia' | 'qiang' // 死士 / 夺简死士
+  hp: number
+  maxHp: number
+  intent: { type: 'attack' | 'steal'; dmg: number; label: string }
+}
+
+export interface TutorialState {
+  round: number // 1~4
+  ap: number
+  hp: number
+  maxHp: number
+  enemies: TEnemy[]
+  mengjia: number // 0~3，到 3 救出
+  cart: number // 0~3，到 3 阵脚稳住
+  yutu: 'safe' | 'lost' // 行囊外层明卷；真正副本是否藏在暗层，要到 C1 拼案才确认
+  log: string[]
+  phase: 'player' | 'done' | 'lost'
+  uidSeq: number
+  lastHit: { uid: number; damage: number } | null
+}
+
+export type TAction = 'tuji' | 'daduan' | 'mengjia' | 'cart'
+
+export const T_ACTIONS: Record<TAction, { name: string; desc: string; target: 'enemy' | 'none' }> = {
+  tuji: { name: '突击', desc: '直剑突进，伤 6–8。', target: 'enemy' },
+  daduan: { name: '打断', desc: '伤 2，取消目标本回合意图。对付夺卷者的唯一办法。', target: 'enemy' },
+  mengjia: { name: '救出孟甲', desc: '撬开压住他的辎重（需 3 次）。', target: 'none' },
+  cart: { name: '守住谷口退路', desc: '护住身后谷口，守住全队退路（需 3 次）。', target: 'none' },
+}
+
+export const MAX_ROUNDS = 4
+export const AP_PER_ROUND = 2
+export const RESCUE_COST = 3
+export const CART_COST = 3
+
+const rand = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min
+
+function log(s: TutorialState, t: string) {
+  s.log.push(t)
+}
+
+function xia(s: TutorialState): TEnemy {
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 31 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 31 页
+============================
+  return { uid: s.uidSeq++, name: '宗室死士', kind: 'xia', hp: 8, maxHp: 8, intent: { type: 'attack', dmg: 0, label: '' } }
+}
+
+function qiang(s: TutorialState): TEnemy {
+  // 夺简者身手极高：实战中杀不死，只能打断
+  return { uid: s.uidSeq++, name: '夺简死士', kind: 'qiang', hp: 22, maxHp: 22, intent: { type: 'steal', dmg: 0, label: '' } }
+}
+
+function rollIntents(s: TutorialState) {
+  for (const e of s.enemies) {
+    if (e.kind === 'qiang' && s.yutu === 'safe') {
+      e.intent = { type: 'steal', dmg: 0, label: '意图：夺走行囊明卷（不可击杀，需打断）' }
+    } else {
+      const dmg = rand(3, 5)
+      e.intent = { type: 'attack', dmg, label: `意图：攻击北芒（${dmg}）` }
+    }
+  }
+}
+
+export function createTutorial(): TutorialState {
+  const s: TutorialState = {
+    round: 1,
+    ap: AP_PER_ROUND,
+    hp: 28,
+    maxHp: 28,
+    enemies: [],
+    mengjia: 0,
+    cart: 0,
+    yutu: 'safe',
+    log: [],
+    phase: 'player',
+    uidSeq: 1,
+    lastHit: null,
+  }
+  s.enemies.push(xia(s), xia(s))
+  rollIntents(s)
+  log(s, '雨夜。接应暗号被人改过，伏兵封住谷口。')
+  log(s, '密令明卷，就在这行囊里——行囊在，证据在。')
+  log(s, '三件事压在肩上：明卷、孟甲、谷口退路。四回合——你顾不了全部。')
+  return s
+}
+
+export function applyTutorialAction(prev: TutorialState, action: TAction, targetUid?: number): TutorialState {
+  const s = structuredClone(prev)
+  if (s.phase !== 'player' || s.ap <= 0) return s
+  s.lastHit = null
+  const enemy = targetUid != null ? s.enemies.find((e) => e.uid === targetUid) : undefined
+
+  switch (action) {
+    case 'tuji': {
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 32 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 32 页
+============================
+      if (!enemy) return prev
+      const dmg = rand(6, 8)
+      enemy.hp -= dmg
+      s.lastHit = { uid: enemy.uid, damage: dmg }
+      log(s, `北芒突击${enemy.name}，伤 ${dmg}。`)
+      if (enemy.hp <= 0) {
+        s.enemies = s.enemies.filter((e) => e.uid !== enemy.uid)
+        log(s, `${enemy.name}倒下。`)
+      }
+      break
+    }
+    case 'daduan': {
+      if (!enemy) return prev
+      enemy.hp -= 2
+      s.lastHit = { uid: enemy.uid, damage: 2 }
+      enemy.intent = { type: 'attack', dmg: 0, label: '意图：被打断，踉跄' }
+      log(s, `北芒打断${enemy.name}，其本回合行动被取消。`)
+      if (enemy.hp <= 0) {
+        s.enemies = s.enemies.filter((e) => e.uid !== enemy.uid)
+        log(s, `${enemy.name}倒下。`)
+      }
+      break
+    }
+    case 'mengjia': {
+      if (s.mengjia >= RESCUE_COST) return prev
+      s.mengjia += 1
+      log(s, s.mengjia >= RESCUE_COST ? '北芒撬开辎重，把孟甲拖了出来！' : `北芒搬开压在孟甲身上的辎重（${s.mengjia}/${RESCUE_COST}）。`)
+      break
+    }
+    case 'cart': {
+      if (s.cart >= CART_COST) return prev
+      s.cart += 1
+      log(s, s.cart >= CART_COST ? '谷口守住了——全队退路，在握！' : `北芒喝令结阵，谷口又稳一分（${s.cart}/${CART_COST}）。`)
+      break
+    }
+  }
+
+  s.ap -= 1
+  return s
+}
+
+export function endTutorialTurn(prev: TutorialState): TutorialState {
+  const s = structuredClone(prev)
+  s.lastHit = null
+  // 敌方行动
+  for (const e of [...s.enemies]) {
+    if (e.intent.type === 'steal') {
+      s.yutu = 'lost'
+      s.enemies = s.enemies.filter((x) => x.uid !== e.uid)
+      log(s, '夺简死士劈开行囊，夺走明卷——暗层是否暴露，无人看清。')
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 33 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 33 页
+============================
+      continue
+    }
+    if (e.intent.type === 'attack' && e.intent.dmg > 0) {
+      s.hp -= e.intent.dmg
+      log(s, `${e.name}击中北芒，伤 ${e.intent.dmg}。`)
+      if (s.hp <= 0) {
+        s.hp = 0
+        s.phase = 'lost'
+        log(s, '北芒倒下。伏兵越过谷口，任务失败。')
+        return s
+      }
+    }
+  }
+
+  if (s.round >= MAX_ROUNDS) {
+    s.phase = 'done'
+    log(s, '伏兵主力已至。绝境——')
+    log(s, '坡顶一道剑光破雨而下。那个本该东出函谷的人，杀了下来。')
+    log(s, '她没有上商队的车。越女到了。')
+    return s
+  }
+
+  s.round += 1
+  s.ap = AP_PER_ROUND
+  // 增援与夺简者
+  if (s.round === 2 && s.yutu === 'safe') {
+    s.enemies.push(qiang(s))
+    log(s, '一道人影扑向行囊——副本就在囊中！')
+  }
+  if (s.round === 3) {
+    if (s.enemies.filter((e) => e.kind === 'xia').length < 2) s.enemies.push(xia(s))
+    if (s.yutu === 'safe' && !s.enemies.some((e) => e.kind === 'qiang')) s.enemies.push(qiang(s))
+  }
+  if (s.round === 4 && s.enemies.filter((e) => e.kind === 'xia').length < 2) {
+    s.enemies.push(xia(s))
+  }
+  rollIntents(s)
+  log(s, `—— 第 ${s.round} 回合 ——`)
+  return s
+}
+
+export interface TutorialOutcome {
+  yutuSaved: boolean
+  mengjiaSaved: boolean
+  cartThrough: boolean
+}
+
+export function tutorialOutcome(s: TutorialState): TutorialOutcome {
+  return {
+    yutuSaved: s.yutu === 'safe',
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 34 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 34 页
+============================
+    mengjiaSaved: s.mengjia >= RESCUE_COST,
+    cartThrough: s.cart >= CART_COST,
+  }
+}
+
+
+// === file: src/game/save.ts ===
+// 《秦灭六国》Demo — 存档系统（仅手动，3 个槽位，localStorage 持久化）
+
+export type Stage =
+  | 'title'
+  | 'chapter_card'
+  // 序章
+  | 's1_anfa'
+  | 's1_statement'
+  | 's1_anfa_after'
+  | 's2_shenxun'
+  | 's3_chaqu'
+  | 's3_chaan'
+  | 's3_chaqu_after'
+  | 's4_andun'
+  | 's5_zhuishi'
+  | 's5_battle'
+  | 's5_zhuishi_after'
+  | 's6_fusha'
+  | 's6_battle'
+  | 's6_fusha_after'
+  | 's6_yuenu_battle'
+  | 's6_fusha_fall'
+  | 's7_xiandai'
+  | 's8_nongjia'
+  | 's9_tongxing'
+  | 's9_battle'
+  | 's9_tongxing_after'
+  | 's10_guace'
+  // 第一章
+  | 'c1_pinan'
+  | 'c1_case'
+  | 'c1_pinan_after'
+  | 'c2_zhangtai'
+  | 'c3_guoshu'
+  | 'c4_husong'
+  | 'c4_battle'
+  | 'c4_husong_after'
+  | 'c5_shouxiang'
+  | 'c6_yiying'
+  | 'c6_huipai_battle'
+  | 'c7_huoqi'
+  | 'c7_choice'
+  | 'c7_fire'
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 35 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 35 页
+============================
+  | 'c7_troops'
+  | 'c7_evac'
+  | 'c7_huoqi_after'
+  | 'c8_zhangmo'
+  | 'c8_settle'
+  // 挂载与收尾
+  | 'shicheng'
+  | 'end'
+
+export const STAGE_LABELS: Record<Stage, string> = {
+  title: '标题页',
+  chapter_card: '章节转场',
+  s1_anfa: 'S1 案发',
+  s1_statement: 'S1 亲见落笔',
+  s1_anfa_after: 'S1 案发 · 传闻入章台',
+  s2_shenxun: 'S2 审讯',
+  s3_chaqu: 'S3 查渠',
+  s3_chaan: 'S3 查案（挂载）',
+  s3_chaqu_after: 'S3 查渠 · 后段',
+  s4_andun: 'S4 一马十金与安顿',
+  s5_zhuishi: 'S5 追使夺书',
+  s5_battle: 'S5 追击密使战',
+  s5_zhuishi_after: 'S5 追使夺书 · 后段',
+  s6_fusha: 'S6 郑地伏杀',
+  s6_battle: 'S6 教学战',
+  s6_fusha_after: 'S6 越女来援',
+  s6_yuenu_battle: 'S6 越女单骑破围',
+  s6_fusha_fall: 'S6 北芒坠坡',
+  s7_xiandai: 'S7 现代短切',
+  s8_nongjia: 'S8 农家醒来',
+  s9_tongxing: 'S9 农家战',
+  s9_battle: 'S9 农家战 · 战斗',
+  s9_tongxing_after: 'S9 三人同行',
+  s10_guace: 'S10 回营挂册',
+  c1_pinan: 'C1 拼案',
+  c1_case: 'C1 三证合勘',
+  c1_pinan_after: 'C1 拼案 · 结论',
+  c2_zhangtai: 'C2 章台密议',
+  c3_guoshu: 'C3 国书',
+  c4_husong: 'C4 护送截杀战',
+  c4_battle: 'C4 护送战 · 战斗',
+  c4_husong_after: 'C4 护送 · 后段',
+  c5_shouxiang: 'C5 受降',
+  c6_yiying: 'C6 疫营',
+  c6_huipai_battle: 'C6 回旆盟终局战',
+  c7_huoqi: 'C7 火起官署',
+  c7_choice: 'C7 三择其一',
+  c7_fire: 'C7 保户籍 · 火场（挂载）',
+  c7_troops: 'C7 截残军 · 北道追截',
+  c7_evac: 'C7 护疫营 · 撤离战（挂载）',
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 36 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 36 页
+============================
+  c7_huoqi_after: 'C7 回响',
+  c8_zhangmo: 'C8 章末',
+  c8_settle: '章末结算（挂载）',
+  shicheng: '史乘 · 对照卡',
+  end: 'Demo 终',
+}
+
+// 这些 stage 不允许存档（过场/标题/战斗与挂载占位中存档没意义，强制玩家只在叙事场景存档）
+const SAVE_BLOCKED: ReadonlySet<Stage> = new Set([
+  'title',
+  'chapter_card',
+  's1_statement',
+  's3_chaan',
+  's5_battle',
+  's6_battle',
+  's6_yuenu_battle',
+  's9_battle',
+  'c4_battle',
+  'c6_huipai_battle',
+  'c1_case',
+  'c7_choice',
+  'c7_fire',
+  'c7_troops',
+  'c7_evac',
+  'c8_settle',
+  'shicheng',
+  'end',
+])
+
+export function canSaveAt(stage: Stage): boolean {
+  return !SAVE_BLOCKED.has(stage)
+}
+
+export const CURRENT_SAVE_VERSION = 2
+
+export type C4Tactic = 'ambush' | 'valley' | 'rear'
+export type C7Choice = 'register' | 'troops' | 'camp'
+export type EvacSurvival = 'high' | 'low'
+export type C4Performance = 'high' | 'mid' | 'low'
+// 简册 id 统一拼音（总指挥裁决）；中文「户籍/粮册/地图/刑狱/军籍」只作显示 label
+export type SavedRegisterId = 'huji' | 'liangce' | 'ditu' | 'xingyu' | 'junji'
+export type StoryFlagValue = boolean | string | number | null | string[]
+
+/**
+ * 跨场景剧情选择的唯一持久化容器。
+ *
+ * 数组只允许用于 §0 约定的 c7_saved_registers（拼音 id）。其余扩展 flag
+ * 仍限制为标量，避免旧档被任意嵌套对象污染。
+ */
+export interface StoryFlags {
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 37 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 37 页
+============================
+  plead_soldier?: boolean
+  s6_yutu_saved?: boolean
+  s6_mengjia_saved?: boolean
+  s6_cart_through?: boolean
+  c4_tactic?: C4Tactic
+  c4_performance?: C4Performance
+  c7_choice?: C7Choice
+  c7_saved_registers?: SavedRegisterId[]
+  c7_troops_intercepted?: number
+  evac_survival?: EvacSurvival
+  [key: string]: StoryFlagValue | undefined
+}
+
+export const DEFAULT_STORY_FLAGS: Readonly<StoryFlags> = Object.freeze({})
+
+export interface SaveData {
+  saveVersion: typeof CURRENT_SAVE_VERSION
+  slot: number
+  stage: Stage
+  flags: StoryFlags
+  savedAt: number
+}
+
+export type SaveDraftData = Omit<SaveData, 'saveVersion' | 'slot' | 'savedAt' | 'stage'>
+export type SaveCompatibility = 'compatible' | 'legacy' | 'future' | 'invalid'
+
+export type SaveSlotState =
+  | { status: 'empty'; slot: number }
+  | {
+      status: 'incompatible'
+      slot: number
+      reason: Exclude<SaveCompatibility, 'compatible'>
+      saveVersion: number | null
+      savedAt: number | null
+    }
+  | { status: 'ready'; slot: number; data: SaveData }
+
+const KEY_PREFIX = 'qmlg:save:'
+export const SLOT_COUNT = 3
+
+const REGISTER_IDS: ReadonlySet<string> = new Set(['huji', 'liangce', 'ditu', 'xingyu', 'junji'])
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value)
+}
+
+export function checkSaveCompatibility(value: unknown): SaveCompatibility {
+  if (!isRecord(value)) return 'invalid'
+  if (!('saveVersion' in value) || value.saveVersion == null) return 'legacy'
+  if (typeof value.saveVersion !== 'number' || !Number.isInteger(value.saveVersion)) return 'invalid'
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 38 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 38 页
+============================
+  if (value.saveVersion < CURRENT_SAVE_VERSION) return 'legacy'
+  if (value.saveVersion > CURRENT_SAVE_VERSION) return 'future'
+  return 'compatible'
+}
+
+export function normalizeStoryFlags(value: unknown): StoryFlags {
+  if (!isRecord(value)) return { ...DEFAULT_STORY_FLAGS }
+
+  const flags: StoryFlags = {}
+  for (const [key, flagValue] of Object.entries(value)) {
+    if (
+      flagValue === null ||
+      typeof flagValue === 'boolean' ||
+      typeof flagValue === 'string' ||
+      (typeof flagValue === 'number' && Number.isFinite(flagValue)) ||
+      (Array.isArray(flagValue) && flagValue.every((item) => typeof item === 'string'))
+    ) {
+      flags[key] = flagValue as StoryFlagValue
+    }
+  }
+
+  if (Array.isArray(value.c7_saved_registers)) {
+    flags.c7_saved_registers = [...new Set(
+      value.c7_saved_registers.filter(
+        (item): item is SavedRegisterId => typeof item === 'string' && REGISTER_IDS.has(item),
+      ),
+    )].slice(0, 3)
+  }
+
+  if (flags.plead_soldier !== undefined && typeof flags.plead_soldier !== 'boolean') {
+    delete flags.plead_soldier
+  }
+  for (const key of ['s6_yutu_saved', 's6_mengjia_saved', 's6_cart_through'] as const) {
+    if (flags[key] !== undefined && typeof flags[key] !== 'boolean') delete flags[key]
+  }
+  if (flags.c4_tactic !== undefined && !['ambush', 'valley', 'rear'].includes(String(flags.c4_tactic))) {
+    delete flags.c4_tactic
+  }
+  if (flags.c4_performance !== undefined && !['high', 'mid', 'low'].includes(String(flags.c4_performance))) {
+    delete flags.c4_performance
+  }
+  if (flags.c7_choice !== undefined && !['register', 'troops', 'camp'].includes(String(flags.c7_choice))) {
+    delete flags.c7_choice
+  }
+  if (flags.c7_saved_registers !== undefined && !Array.isArray(flags.c7_saved_registers)) {
+    delete flags.c7_saved_registers
+  }
+  if (flags.c7_troops_intercepted !== undefined) {
+    const count = flags.c7_troops_intercepted
+    if (typeof count !== 'number' || !Number.isInteger(count) || count < 0 || count > 5) {
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 39 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 39 页
+============================
+      delete flags.c7_troops_intercepted
+    }
+  }
+  if (flags.evac_survival !== undefined && !['high', 'low'].includes(String(flags.evac_survival))) {
+    delete flags.evac_survival
+  }
+  return flags
+}
+
+function parseCompatibleSave(value: unknown, expectedSlot: number): SaveData | null {
+  if (checkSaveCompatibility(value) !== 'compatible' || !isRecord(value)) return null
+  if (value.slot !== expectedSlot || typeof value.stage !== 'string' || !(value.stage in STAGE_LABELS)) return null
+  if (typeof value.savedAt !== 'number' || !Number.isFinite(value.savedAt)) return null
+
+  return {
+    saveVersion: CURRENT_SAVE_VERSION,
+    slot: expectedSlot,
+    stage: value.stage as Stage,
+    flags: normalizeStoryFlags(value.flags),
+    savedAt: value.savedAt,
+  }
+}
+
+export function inspectSave(slot: number): SaveSlotState {
+  if (slot < 0 || slot >= SLOT_COUNT) return { status: 'empty', slot }
+
+  try {
+    const raw = localStorage.getItem(KEY_PREFIX + slot)
+    if (!raw) return { status: 'empty', slot }
+    const value: unknown = JSON.parse(raw)
+    const compatibility = checkSaveCompatibility(value)
+    const data = parseCompatibleSave(value, slot)
+    if (data) return { status: 'ready', slot, data }
+
+    return {
+      status: 'incompatible',
+      slot,
+      reason: compatibility === 'compatible' ? 'invalid' : compatibility,
+      saveVersion:
+        isRecord(value) && typeof value.saveVersion === 'number' && Number.isInteger(value.saveVersion)
+          ? value.saveVersion
+          : null,
+      savedAt: isRecord(value) && typeof value.savedAt === 'number' ? value.savedAt : null,
+    }
+  } catch {
+    return {
+      status: 'incompatible',
+      slot,
+      reason: 'invalid',
+      saveVersion: null,
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 40 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 40 页
+============================
+      savedAt: null,
+    }
+  }
+}
+
+export function loadSave(slot: number): SaveData | null {
+  const state = inspectSave(slot)
+  return state.status === 'ready' ? state.data : null
+}
+
+export function listSaveSlots(): SaveSlotState[] {
+  const out: SaveSlotState[] = []
+  for (let i = 0; i < SLOT_COUNT; i++) out.push(inspectSave(i))
+  return out
+}
+
+export function listSaves(): (SaveData | null)[] {
+  return listSaveSlots().map((state) => (state.status === 'ready' ? state.data : null))
+}
+
+export function writeSave(slot: number, data: SaveDraftData & { stage: Stage }): SaveData {
+  if (slot < 0 || slot >= SLOT_COUNT) throw new Error(`invalid slot: ${slot}`)
+  const full: SaveData = {
+    ...data,
+    saveVersion: CURRENT_SAVE_VERSION,
+    flags: normalizeStoryFlags(data.flags),
+    slot,
+    savedAt: Date.now(),
+  }
+  localStorage.setItem(KEY_PREFIX + slot, JSON.stringify(full))
+  return full
+}
+
+export function deleteSave(slot: number) {
+  if (slot < 0 || slot >= SLOT_COUNT) return
+  localStorage.removeItem(KEY_PREFIX + slot)
+}
+
+export function findLatestSave(): SaveData | null {
+  const all = listSaves().filter(Boolean) as SaveData[]
+  if (all.length === 0) return null
+  return all.sort((a, b) => b.savedAt - a.savedAt)[0]
+}
+
+export function deleteIncompatibleSaves(): number {
+  let removed = 0
+  for (const state of listSaveSlots()) {
+    if (state.status !== 'incompatible') continue
+    deleteSave(state.slot)
+    removed += 1
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 41 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 41 页
+============================
+  }
+  return removed
+}
+
+export function slotKey(slot: number): string {
+  return `存档 ${['一', '二', '三'][slot] ?? slot}`
+}
+
+export function formatSavedAt(t: number): string {
+  const d = new Date(t)
+  const pad = (n: number) => String(n).padStart(2, '0')
+  return `${pad(d.getMonth() + 1)}/${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`
+}
+
+// —— 战前自动存档（战败重试点：独立键，不占用 3 个手动槽位；战败回卷＋一句旁白） ——
+
+const AUTO_SAVE_KEY = 'qmlg:autosave'
+
+export function writeAutoSave(data: SaveDraftData & { stage: Stage }): SaveData {
+  const full: SaveData = {
+    ...data,
+    saveVersion: CURRENT_SAVE_VERSION,
+    flags: normalizeStoryFlags(data.flags),
+    slot: -1,
+    savedAt: Date.now(),
+  }
+  localStorage.setItem(AUTO_SAVE_KEY, JSON.stringify(full))
+  return full
+}
+
+export function loadAutoSave(): SaveData | null {
+  try {
+    const raw = localStorage.getItem(AUTO_SAVE_KEY)
+    if (!raw) return null
+    const value: unknown = JSON.parse(raw)
+    if (checkSaveCompatibility(value) !== 'compatible' || !isRecord(value)) return null
+    if (typeof value.stage !== 'string' || !(value.stage in STAGE_LABELS)) return null
+    if (typeof value.savedAt !== 'number' || !Number.isFinite(value.savedAt)) return null
+    return {
+      saveVersion: CURRENT_SAVE_VERSION,
+      slot: -1,
+      stage: value.stage as Stage,
+      flags: normalizeStoryFlags(value.flags),
+      savedAt: value.savedAt,
+    }
+  } catch {
+    return null
+  }
+}
+
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 42 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 42 页
+============================
+export function clearAutoSave() {
+  localStorage.removeItem(AUTO_SAVE_KEY)
+}
+
+
+// === file: src/game/defenseBattle.ts ===
+import type { EvacSurvival } from './save'
+
+export type DefenseAction = 'hold' | 'heal' | 'strike'
+export type DefensePhase = 'player' | 'won' | 'lost'
+export type DefenseThreatId = 'rush' | 'casualties' | 'captain'
+
+export interface DefenseThreat {
+  id: DefenseThreatId
+  label: string
+  detail: string
+  response: DefenseAction
+  mitigation: Record<DefenseAction, number>
+  heal: number
+}
+
+export const DEFENSE_THREATS: Record<DefenseThreatId, DefenseThreat> = {
+  rush: {
+    id: 'rush',
+    label: '正面冲阵',
+    detail: '乱兵结成一股，正撞医篷。盾阵最能卸力。',
+    response: 'hold',
+    mitigation: { hold: 6, heal: 1, strike: 2 },
+    heal: 2,
+  },
+  casualties: {
+    id: 'casualties',
+    label: '担架断裂',
+    detail: '伤者失血、队尾拥堵。先救人才能重新移动。',
+    response: 'heal',
+    mitigation: { hold: 2, heal: 5, strike: 1 },
+    heal: 4,
+  },
+  captain: {
+    id: 'captain',
+    label: '头目突入',
+    detail: '持火头目越过盾线。必须反击逼退，否则阵脚从内侧崩开。',
+    response: 'strike',
+    mitigation: { hold: 1, heal: 0, strike: 7 },
+    heal: 2,
+  },
+}
+
+export interface DefenseBattleConfig {
+  id: 'c4_husong' | 'c7_evac'
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 43 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 43 页
+============================
+  title: string
+  objective: string
+  targetName: string
+  maxTargetHp: number
+  rounds: number
+  highSurvivalThreshold: number
+  waveDamage: readonly number[]
+  waveEnemyCount: readonly number[]
+  /** 每次开战从不同公开危机序列中抽取一种，杜绝背固定按钮顺序。 */
+  wavePlans: readonly (readonly DefenseThreatId[])[]
+  enemySprite: string
+  introPlaceholder: string
+}
+
+export interface DefenseBattleState {
+  round: number
+  targetHp: number
+  phase: DefensePhase
+  lastAction: DefenseAction | null
+  lastDamage: number
+  wavePlan: DefenseThreatId[]
+  log: string[]
+}
+
+export const C4_ESCORT_BATTLE_CONFIG: DefenseBattleConfig = {
+  id: 'c4_husong',
+  title: '谷口 · 护送战',
+  objective: '保护车队，守住固定回合',
+  targetName: '郑氏车队',
+  maxTargetHp: 20,
+  rounds: 4,
+  highSurvivalThreshold: 10,
+  waveDamage: [5, 6, 7, 8],
+  waveEnemyCount: [1, 2, 2, 3],
+  wavePlans: [
+    ['rush', 'casualties', 'captain', 'rush'],
+    ['captain', 'rush', 'casualties', 'captain'],
+    ['casualties', 'captain', 'rush', 'casualties'],
+  ],
+  enemySprite: 'https://stats.puck-muling.top/game/assets/battle/enemy_hanzu_idle_v1.webp',
+  introPlaceholder: '私兵压向郑氏车队。守住谷口，等秦军前锋赶到。',
+}
+
+export const EVAC_BATTLE_CONFIG: DefenseBattleConfig = {
+  id: 'c7_evac',
+  title: '新郑疫营 · 撤离战',
+  objective: '观察每轮危机，保护医篷撑到撤离',
+  targetName: '医篷',
+  maxTargetHp: 20,
+  rounds: 4,
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 44 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 44 页
+============================
+  highSurvivalThreshold: 10,
+  waveDamage: [7, 8, 9, 10],
+  waveEnemyCount: [1, 2, 2, 3],
+  wavePlans: [
+    ['rush', 'casualties', 'captain', 'rush'],
+    ['captain', 'rush', 'casualties', 'captain'],
+    ['casualties', 'captain', 'rush', 'casualties'],
+  ],
+  enemySprite: 'https://stats.puck-muling.top/game/assets/battle/enemy_hanzu_idle_v1.webp',
+  introPlaceholder: '乱兵冲着医篷来了——伤兵抢药，溃兵抢命。', // v3.5 冻结稿附录逐字
+}
+
+export function createDefenseBattle(config: DefenseBattleConfig, planIndex = 0): DefenseBattleState {
+  const plan = config.wavePlans[planIndex % config.wavePlans.length] ?? config.wavePlans[0]
+  return {
+    round: 1,
+    targetHp: config.maxTargetHp,
+    phase: 'player',
+    lastAction: null,
+    lastDamage: 0,
+    wavePlan: [...plan],
+    log: [config.introPlaceholder],
+  }
+}
+
+export function currentDefenseThreat(state: DefenseBattleState): DefenseThreat {
+  const id = state.wavePlan[Math.min(state.round - 1, state.wavePlan.length - 1)] ?? 'rush'
+  return DEFENSE_THREATS[id]
+}
+
+export interface DefenseActionPreview {
+  mitigation: number
+  healed: number
+  damage: number
+  fatigued: boolean
+  isCounter: boolean
+}
+
+export function previewDefenseAction(
+  state: DefenseBattleState,
+  config: DefenseBattleConfig,
+  action: DefenseAction,
+): DefenseActionPreview {
+  const index = Math.min(state.round - 1, config.waveDamage.length - 1)
+  const baseDamage = config.waveDamage[index] ?? 0
+  const threat = currentDefenseThreat(state)
+  const fatigued = state.lastAction === action
+  const fatiguePenalty = fatigued ? 2 : 0
+  const mitigation = Math.max(0, threat.mitigation[action] - fatiguePenalty)
+  const healed = action === 'heal' ? Math.max(0, threat.heal - (fatigued ? 1 : 0)) : 0
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 45 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 45 页
+============================
+  return {
+    mitigation,
+    healed,
+    damage: Math.max(0, baseDamage - mitigation),
+    fatigued,
+    isCounter: threat.response === action,
+  }
+}
+
+export function defenseOutcome(
+  state: DefenseBattleState,
+  config: DefenseBattleConfig,
+): EvacSurvival {
+  return state.targetHp >= config.highSurvivalThreshold ? 'high' : 'low'
+}
+
+export function resolveDefenseRound(
+  state: DefenseBattleState,
+  config: DefenseBattleConfig,
+  action: DefenseAction,
+): DefenseBattleState {
+  if (state.phase !== 'player') return state
+
+  const preview = previewDefenseAction(state, config, action)
+  const threat = currentDefenseThreat(state)
+  const mitigation = preview.mitigation
+  const healed = preview.healed
+  const targetBeforeDamage = Math.min(config.maxTargetHp, state.targetHp + healed)
+  const damage = preview.damage
+  const targetHp = Math.max(0, targetBeforeDamage - damage)
+
+  const actionLabel = {
+    hold: '结阵守线',
+    heal: '抢救伤者',
+    strike: '反击乱兵',
+  }[action]
+
+  const log = [
+    ...state.log,
+    `第 ${state.round} 回合：${threat.label}；${actionLabel}。`,
+    `${preview.isCounter ? '应对得当' : '应对失准'}${preview.fatigued ? '，但连续使用同一战法，众人已经疲惫' : ''}：减伤 ${mitigation}${healed > 0 ? `，抢回 ${healed} 点状态` : ''}，医篷受损 ${damage}。`,
+  ]
+
+  if (targetHp <= 0) {
+    return {
+      ...state,
+      targetHp,
+      phase: 'lost',
+      lastAction: action,
+      lastDamage: damage,
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 46 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 46 页
+============================
+      log: [...log, '医篷被冲散。伤者无法继续撤离。'],
+    }
+  }
+
+  if (state.round >= config.rounds) {
+    return {
+      ...state,
+      targetHp,
+      phase: 'won',
+      lastAction: action,
+      lastDamage: damage,
+      log: [...log, '最后一批伤者越过城门，疫营完成撤离。'],
+    }
+  }
+
+  return {
+    ...state,
+    round: state.round + 1,
+    targetHp,
+    lastAction: action,
+    lastDamage: damage,
+    log,
+  }
+}
+
+
+// === file: src/game/battleRetry.ts ===
+import type { StoryFlags } from './save'
+import { DEFEAT_NARRATION } from './story'
+
+export type RetryBattleId = 's5_zhuishi' | 's6_fusha' | 's9_tongxing' | 'c4_husong' | 'c7_evac'
+
+export const RETRY_BATTLE_IDS: readonly RetryBattleId[] = [
+  's5_zhuishi',
+  's6_fusha',
+  's9_tongxing',
+  'c4_husong',
+  'c7_evac',
+]
+
+// s5/s6/s9/c4 为 v3.5 冻结稿附录战败旁白逐字（DEFEAT_NARRATION 同源）；c7_evac 无冻结对应句，保留占位
+export const BATTLE_DEFEAT_PLACEHOLDERS: Record<RetryBattleId, string> = {
+  s5_zhuishi: DEFEAT_NARRATION.s5,
+  s6_fusha: DEFEAT_NARRATION.s6,
+  s9_tongxing: DEFEAT_NARRATION.s9,
+  c4_husong: DEFEAT_NARRATION.c4,
+  c7_evac: '医篷被乱兵冲散。回到撤离命令下达之时，重新布置防线。',
+}
+
+export interface BattleCheckpoint<TPayload = unknown> {
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 47 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 47 页
+============================
+  battleId: RetryBattleId
+  stage: string
+  flags: StoryFlags
+  payload: TPayload
+}
+
+const KEY_PREFIX = 'qmlg:battle-checkpoint:'
+
+function clone<T>(value: T): T {
+  return typeof structuredClone === 'function'
+    ? structuredClone(value)
+    : JSON.parse(JSON.stringify(value)) as T
+}
+
+export function createBattleCheckpoint<TPayload>(
+  battleId: RetryBattleId,
+  stage: string,
+  flags: StoryFlags,
+  payload: TPayload,
+): BattleCheckpoint<TPayload> {
+  return clone({ battleId, stage, flags, payload })
+}
+
+export function restoreBattleCheckpoint<TPayload>(
+  checkpoint: BattleCheckpoint<TPayload>,
+): BattleCheckpoint<TPayload> {
+  return clone(checkpoint)
+}
+
+export function writeBattleCheckpoint<TPayload>(
+  checkpoint: BattleCheckpoint<TPayload>,
+  storage: Storage = sessionStorage,
+): void {
+  storage.setItem(KEY_PREFIX + checkpoint.battleId, JSON.stringify(checkpoint))
+}
+
+export function readBattleCheckpoint<TPayload>(
+  battleId: RetryBattleId,
+  storage: Storage = sessionStorage,
+): BattleCheckpoint<TPayload> | null {
+  try {
+    const raw = storage.getItem(KEY_PREFIX + battleId)
+    if (!raw) return null
+    const value = JSON.parse(raw) as Partial<BattleCheckpoint<TPayload>>
+    if (value.battleId !== battleId || typeof value.stage !== 'string' || !value.flags) return null
+    return restoreBattleCheckpoint(value as BattleCheckpoint<TPayload>)
+  } catch {
+    return null
+  }
+}
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 48 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 48 页
+============================
+
+export function clearBattleCheckpoint(
+  battleId: RetryBattleId,
+  storage: Storage = sessionStorage,
+): void {
+  storage.removeItem(KEY_PREFIX + battleId)
+}
+
+
+// === file: src/game/audio.ts ===
+// 《秦灭六国》Demo — 音频：BGM 管理（淡入淡出）+ Web Audio 合成音效
+import { cdnUrl } from '../lib/cdn'
+
+export type BgmName = 'ambush' | 'farm' | 'court'
+
+const TRACKS: Record<BgmName, string> = {
+  ambush: 'bgm/ambush.mp3', // 雨夜伏击
+  farm: 'bgm/farm.mp3', // 农家晨静
+  court: 'bgm/court.mp3', // 章台庙堂
+}
+
+// 行业标准 BGM 音量：5-8%（人声中央，BGM 远景衬托）。古筝拨弦瞬态明显，比 ambient 多压一点。
+const VOL: Record<BgmName, number> = { ambush: 0.07, farm: 0.05, court: 0.04 }
+
+let current: HTMLAudioElement | null = null
+let currentName: BgmName | null = null
+let muted = false
+let voiceRequestId = 0
+
+function url(name: BgmName) {
+  return cdnUrl(TRACKS[name])
+}
+
+function fade(el: HTMLAudioElement, to: number, ms: number, then?: () => void) {
+  const from = el.volume
+  const t0 = performance.now()
+  const tick = (t: number) => {
+    const k = Math.min(1, (t - t0) / ms)
+    el.volume = from + (to - from) * k
+    if (k < 1 && !el.paused) requestAnimationFrame(tick)
+    else if (k >= 1) then?.()
+  }
+  requestAnimationFrame(tick)
+}
+
+export function playBgm(name: BgmName | null) {
+  if (name === currentName) return
+  currentName = name
+  const old = current
+  current = null
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 49 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 49 页
+============================
+  if (old) {
+    fade(old, 0, 800, () => {
+      old.pause()
+      old.src = ''
+    })
+  }
+  if (!name) return
+  const el = new Audio(url(name))
+  el.loop = true
+  el.muted = muted
+  current = el
+  el.volume = 0
+  el.play()
+    .then(() => fade(el, VOL[name], 1500))
+    .catch(() => {
+      /* 浏览器自动播放限制：下一次用户交互时由 playBgm 重试 */
+    })
+}
+
+// 用户首次交互后调用，确保 BGM 真正开始
+export function unlockBgm() {
+  const name = currentName
+  const el = current
+  if (name && el && el.paused) {
+    el.play().then(() => fade(el, VOL[name], 800)).catch(() => {})
+  }
+}
+
+export function setMuted(m: boolean) {
+  muted = m
+  if (current) current.muted = m
+  if (voiceEl) voiceEl.muted = m
+  for (const el of Object.values(sfxFileChannels)) {
+    if (el) el.muted = m
+  }
+}
+export function isMuted() {
+  return muted
+}
+
+// —— 配音：单轨，跨行自动打断 ——
+// 路径规则：voice/{sceneId}/{idx:02d}_{speaker}.mp3（与 manifest.json 对齐）
+
+let voiceEl: HTMLAudioElement | null = null
+// 复用 Audio 元素：避免每次 playVoiceLine 都 new Audio 带来的开销
+let persistentVoiceEl: HTMLAudioElement | null = null
+// 移动端音频解锁标记：首次用户交互后解锁，后续 play() 不再被拦截
+let audioUnlocked = false
+
+interface VoiceManifestEntry {
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 50 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 50 页
+============================
+  scene: string
+  speaker: string
+  text: string
+  file: string
+}
+
+let voiceManifestPromise: Promise<VoiceManifestEntry[]> | null = null
+let voiceManifest: VoiceManifestEntry[] | null = null
+
+function normalizeVoiceText(text: string): string {
+  return text
+    .normalize('NFKC')
+    .replace(/[\s"'""''…—，。！？、：；（）()·]/g, '')
+}
+
+function loadVoiceManifest(): Promise<VoiceManifestEntry[]> {
+  if (!voiceManifestPromise) {
+    voiceManifestPromise = fetch(cdnUrl('voice/manifest.json'))
+      .then((response) => {
+        if (!response.ok) throw new Error(`voice manifest: ${response.status}`)
+        return response.json() as Promise<VoiceManifestEntry[]>
+      })
+      .then((data) => {
+        voiceManifest = data
+        return data
+      })
+      .catch(() => [])
+  }
+  return voiceManifestPromise
+}
+
+// 页面加载时立即预取 manifest，避免首次播放时的异步延迟
+loadVoiceManifest()
+
+function startVoice(relativePath: string) {
+  if (voiceEl) {
+    voiceEl.pause()
+    voiceEl.src = ''
+  }
+  // 复用 Audio 元素减少 new Audio 开销（移动端首次 new 会明显延迟）
+  const el = persistentVoiceEl ?? new Audio()
+  el.preload = 'auto'
+  el.src = cdnUrl(relativePath)
+  el.volume = 0.7
+  el.muted = muted
+  voiceEl = el
+  persistentVoiceEl = el
+  el.play().catch(() => {
+    // 移动端自动播放被拦截：标记未解锁，等下次用户交互重试
+    if (voiceEl === el) voiceEl = null
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 51 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 51 页
+============================
+  })
+}
+
+/** 预取某个场景的所有配音文件，让首次点击播放近乎即时 */
+export async function preloadSceneVoices(sceneId: string) {
+  const manifest = voiceManifest ?? (await loadVoiceManifest())
+  const scenePrefix = sceneId.split('#', 1)[0]
+  const urls = manifest
+    .filter((m) => m.scene === scenePrefix)
+    .map((m) => cdnUrl(m.file))
+  // 并行 fetch，浏览器会自动缓存
+  await Promise.allSettled(
+    urls.map((url) =>
+      fetch(url, { mode: 'no-cors' }).catch(() => {}),
+    ),
+  )
+}
+
+export function playVoice(relativePath: string) {
+  if (muted) return
+  voiceRequestId += 1
+  startVoice(relativePath)
+}
+
+export async function playVoiceLine(scene: string, speaker: string, text: string) {
+  const requestId = ++voiceRequestId
+  if (voiceEl) {
+    voiceEl.pause()
+    voiceEl.src = ''
+    voiceEl = null
+  }
+  if (muted) return
+  // 优先使用已缓存的 manifest（同步路径），避免 await 打断移动端播放手势链
+  const manifest = voiceManifest ?? (await loadVoiceManifest())
+  if (requestId !== voiceRequestId || muted) return
+  // 战斗/挂载前后的分段场景都带 #suffix（after / yuenu-arrival / beimang-fall），配音按主场景 id 查。
+  const voiceScene = scene.split('#', 1)[0]
+  const normalized = normalizeVoiceText(text)
+  const entry = manifest.find(
+    (item) =>
+      item.scene === voiceScene &&
+      item.speaker === speaker &&
+      normalizeVoiceText(item.text) === normalized,
+  )
+  if (entry) startVoice(entry.file)
+}
+
+/** 用户首次交互时调用，解锁移动端音频播放限制 */
+export function unlockAudio() {
+  if (audioUnlocked) return
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 52 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 52 页
+============================
+  audioUnlocked = true
+  // 播放一段静音以解锁 iOS/Android 音频上下文
+  const el = new Audio()
+  el.volume = 0
+  el.play().catch(() => {})
+  // 同时解锁 BGM
+  unlockBgm()
+}
+
+export function stopVoice() {
+  voiceRequestId += 1
+  if (voiceEl) {
+    voiceEl.pause()
+    voiceEl.src = ''
+    voiceEl = null
+  }
+}
+
+// —— 预录 sfx 文件播放（独立轨道，可与 voice 同时播）——
+// 路径规则：sfx/{name}.mp3（与 demo/public/sfx/ 对齐）
+
+export type SfxFileChannel = 'environment' | 'effect'
+
+const sfxFileChannels: Record<SfxFileChannel, HTMLAudioElement | null> = {
+  environment: null,
+  effect: null,
+}
+
+export function playSfxFile(
+  relativePath: string,
+  opts: { loop?: boolean; volume?: number; channel?: SfxFileChannel; overlap?: boolean } = {},
+) {
+  const channel = opts.channel ?? 'effect'
+  if (muted && !opts.loop) return
+  // overlap=true 时不占用单通道，允许多个短音效同时发声（战斗连续动作）
+  if (!opts.overlap) {
+    const previous = sfxFileChannels[channel]
+    if (previous) {
+      previous.pause()
+      previous.src = ''
+    }
+  }
+  const el = new Audio(cdnUrl(relativePath))
+  el.volume = opts.volume ?? 0.6
+  el.loop = opts.loop ?? false
+  el.muted = muted
+  if (!opts.overlap) sfxFileChannels[channel] = el
+  el.play().catch(() => {
+    // 循环环境音保留实例，等待下一次明确玩家交互解锁；短音效失败则释放通道。
+    if (!opts.overlap && !opts.loop && sfxFileChannels[channel] === el) sfxFileChannels[channel] = null
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 53 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 53 页
+============================
+  })
+}
+
+export function unlockSfxFile(channel: SfxFileChannel = 'environment') {
+  const el = sfxFileChannels[channel]
+  if (el?.paused) el.play().catch(() => {})
+}
+
+export function stopSfxFile(channel?: SfxFileChannel) {
+  const channels: SfxFileChannel[] = channel ? [channel] : ['environment', 'effect']
+  for (const key of channels) {
+    const el = sfxFileChannels[key]
+    if (el) {
+      el.pause()
+      el.src = ''
+      sfxFileChannels[key] = null
+    }
+  }
+}
+
+// —— 战斗动作音效：audio_generation 真实拟音（2026-07-30 试听拍板定稿）——
+// 曾用 Web Audio 振荡器程序合成，听感廉价，已废弃；素材与提示词见 docs/配音原则-人物配音-2026-07-29.md §8.3
+
+type SfxKind = 'hit' | 'interrupt' | 'rescue' | 'hold' | 'steal' | 'hurt' | 'select' | 'win' | 'fall'
+
+const ACTION_SFX: Record<SfxKind, { path: string; volume: number }> = {
+  hit:       { path: 'sfx/hit.mp3', volume: 0.6 },       // 剑击命中
+  hurt:      { path: 'sfx/hurt.mp3', volume: 0.6 },      // 受创闷哼
+  interrupt: { path: 'sfx/interrupt.mp3', volume: 0.45 }, // 打断（保留原版 ）
+  rescue:    { path: 'sfx/rescue.mp3', volume: 0.55 },    // 救援/医治
+  hold:      { path: 'sfx/hold.mp3', volume: 0.55 },     // 撑住阵脚
+  steal:     { path: 'sfx/steal.mp3', volume: 0.55 },    // 夺走
+  select:    { path: 'sfx/select.mp3', volume: 0.45 },    // 界面点击
+  fall:      { path: 'sfx/fall.mp3', volume: 0.6 },      // 坠坡
+  win:       { path: 'sfx/win.mp3', volume: 0.7 },       // 小胜
+}
+
+export function playSfx(kind: SfxKind) {
+  if (muted) return
+  const def = ACTION_SFX[kind]
+  playSfxFile(def.path, { volume: def.volume, overlap: true })
+}
+
+
+// === file: src/game/animationEngine.ts ===
+// 战斗程序化动画引擎 — Web Animations API 驱动
+// 位移由敌我双方实际 DOM 坐标计算；HUD 留在原位，只移动角色立绘。
+
+export type StrikePhase = 'idle' | 'anticipation' | 'strike' | 'impact' | 'recover'
+export type HitPhase = 'idle' | 'knockback' | 'down' | 'return'
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 54 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 54 页
+============================
+export type StrikeStyle = 'tuji' | 'jiejian' | 'daduan' | 'zhidu' | 'anqi' | 'enemy' | 'crossbow' | 'mounted'
+export type StrikeDirection = 'ltr' | 'rtl'
+
+export interface StrikeAnimCallbacks {
+  onPhase?: (phase: StrikePhase) => void
+  /** 接触帧触发；随后保持 90ms hit-stop。 */
+  onImpact?: () => void
+  /** hit-stop 结束后触发，适合启动受击动作。 */
+  onHitStopEnd?: () => void
+}
+
+export interface HitReactionOptions {
+  intensity?: number
+  lethal?: boolean
+  onPhase?: (phase: HitPhase) => void
+}
+
+export interface StrikeGeometry {
+  direction: StrikeDirection
+  distance: number
+  actorCenterX: number
+  targetCenterX: number
+}
+
+export interface CameraShakeOptions {
+  intensity?: number
+  direction?: StrikeDirection
+  originX?: number
+  originY?: number
+}
+
+const HIT_STOP_MS = 90
+
+function prefersReducedMotion(): boolean {
+  return typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches === true
+}
+
+function duration(ms: number): number {
+  return prefersReducedMotion() ? 1 : ms
+}
+
+function actorFigure(el: HTMLElement): HTMLElement {
+  return el.querySelector<HTMLElement>('.cinematic-actor__figure') ?? el
+}
+
+function waitAnim(el: HTMLElement, keyframes: Keyframe[], options: KeyframeAnimationOptions): Animation {
+  return el.animate(keyframes, { fill: 'forwards', ...options })
+}
+
+async function finishAndCancel(anim: Animation): Promise<void> {
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 55 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 55 页
+============================
+  await anim.finished.then(() => undefined).catch(() => undefined)
+  anim.cancel()
+}
+
+/** 按双方立绘的真实位置与宽度，计算接敌方向和需要跨越的像素距离。 */
+export function measureStrikeGeometry(actorEl: HTMLElement, targetEl: HTMLElement): StrikeGeometry {
+  const actorRect = actorFigure(actorEl).getBoundingClientRect()
+  const targetRect = actorFigure(targetEl).getBoundingClientRect()
+  const actorCenterX = actorRect.left + actorRect.width / 2
+  const targetCenterX = targetRect.left + targetRect.width / 2
+  const direction: StrikeDirection = targetCenterX >= actorCenterX ? 'ltr' : 'rtl'
+  const sign = direction === 'ltr' ? 1 : -1
+  // 两张立绘各保留约 22% 宽度作为近身接触距离，防止中心完全重叠。
+  const contactGap = Math.max(18, (actorRect.width + targetRect.width) * 0.22)
+  const centerDistance = Math.abs(targetCenterX - actorCenterX)
+  return {
+    direction,
+    distance: sign * Math.max(0, centerDistance - contactGap),
+    actorCenterX,
+    targetCenterX,
+  }
+}
+
+type StrikeProfile = {
+  reach: number
+  windupX: number
+  windupY: number
+  contactY: number
+  overshoot: number
+  anticipationMs: number
+  strikeMs: number
+  recoverMs: number
+  contactRotate: number
+}
+
+const STRIKE_PROFILES: Record<StrikeStyle, StrikeProfile> = {
+  // 突击：深蓄力、贴身贯穿、长距离直线冲锋。
+  tuji: { reach: 1, windupX: 16, windupY: 2, contactY: -2, overshoot: 7, anticipationMs: 135, strikeMs: 175, recoverMs: 310, contactRotate: -2 },
+  // 截剑：斜向上步切入，不完全贴身，挥剑弧线更明显。
+  jiejian: { reach: 0.86, windupX: 7, windupY: 5, contactY: -14, overshoot: 2, anticipationMs: 105, strikeMs: 215, recoverMs: 285, contactRotate: -8 },
+  // 打断：短促压步后猛撞，位移短、下盘更低、回弹更硬。
+  daduan: { reach: 0.68, windupX: 5, windupY: -3, contactY: 7, overshoot: 11, anticipationMs: 80, strikeMs: 130, recoverMs: 235, contactRotate: 5 },
+  // 掷毒：只前探少量距离，主要靠抛掷动作完成攻击。
+  zhidu: { reach: 0.24, windupX: 8, windupY: 5, contactY: -8, overshoot: 0, anticipationMs: 150, strikeMs: 220, recoverMs: 260, contactRotate: -5 },
+  // 暗器：压腕后快速扬手，人物只做极短前探，飞行距离由特效承担。
+  anqi: { reach: 0.12, windupX: 5, windupY: 3, contactY: -10, overshoot: 0, anticipationMs: 95, strikeMs: 125, recoverMs: 190, contactRotate: -7 },
+  // 弩击：人物留在原地举弩，飞行距离完全交给弩矢特效。
+  crossbow: { reach: 0.04, windupX: 3, windupY: 5, contactY: -9, overshoot: 0, anticipationMs: 190, strikeMs: 90, recoverMs: 210, contactRotate: -2 },
+  // 骑影冲杀：更深、更快的贯穿位移，回位带明显惯性。
+  mounted: { reach: 1.06, windupX: 22, windupY: 3, contactY: -4, overshoot: 14, anticipationMs: 115, strikeMs: 145, recoverMs: 360, contactRotate: 4 },
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 56 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 56 页
+============================
+  enemy: { reach: 0.94, windupX: 10, windupY: 2, contactY: -3, overshoot: 4, anticipationMs: 110, strikeMs: 185, recoverMs: 290, contactRotate: 3 },
+}
+
+/** 多阶段攻击：蓄力 → 按真实坐标接敌 → 90ms 命中冻结 → 回位。 */
+export async function playStrikeAnimation(
+  actorEl: HTMLElement,
+  targetEl: HTMLElement,
+  style: StrikeStyle,
+  callbacks?: StrikeAnimCallbacks,
+): Promise<void> {
+  const figure = actorFigure(actorEl)
+  const geometry = measureStrikeGeometry(actorEl, targetEl)
+  const profile = STRIKE_PROFILES[style]
+  const sign = geometry.direction === 'ltr' ? 1 : -1
+  const travel = geometry.distance * profile.reach
+  const contactX = travel + sign * profile.overshoot
+  const windupX = -sign * profile.windupX
+
+  callbacks?.onPhase?.('anticipation')
+  const anticipation = waitAnim(
+    figure,
+    [
+      { transform: 'translate3d(0, 0, 0) rotate(0deg) scale(1)', filter: 'brightness(1)' },
+      {
+        transform: `translate3d(${windupX}px, ${profile.windupY}px, 0) rotate(${-sign * profile.contactRotate * 0.35}deg) scaleX(0.93) scaleY(1.055)`,
+        filter: 'brightness(0.88)',
+      },
+    ],
+    { duration: duration(profile.anticipationMs), easing: 'ease-in' },
+  )
+  await finishAndCancel(anticipation)
+
+  callbacks?.onPhase?.('strike')
+  const strike = waitAnim(
+    figure,
+    style === 'jiejian'
+      ? [
+          { transform: `translate3d(${windupX}px, ${profile.windupY}px, 0) rotate(${sign * 3}deg) scale(0.96)` },
+          { transform: `translate3d(${contactX * 0.55}px, ${profile.contactY - 8}px, 0) rotate(${-sign * 11}deg) scaleX(1.04) scaleY(0.96)`, offset: 0.52 },
+          { transform: `translate3d(${contactX}px, ${profile.contactY}px, 0) rotate(${sign * profile.contactRotate}deg) scaleX(1.08) scaleY(0.93)`, filter: 'brightness(1.18)' },
+        ]
+      : style === 'daduan'
+        ? [
+            { transform: `translate3d(${windupX}px, ${profile.windupY}px, 0) rotate(${-sign * 2}deg) scaleX(0.9) scaleY(1.08)` },
+            { transform: `translate3d(${contactX * 0.38}px, ${profile.contactY + 4}px, 0) rotate(${sign * 1}deg) scaleX(1.14) scaleY(0.87)`, offset: 0.42 },
+            { transform: `translate3d(${contactX}px, ${profile.contactY}px, 0) rotate(${sign * profile.contactRotate}deg) scaleX(1.2) scaleY(0.82)`, filter: 'brightness(1.2)' },
+          ]
+        : style === 'zhidu' || style === 'anqi' || style === 'crossbow'
+          ? [
+              { transform: `translate3d(${windupX}px, ${profile.windupY}px, 0) rotate(${sign * 5}deg) scale(0.96)` },
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 57 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 57 页
+============================
+              { transform: `translate3d(${contactX * 0.7}px, ${profile.contactY - 7}px, 0) rotate(${-sign * 8}deg) scale(1.04)`, offset: 0.58 },
+              { transform: `translate3d(${contactX}px, ${profile.contactY}px, 0) rotate(${sign * profile.contactRotate}deg) scale(1.02)`, filter: 'brightness(1.14) saturate(1.2)' },
+            ]
+          : style === 'mounted'
+            ? [
+                { transform: `translate3d(${windupX}px, ${profile.windupY}px, 0) rotate(${-sign * 3}deg) scaleX(0.9) scaleY(1.06)` },
+                { transform: `translate3d(${contactX * 0.72}px, ${profile.contactY - 4}px, 0) rotate(${sign * 2}deg) scaleX(1.19) scaleY(0.87)`, offset: 0.55 },
+                { transform: `translate3d(${contactX}px, ${profile.contactY}px, 0) rotate(${sign * profile.contactRotate}deg) scaleX(1.14) scaleY(0.9)`, filter: 'brightness(1.2)' },
+              ]
+            : [
+              { transform: `translate3d(${windupX}px, ${profile.windupY}px, 0) rotate(0deg) scaleX(0.93) scaleY(1.055)` },
+              { transform: `translate3d(${contactX * 0.82}px, ${profile.contactY}px, 0) rotate(${sign * profile.contactRotate}deg) scaleX(1.14) scaleY(0.89)`, offset: 0.68 },
+              { transform: `translate3d(${contactX}px, ${profile.contactY}px, 0) rotate(${sign * profile.contactRotate}deg) scaleX(1.07) scaleY(0.96)`, filter: 'brightness(1.18)' },
+            ],
+    { duration: duration(profile.strikeMs), easing: 'cubic-bezier(0.16, 1, 0.3, 1)' },
+  )
+  await finishAndCancel(strike)
+
+  // 接触姿势在冻结和受击启动期间保持不动。
+  const hold = waitAnim(
+    figure,
+    [{ transform: `translate3d(${contactX}px, ${profile.contactY}px, 0) rotate(${sign * profile.contactRotate}deg) scaleX(1.07) scaleY(0.96)`, filter: 'brightness(1.18)' }],
+    // hit-stop 是节奏反馈而非持续运动，减少动态效果时仍保留完整 90ms。
+    { duration: HIT_STOP_MS },
+  )
+  callbacks?.onPhase?.('impact')
+  callbacks?.onImpact?.()
+  await finishAndCancel(hold)
+  callbacks?.onHitStopEnd?.()
+
+  callbacks?.onPhase?.('recover')
+  const recover = waitAnim(
+    figure,
+    [
+      { transform: `translate3d(${contactX}px, ${profile.contactY}px, 0) rotate(${sign * profile.contactRotate}deg) scaleX(1.07) scaleY(0.96)`, filter: 'brightness(1.18)' },
+      { transform: `translate3d(${sign * 8}px, 2px, 0) rotate(${-sign * 2}deg) scaleX(0.98) scaleY(1.02)`, filter: 'brightness(1)', offset: style === 'daduan' ? 0.6 : 0.46 },
+      { transform: 'translate3d(0, 0, 0) rotate(0deg) scale(1)', filter: 'brightness(1)' },
+    ],
+    { duration: duration(profile.recoverMs), easing: style === 'daduan' ? 'cubic-bezier(0.2, 0.75, 0.35, 1)' : 'cubic-bezier(0.34, 1.35, 0.64, 1)' },
+  )
+  await finishAndCancel(recover)
+  callbacks?.onPhase?.('idle')
+}
+
+/** 受击三段式：击退 → 倒地 → 回位；致命攻击停留在倒地姿态等待状态提交。 */
+export async function playHitReaction(
+  el: HTMLElement,
+  direction: StrikeDirection,
+  options: HitReactionOptions = {},
+): Promise<void> {
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 58 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 58 页
+============================
+  const figure = actorFigure(el)
+  const sign = direction === 'ltr' ? 1 : -1
+  const intensity = options.intensity ?? 1
+  const knockback = sign * 18 * intensity
+
+  options.onPhase?.('knockback')
+  const knock = waitAnim(
+    figure,
+    [
+      { transform: 'translate3d(0, 0, 0) rotate(0deg) scale(1)', filter: 'brightness(1)' },
+      { transform: 'translate3d(0, 0, 0) rotate(0deg) scaleX(1.2) scaleY(0.8)', filter: 'brightness(2.35) saturate(0.25)', offset: 0.25 },
+      { transform: `translate3d(${knockback}px, 2px, 0) rotate(${sign * 4}deg) scaleX(0.88) scaleY(1.1)`, filter: 'brightness(0.72)' },
+    ],
+    { duration: duration(135), easing: 'cubic-bezier(0.18, 0.82, 0.3, 1)' },
+  )
+  await finishAndCancel(knock)
+
+  options.onPhase?.('down')
+  const downX = knockback + sign * 5 * intensity
+  const downRotate = sign * 11 * intensity
+  const down = waitAnim(
+    figure,
+    [
+      { transform: `translate3d(${knockback}px, 2px, 0) rotate(${sign * 4}deg) scaleX(0.88) scaleY(1.1)`, filter: 'brightness(0.72)' },
+      { transform: `translate3d(${downX}px, ${8 + 4 * intensity}px, 0) rotate(${downRotate}deg) scaleX(1.05) scaleY(0.9)`, filter: 'brightness(0.64) saturate(0.72)' },
+    ],
+    { duration: duration(options.lethal ? 210 : 145), easing: 'cubic-bezier(0.4, 0, 0.8, 0.65)' },
+  )
+  await down.finished.then(() => undefined).catch(() => undefined)
+
+  if (options.lethal) {
+    // fill:forwards 保持倒地；调用方紧接着提交状态并卸载目标。
+    options.onPhase?.('idle')
+    return
+  }
+  down.cancel()
+
+  options.onPhase?.('return')
+  const returnAnim = waitAnim(
+    figure,
+    [
+      { transform: `translate3d(${downX}px, ${8 + 4 * intensity}px, 0) rotate(${downRotate}deg) scaleX(1.05) scaleY(0.9)`, filter: 'brightness(0.64) saturate(0.72)' },
+      { transform: `translate3d(${sign * 6}px, -2px, 0) rotate(${-sign * 2}deg) scaleX(0.97) scaleY(1.04)`, filter: 'brightness(1)', offset: 0.55 },
+      { transform: 'translate3d(0, 0, 0) rotate(0deg) scale(1)', filter: 'brightness(1)' },
+    ],
+    { duration: duration(235), easing: 'cubic-bezier(0.25, 1.35, 0.5, 1)' },
+  )
+  await finishAndCancel(returnAnim)
+  options.onPhase?.('idle')
+}
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 59 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 59 页
+============================
+
+/** 施法/治疗动画 — 下沉蓄力 → 上升释放。 */
+export async function playCastAnimation(el: HTMLElement): Promise<void> {
+  const figure = actorFigure(el)
+  const anim = waitAnim(
+    figure,
+    [
+      { transform: 'translateY(0) scale(1)', filter: 'brightness(1) drop-shadow(0 0 0 transparent)' },
+      { transform: 'translateY(4px) scale(0.97)', filter: 'brightness(0.9)', offset: 0.25 },
+      { transform: 'translateY(-6px) scale(1.03)', filter: 'brightness(1.25) drop-shadow(0 0 16px rgba(157,184,154,0.6))', offset: 0.55 },
+      { transform: 'translateY(0) scale(1)', filter: 'brightness(1) drop-shadow(0 0 0 transparent)' },
+    ],
+    { duration: duration(620), easing: 'ease-in-out' },
+  )
+  await finishAndCancel(anim)
+}
+
+/** 镜头震动，以实际受击目标为震源，并按来刀方向偏移。 */
+export function playCameraShake(container: HTMLElement, options: CameraShakeOptions = {}): void {
+  const intensity = options.intensity ?? 1
+  const sign = options.direction === 'rtl' ? -1 : 1
+  container.style.transformOrigin = `${options.originX ?? 50}% ${options.originY ?? 50}%`
+  const shake = container.animate(
+    [
+      { transform: 'translate(0, 0) scale(1)' },
+      { transform: `translate(${-sign * 4 * intensity}px, ${2 * intensity}px) scale(1.008)`, offset: 0.2 },
+      { transform: `translate(${sign * 3 * intensity}px, ${-1 * intensity}px) scale(1.005)`, offset: 0.5 },
+      { transform: `translate(${-sign * 2 * intensity}px, 0) scale(1.002)`, offset: 0.75 },
+      { transform: 'translate(0, 0) scale(1)' },
+    ],
+    { duration: duration(240), easing: 'linear' },
+  )
+  shake.onfinish = () => shake.cancel()
+}
+
+
+// === file: src/ui/flags.ts ===
+import type { StoryFlags, StoryFlagValue } from '../game/save'
+
+export interface FlagCondition {
+  flag: string
+  equals?: StoryFlagValue
+  exists?: boolean
+  /** 数组或字符串 flag 包含指定子项（如 c7_saved_registers 含 'huji'） */
+  contains?: string
+}
+
+export interface FlagLineVariant<T> {
+  when: FlagCondition | readonly FlagCondition[]
+  match?: 'all' | 'any'
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 60 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 60 页
+============================
+  lines: readonly T[]
+}
+
+export interface ChoiceFlagBinding {
+  flag: string
+  values: Readonly<Record<string, StoryFlagValue>>
+}
+
+export function matchesFlagCondition(flags: StoryFlags, condition: FlagCondition): boolean {
+  const value = flags[condition.flag]
+  if (condition.exists !== undefined) {
+    const exists = value !== undefined
+    if (exists !== condition.exists) return false
+  }
+  if ('equals' in condition && value !== condition.equals) return false
+  if (condition.contains !== undefined) {
+    if (Array.isArray(value)) return value.includes(condition.contains)
+    if (typeof value === 'string') return value.split(',').includes(condition.contains)
+    return false
+  }
+  return true
+}
+
+export function matchesFlagVariant<T>(flags: StoryFlags, variant: FlagLineVariant<T>): boolean {
+  const conditions = Array.isArray(variant.when) ? variant.when : [variant.when]
+  if (conditions.length === 0) return true
+  return variant.match === 'any'
+    ? conditions.some((condition) => matchesFlagCondition(flags, condition))
+    : conditions.every((condition) => matchesFlagCondition(flags, condition))
+}
+
+/**
+ * 按声明顺序返回第一个满足 flag 条件的 lines；没有命中时保留原 lines。
+ * 调用者可用多个条件组合任意后续场景分支，不需要在渲染组件里写角色专用判断。
+ */
+export function selectLinesByFlags<T>(
+  fallback: readonly T[],
+  variants: readonly FlagLineVariant<T>[] | undefined,
+  flags: StoryFlags,
+): readonly T[] {
+  return variants?.find((variant) => matchesFlagVariant(flags, variant))?.lines ?? fallback
+}
+
+export function flagPatchForChoice(binding: ChoiceFlagBinding | undefined, tag: string): Partial<StoryFlags> {
+  if (!binding || !(tag in binding.values)) return {}
+  return { [binding.flag]: binding.values[tag] }
+}
+
+
+// === file: src/ui/caseFragmentData.ts ===
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 61 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 61 页
+============================
+export interface CaseFragment {
+  id: 'mengjia' | 'qingling' | 'xiaoman'
+  owner: string
+  source: string
+  placeholder: string
+}
+
+export const CASE_FRAGMENTS: readonly CaseFragment[] = [
+  {
+    id: 'mengjia',
+    owner: '孟甲',
+    source: '行囊暗层',
+    placeholder: '行囊底布下藏着一道旧封口。',
+  },
+  {
+    id: 'qingling',
+    owner: '青翎',
+    source: '行囊',
+    placeholder: '束带未断，暗层没有被伏兵发现。',
+  },
+  {
+    id: 'xiaoman',
+    owner: '小满',
+    source: '透骨钉',
+    placeholder: '钉尾无军匠戳记，出自私坊。',
+  },
+] as const
+
+
+// === file: src/ui/c7ChoiceData.ts ===
+import type { C7Choice } from './c8ReportData'
+
+export type C4Tactic = 'ambush' | 'valley' | 'rear'
+
+export interface C7ChoiceOption {
+  id: C7Choice
+  title: string
+  summary: string
+}
+
+export const C7_CHOICE_OPTIONS: readonly C7ChoiceOption[] = [
+  {
+    id: 'register',
+    title: '保户籍',
+    summary: '赶赴官署火场，最多抢出三册。户籍若存，失散者仍有姓名可循。',
+  },
+  {
+    id: 'troops',
+    title: '截残军',
+    summary: '追踪五股逃兵留下的痕迹，判断逃路，抢在他们越过北道前封堵。',
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 62 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 62 页
+============================
+  },
+  {
+    id: 'camp',
+    title: '护疫营',
+    summary: '赶赴疫营，护住医篷、伤患与药材，撑到撤离。',
+  },
+] as const
+
+export const C7_LOCKED_CHOICE_BY_TACTIC: Record<C4Tactic, C7Choice> = {
+  ambush: 'camp',
+  valley: 'troops',
+  rear: 'register',
+}
+
+export const C4_TACTIC_LABELS: Record<C4Tactic, string> = {
+  ambush: '上山设伏',
+  valley: '入谷接应',
+  rear: '自领断后',
+}
+
+export const C7_LOCK_REASON_BY_TACTIC: Record<C4Tactic, string> = {
+  ambush: '先前选择“上山设伏”，当前无法及时转往疫营。',
+  valley: '先前选择“入谷接应”，当前无法及时追截残军。',
+  rear: '先前选择“自领断后”，当前已错过保全户籍的时机。',
+}
+
+
+// === file: src/ui/c8ReportData.ts ===
+import type { EvacSurvival, SavedRegisterId } from '../game/save'
+
+export type C7Choice = 'register' | 'troops' | 'camp'
+
+export interface MilitaryReportSection {
+  heading: string
+  result: string
+  cost: string
+}
+
+export const C8_FIXED_REPORTS = {
+  surrender: {
+    heading: '韩王受降军报',
+    result: '韩王安素车出降，新郑城门、武库、粮仓俱已接收。',
+    cost: '城中积尸未敛，疫病与征粮摩擦尚待处置。',
+  },
+  canal: {
+    heading: '渠成军报',
+    result: '郑国渠全线通水，关中沃野自此可期。',
+    cost: '渠成同旬，韩国覆亡。',
+  },
+} as const satisfies Record<string, MilitaryReportSection>
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 63 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 63 页
+============================
+
+export const C8_REPORT_VARIANTS: Record<C7Choice, MilitaryReportSection> = {
+  register: {
+    heading: '官署急报 · 保户籍',
+    result: '官署简册抢出三卷，尚待核验主档。',
+    cost: '其余简册焚毁，城中旧籍难以复原。',
+  },
+  troops: {
+    heading: '官署急报 · 截残军',
+    result: '残军溃散，北道者寡。',
+    cost: '官署与疫营无人回援，火势与伤患只能各自苦撑。',
+  },
+  camp: {
+    heading: '官署急报 · 护疫营',
+    result: '疫营完成撤离，伤患存活数尚待核验。',
+    cost: '官署户籍焚毁，北道残军脱出。',
+  },
+}
+
+export function resolveC8ReportVariant(
+  choice: C7Choice,
+  savedRegisters: readonly SavedRegisterId[] = [],
+  evacSurvival?: EvacSurvival,
+): MilitaryReportSection {
+  if (choice === 'register') {
+    const censusSaved = savedRegisters.includes('huji')
+    return {
+      heading: '官署急报 · 保户籍',
+      // 军报正文为 v3.5 冻结文案（story.ts 文本轨从这里取）
+      result: censusSaved ? '户籍主档在，人名可循。' : '户籍主档焚毁，其余三册得存。',
+      cost: censusSaved
+        ? '粮册、地图等未必俱存，城中善后仍缺凭据。'
+        : '韩蕙等失散者，再无完整名册可查。',
+    }
+  }
+
+  if (choice === 'camp') {
+    return {
+      heading: '官署急报 · 护疫营',
+      result: evacSurvival === 'high' ? '疫营伤者，多数得活。' : '疫营伤者，得活者半。',
+      cost:
+        evacSurvival === 'high'
+          ? '官署户籍焚毁，北道残军脱出。'
+          : '医篷伤损过半，官署户籍亦未能保全。',
+    }
+  }
+
+  return C8_REPORT_VARIANTS.troops
+}
+
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 64 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 64 页
+============================
+
+// === file: src/ui/fireRescueData.ts ===
+import type { SavedRegisterId } from '../game/save'
+
+export interface RegisterPile {
+  id: SavedRegisterId
+  /** 显示用中文名（id 统一拼音，中文只作 label） */
+  label: string
+  subtitle: string
+  placeholder: string
+  /** 抢出该堆简册所需的基础时间；换架还会额外耗时。 */
+  rescueSeconds: number
+}
+
+export const REGISTER_PILES: readonly RegisterPile[] = [
+  { id: 'huji', label: '户籍', subtitle: '人名与里籍', placeholder: '可循册查找失散百姓。', rescueSeconds: 5 },
+  { id: 'liangce', label: '粮册', subtitle: '仓廪出入', placeholder: '可核城中余粮与赈济去向。', rescueSeconds: 3 },
+  { id: 'ditu', label: '地图', subtitle: '城道关津', placeholder: '标有城道、水井与关津。', rescueSeconds: 4 },
+  { id: 'xingyu', label: '刑狱', subtitle: '案牍囚籍', placeholder: '记着在押者与未结旧案。', rescueSeconds: 3 },
+  { id: 'junji', label: '军籍', subtitle: '卒伍名录', placeholder: '可核降卒编伍与旧部去向。', rescueSeconds: 4 },
+]
+
+export interface FireThreat {
+  id: SavedRegisterId
+  /** 当全局剩余时间降至该值时，此堆被烧毁。 */
+  burnsAt: number
+}
+
+export interface FireRescueStep {
+  saved: SavedRegisterId[]
+  burned: SavedRegisterId[]
+  secondsLeft: number
+  lastPile: SavedRegisterId | null
+  cost: number
+  rescued: boolean
+}
+
+const pileIndex = (id: SavedRegisterId) => REGISTER_PILES.findIndex((pile) => pile.id === id)
+
+/**
+ * 每次进火场都会重新分配火舌逼近次序。危险是公开的，但不存在可背诵的固定点选顺序。
+ */
+export function createFireThreatSchedule(
+  durationSeconds: number,
+  random: () => number = Math.random,
+): FireThreat[] {
+  const shuffled = REGISTER_PILES.map((pile) => pile.id)
+  for (let index = shuffled.length - 1; index > 0; index -= 1) {
+    const swapWith = Math.floor(random() * (index + 1))
+    ;[shuffled[index], shuffled[swapWith]] = [shuffled[swapWith], shuffled[index]]
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 65 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 65 页
+============================
+  }
+  return shuffled.map((id, index) => ({
+    id,
+    burnsAt: Math.max(0, durationSeconds - 3 * (index + 1)),
+  }))
+}
+
+export function burnedRegisters(
+  schedule: readonly FireThreat[],
+  secondsLeft: number,
+  saved: readonly SavedRegisterId[],
+): SavedRegisterId[] {
+  return schedule
+    .filter((threat) => threat.burnsAt >= secondsLeft && !saved.includes(threat.id))
+    .map((threat) => threat.id)
+}
+
+/**
+ * 抢册会真实消耗倒计时；跨过相邻书架还会多耗一秒。目标在动作开始时被抱走，
+ * 但这段时间内火会继续烧掉别处，因此“先拿哪堆”必须随本局火势调整。
+ */
+export function resolveFireRescueStep({
+  saved,
+  burned,
+  secondsLeft,
+  lastPile,
+  schedule,
+  id,
+  maxSaved = 3,
+}: {
+  saved: readonly SavedRegisterId[]
+  burned: readonly SavedRegisterId[]
+  secondsLeft: number
+  lastPile: SavedRegisterId | null
+  schedule: readonly FireThreat[]
+  id: SavedRegisterId
+  maxSaved?: number
+}): FireRescueStep {
+  const pile = REGISTER_PILES.find((candidate) => candidate.id === id)
+  if (!pile || saved.includes(id) || burned.includes(id) || saved.length >= maxSaved || secondsLeft <= 0) {
+    return { saved: [...saved], burned: [...burned], secondsLeft, lastPile, cost: 0, rescued: false }
+  }
+  const shelfDistance = lastPile == null ? 0 : Math.abs(pileIndex(lastPile) - pileIndex(id))
+  const cost = pile.rescueSeconds + (shelfDistance >= 2 ? 1 : 0)
+  const nextSaved = [...saved, id].slice(0, maxSaved)
+  const nextSeconds = Math.max(0, secondsLeft - cost)
+  const nextBurned = [...new Set([
+    ...burned,
+    ...burnedRegisters(schedule, nextSeconds, nextSaved),
+  ])]
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 66 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 66 页
+============================
+  return {
+    saved: nextSaved,
+    burned: nextBurned,
+    secondsLeft: nextSeconds,
+    lastPile: id,
+    cost,
+    rescued: true,
+  }
+}
+
+/** 火场面板文案（v3.5 冻结稿附录逐字；story.ts C7_FIRE 同源引用） */
+export const FIRE_TEXT = {
+  instruction: '火路每次都不同。抢册会耗时，跨架更慢；先看火势，再决定舍哪一堆。',
+  withdraw: '烟呛得人睁不开眼。只能走了。',
+} as const
+
+export function takeRegister(
+  current: readonly SavedRegisterId[],
+  id: SavedRegisterId,
+  maxSaved = 3,
+): SavedRegisterId[] {
+  if (current.includes(id) || current.length >= maxSaved) return [...current]
+  return [...current, id].slice(0, maxSaved)
+}
+
+
+// === file: src/ui/pursuitInterceptData.ts ===
+export type PursuitRouteId = 'north' | 'market' | 'canal'
+
+export interface PursuitRoute {
+  id: PursuitRouteId
+  label: string
+  shortLabel: string
+}
+
+export interface PursuitWave {
+  id: number
+  route: PursuitRouteId
+  clue: string
+}
+
+export const PURSUIT_ROUTES: readonly PursuitRoute[] = [
+  { id: 'north', label: '北门驰道', shortLabel: '北道' },
+  { id: 'market', label: '西市窄巷', shortLabel: '西市' },
+  { id: 'canal', label: '渠桥水门', shortLabel: '水门' },
+]
+
+const ROUTE_CLUES: Record<PursuitRouteId, readonly string[]> = {
+  north: [
+    '城墙根传来密集马蹄，折断的旌旗一路朝北。',
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 67 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 67 页
+============================
+    '石道上尘土笔直扬起，残骑正贴着北城墙突围。',
+  ],
+  market: [
+    '市棚接连倒下，谷草和碎陶一路撒向西市。',
+    '坊墙后有人撞开木门，脚步正钻进西市窄巷。',
+  ],
+  canal: [
+    '水沟边全是新鲜湿泥脚印，渠桥下传来甲片碰响。',
+    '残兵弃马涉水，水门方向浮起一串急促波纹。',
+  ],
+}
+
+/** 五股残兵的逃路每局重排，且不会连续两股走同一路。 */
+export function createPursuitWaves(random: () => number = Math.random, count = 5): PursuitWave[] {
+  const waves: PursuitWave[] = []
+  let previous: PursuitRouteId | null = null
+
+  for (let index = 0; index < count; index++) {
+    const candidates = PURSUIT_ROUTES.filter((route) => route.id !== previous)
+    const route = candidates[Math.min(candidates.length - 1, Math.floor(random() * candidates.length))]
+    const clues = ROUTE_CLUES[route.id]
+    const clue = clues[Math.min(clues.length - 1, Math.floor(random() * clues.length))]
+    waves.push({ id: index + 1, route: route.id, clue })
+    previous = route.id
+  }
+
+  return waves
+}
+
+export function pursuitResultLabel(intercepted: number, total: number): string {
+  if (intercepted >= total - 1) return '北逃通道被截断。回旆盟残军再难整队。'
+  if (intercepted >= Math.ceil(total / 2)) return '主队被截，仍有零散残骑逃入夜色。'
+  return '只截住后队。残军已有多人越过北道。'
+}
+
+
+// === file: src/ui/scrollInspectData.ts ===
+import type { ScrollInspectStack } from './ScrollInspect'
+
+// S3 三叠简：封面先给查验方向，翻开后才呈现记录结果。
+export const S3_SCROLL_STACKS: readonly ScrollInspectStack[] = [
+  {
+    id: 'qukou',
+    label: '渠口查验记档·十年',
+    cover: '渠工营逐日查验，十年记录俱在。',
+    detail: '渠口——十年，无一错漏。',
+  },
+  {
+    id: 'rujing',
+    label: '隐密署入境记档',
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 68 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 68 页
+============================
+    cover: '核对韩使入秦、离秦的关津簿。',
+    detail: '入境——韩使，有入，无出。',
+    finding: {
+      title: '入境——韩使，有入，无出。',
+      detail: '',
+    },
+  },
+  {
+    id: 'guanyi',
+    label: '秦韩馆驿传讯记档',
+    cover: '查验馆驿往来与递送日期。',
+    detail: '馆驿——每隔五日，向韩境传讯一次。',
+    finding: {
+      title: '馆驿——每隔五日，向韩境传讯一次。',
+      detail: '',
+    },
+  },
+]
+
+export const C1_SCROLL_STACKS: readonly ScrollInspectStack[] = [
+  {
+    id: 'mengjia',
+    label: '孟甲·行囊暗层',
+    cover: '孟甲记得：要紧物证从不只放一层。',
+    detail: '行囊底布比别处厚，压线下藏着一道旧封口。',
+    finding: {
+      title: '行囊另有暗层。',
+      detail: '尺寸正好容下一卷密令。',
+    },
+  },
+  {
+    id: 'qingling',
+    label: '青翎·行囊',
+    cover: '青翎把人拖出重围时，行囊一直随身。',
+    detail: '束带未断，外层虽被翻动，底部封线仍完整。',
+    finding: {
+      title: '暗层未被伏兵发现。',
+      detail: '坠坡之后，没有旁人碰过这道封线。',
+    },
+  },
+  {
+    id: 'xiaoman',
+    label: '小满·透骨钉',
+    cover: '小满留下了从北芒胸口取出的透骨钉。',
+    detail: '钉尾没有秦军匠作戳记，淬火纹也不是官坊制式。',
+    finding: {
+      title: '透骨钉出自私坊。',
+      detail: '伏杀者不像韩军，更像受人豢养的私兵。',
+    },
+  },
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 69 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 69 页
+============================
+]
+
+
+// === file: src/ui/settleData.ts ===
+import type { StoryFlags } from '../game/save'
+
+export type SettleRating = 'head' | 'second' | 'balanced'
+
+export const SETTLE_RATING_LABELS: Record<SettleRating, string> = {
+  head: '头功',
+  second: '次功',
+  balanced: '功过相抵',
+}
+
+export function branchOutcomeSucceeded(flags: StoryFlags): boolean {
+  if (flags.c7_choice === 'troops') {
+    return flags.c7_troops_intercepted == null || flags.c7_troops_intercepted >= 3
+  }
+  if (flags.c7_choice === 'register') return flags.c7_saved_registers?.includes('huji') ?? false
+  if (flags.c7_choice === 'camp') return flags.evac_survival === 'high'
+  return false
+}
+
+export function calculateSettleRating(flags: StoryFlags): SettleRating {
+  let score = 0
+  if (flags.c4_performance === 'high') score += 2
+  else if (flags.c4_performance === 'mid' || (!flags.c4_performance && flags.c4_tactic)) score += 1
+  if (flags.c7_choice) score += 1
+  if (branchOutcomeSucceeded(flags)) score += 1
+
+  if (score >= 4) return 'head'
+  if (score >= 2) return 'second'
+  return 'balanced'
+}
+
+export function c4PerformanceLabel(flags: StoryFlags): string {
+  if (flags.c4_performance === 'high') return '伤损轻微'
+  if (flags.c4_performance === 'mid') return '付出伤损'
+  if (flags.c4_performance === 'low') return '惨胜守成'
+  return flags.c4_tactic ? '旧档未记伤损' : '尚未参战'
+}
+
+export function s6OutcomeLabel(flags: StoryFlags): string {
+  const outcomes = [
+    flags.s6_yutu_saved === true ? '明卷在' : flags.s6_yutu_saved === false ? '明卷失' : null,
+    flags.s6_mengjia_saved === true ? '亲救孟甲' : flags.s6_mengjia_saved === false ? '青翎折返救人' : null,
+    flags.s6_cart_through === true ? '谷口守住' : flags.s6_cart_through === false ? '旧部四散' : null,
+  ].filter(Boolean)
+  return outcomes.length > 0 ? outcomes.join(' · ') : '旧档未记取舍'
+}
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 70 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 70 页
+============================
+
+export function c4TacticLabel(flags: StoryFlags): string {
+  const labels = {
+    ambush: '上山设伏',
+    valley: '入谷接应',
+    rear: '自领断后',
+  } as const
+  return flags.c4_tactic ? labels[flags.c4_tactic] : '尚未选择战术'
+}
+
+export function c7ChoiceLabel(flags: StoryFlags): string {
+  const labels = {
+    register: '抢救官署简册',
+    troops: '截击残军',
+    camp: '护送疫营',
+  } as const
+  if (flags.c7_choice === 'troops' && flags.c7_troops_intercepted != null) {
+    return `${labels.troops} · 截下 ${flags.c7_troops_intercepted}/5 股`
+  }
+  return flags.c7_choice ? labels[flags.c7_choice] : '尚未处置'
+}
+
+export function c7OutcomeLabel(flags: StoryFlags): string {
+  if (flags.c7_choice === 'troops' && flags.c7_troops_intercepted != null) {
+    return `北道追截：截下 ${flags.c7_troops_intercepted}/5 股残军。`
+  }
+  return flags.c7_choice ? SETTLE_TEXT.c7Outcome[flags.c7_choice] : '尚无战果记录'
+}
+
+/**
+ * 结算面板文案（v3.5 冻结稿附录逐字 + 任务 E §3 裁决的失期秦卒双版本）。
+ * story.ts 的 C8_SETTLE 从这里取数，保持唯一数据源。
+ */
+export const SETTLE_TEXT = {
+  title: '玄羽军报 · 核验',
+  c7Outcome: {
+    register: '官署火起：抢救了官署简册。',
+    troops: '截了残军。',
+    camp: '护了疫营。',
+  } as Record<NonNullable<StoryFlags['c7_choice']>, string>,
+  hanhui: { reunited: '韩蕙：父女重逢。', lost: '名册无迹。' },
+  soldierBranch: { pleaded: '谷口，守住了。', silent: '笞八十，已领。' },
+  ratingLine: {
+    head: '“军功爵，进一级。”',
+    second: '“战功在册。”',
+    balanced: '“功过相抵。下次，挣回来。”',
+  } as Record<SettleRating, string>,
+} as const
+
+
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 71 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 71 页
+============================
+// === file: src/ui/shichengData.ts ===
+export interface ShichengCard {
+  id: 'c2_fatigue' | 'c2_guests' | 'c8_surrender' | 'c8_canal'
+  chapter: 'C2' | 'C8'
+  title: string
+  history: string
+  experienced: string
+}
+
+// 卡面文案为 v3.5 冻结稿附录逐字（任务 E §1：ui/*Data.ts 为唯一数据源，story.ts 从这里导入）
+export const SHICHENG_CARDS: readonly ShichengCard[] = [
+  {
+    id: 'c2_fatigue',
+    chapter: 'C2',
+    title: '疲秦计',
+    history:
+      '《史记·河渠书》记：韩国派水工郑国入秦，劝秦凿泾水修渠，意图疲秦。修渠途中，事觉，秦欲杀郑国。',
+    experienced: '没人记下那场要挟。',
+  },
+  {
+    id: 'c2_guests',
+    chapter: 'C2',
+    title: '逐客令',
+    history: '《史记·李斯列传》记：郑国事发，秦王下令逐客。李斯上《谏逐客书》，秦王乃除逐客之令。',
+    experienced: '除令的台阶，是一卷伪令垫出来的。',
+  },
+  {
+    id: 'c8_surrender',
+    chapter: 'C8',
+    title: '韩亡',
+    history: '《史记·秦始皇本纪》记：十七年，内史腾攻韩，得韩王安，尽纳其地。',
+    experienced: '降书、城门、武库、粮仓、户籍——史官只记了一个“得”字。',
+  },
+  {
+    id: 'c8_canal',
+    chapter: 'C8',
+    title: '郑国渠',
+    history: '《史记·河渠书》记：渠成，溉田四万余顷，关中为沃野，秦以富强，卒并诸侯。',
+    experienced: '一个国亡了。一条渠成了。',
+  },
+]
+
+
+// === file: src/ui/UiMechanicsPreview.tsx ===
+import { useState } from 'react'
+import type { StoryFlags } from '../game/save'
+import C7ChoicePanel from './C7ChoicePanel'
+import C8ReportPanel from './C8ReportPanel'
+import CaseFragmentBoard from './CaseFragmentBoard'
+import ChapterCard from './ChapterCard'
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 72 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 72 页
+============================
+import {
+  C4_TACTIC_LABELS,
+  C7_CHOICE_OPTIONS,
+  C7_LOCKED_CHOICE_BY_TACTIC,
+  type C4Tactic,
+} from './c7ChoiceData'
+import type { C7Choice } from './c8ReportData'
+import { C4_TACTIC_REPORTS } from './c4TacticData'
+
+const ART_PLACEHOLDERS = [
+  { id: 'bg_qukou.png', label: '渠口查验', src: 'https://stats.puck-muling.top/game/assets/bg_qukou.webp', type: 'background' },
+  { id: 'bg_hangong.png', label: '韩王宫', src: 'https://stats.puck-muling.top/game/assets/bg_hangong.webp', type: 'background' },
+  { id: 'bg_xinzheng.png', label: '新郑受降', src: 'https://stats.puck-muling.top/game/assets/bg_xinzheng.webp', type: 'background' },
+  { id: 'bg_guanshu_huo.png', label: '官署火起', src: 'https://stats.puck-muling.top/game/assets/bg_guanshu_huo.webp', type: 'background' },
+  { id: '韩王安', label: '韩王安', src: 'https://stats.puck-muling.top/game/assets/npc_hanwang.webp', type: 'portrait' },
+  { id: '司马朔', label: '司马朔', src: 'https://stats.puck-muling.top/game/assets/npc_simashuo.webp', type: 'portrait' },
+] as const
+
+function firstAvailableChoice(tactic: C4Tactic): C7Choice {
+  const locked = C7_LOCKED_CHOICE_BY_TACTIC[tactic]
+  return C7_CHOICE_OPTIONS.find((option) => option.id !== locked)?.id ?? 'register'
+}
+
+export default function UiMechanicsPreview() {
+  const [flags, setFlags] = useState<StoryFlags>({
+    plead_soldier: true,
+    c4_tactic: 'ambush',
+    c7_choice: 'register',
+  })
+  const [caseResult, setCaseResult] = useState('等待勘验')
+  const [caseKey, setCaseKey] = useState(0)
+  const [showChapterCard, setShowChapterCard] = useState(false)
+
+  const tactic = (flags.c4_tactic as C4Tactic | undefined) ?? 'ambush'
+  const c7Choice = (flags.c7_choice as C7Choice | undefined) ?? null
+  const tacticReport = C4_TACTIC_REPORTS[tactic]
+
+  const updateTactic = (next: C4Tactic) => {
+    setFlags((current) => ({
+      ...current,
+      c4_tactic: next,
+      c7_choice: firstAvailableChoice(next),
+    }))
+  }
+
+  return (
+    <main className="min-h-screen bg-[#0d0e11] px-4 py-10 text-qin-parchment sm:px-8">
+      <div className="mx-auto max-w-6xl">
+        <header className="border-b border-qin-bronze-35 pb-7">
+          <p className="text-xs tracking-[0.4em] text-qin-bronze/70">UI MECHANICS PREVIEW</p>
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 73 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 73 页
+============================
+          <div className="mt-3 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
+            <div>
+              <h1 className="text-3xl tracking-[0.22em] sm:text-4xl">美术与交互验收台</h1>
+              <p className="mt-3 text-sm leading-7 text-qin-parchment-50">
+                占位机制独立验收，不改变当前剧情场景与对白顺序。
+              </p>
+            </div>
+            <div className="flex flex-col gap-3 sm:flex-row">
+              <button
+                type="button"
+                onClick={() => setShowChapterCard(true)}
+                className="border border-qin-bronze-25 px-5 py-2 text-center text-sm tracking-[0.2em] text-qin-bronze-light hover:bg-qin-bronze-10"
+              >
+                预览章节卡
+              </button>
+              <a
+                href="/"
+                className="border border-qin-bronze-25 px-5 py-2 text-center text-sm tracking-[0.2em] text-qin-bronze-light hover:bg-qin-bronze-10"
+              >
+                返回游戏
+              </a>
+            </div>
+          </div>
+        </header>
+
+        <section className="mt-10 grid gap-6 lg:grid-cols-2">
+          <article className="border border-qin-bronze-25 bg-[#151619] p-6">
+            <p className="text-xs tracking-[0.3em] text-qin-bronze/70">S10 → C4 · FLAG</p>
+            <h2 className="mt-3 text-2xl tracking-[0.18em]">失期秦卒回响</h2>
+            <div className="mt-6 flex gap-3">
+              <button
+                type="button"
+                onClick={() => setFlags((current) => ({ ...current, plead_soldier: true }))}
+                className={`flex-1 border px-4 py-3 ${flags.plead_soldier ? 'border-qin-bronze bg-qin-bronze-10' : 'border-qin-parchment-10'}`}
+              >
+                求情
+              </button>
+              <button
+                type="button"
+                onClick={() => setFlags((current) => ({ ...current, plead_soldier: false }))}
+                className={`flex-1 border px-4 py-3 ${flags.plead_soldier === false ? 'border-qin-bronze bg-qin-bronze-10' : 'border-qin-parchment-10'}`}
+              >
+                不开口
+              </button>
+            </div>
+            <blockquote className="mt-6 border-l-2 border-qin-bronze bg-black/20 p-5 leading-8 text-qin-parchment-80">
+              {flags.plead_soldier
+                ? '“那次你替我说情，这次我替你守口。”'
+                : '“那次你没有开口。今天我守这里，不为还债，只因军令。”'}
+            </blockquote>
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 74 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 74 页
+============================
+          </article>
+
+          <article className="border border-qin-bronze-25 bg-[#151619] p-6">
+            <p className="text-xs tracking-[0.3em] text-qin-bronze/70">C4 · TACTIC</p>
+            <h2 className="mt-3 text-2xl tracking-[0.18em]">截杀战前</h2>
+            <div className="mt-6 grid gap-3 sm:grid-cols-3">
+              {(Object.keys(C4_TACTIC_LABELS) as C4Tactic[]).map((option) => (
+                <button
+                  key={option}
+                  type="button"
+                  onClick={() => updateTactic(option)}
+                  className={`border px-3 py-3 text-sm ${tactic === option ? 'border-qin-bronze bg-qin-bronze-10 text-qin-bronze-light' : 'border-qin-parchment-10 text-qin-parchment-50'}`}
+                >
+                  {C4_TACTIC_LABELS[option]}
+                </button>
+              ))}
+            </div>
+            <div className="mt-6 border border-qin-parchment-10 bg-black/15 p-5 text-sm leading-7">
+              <div className="tracking-[0.18em] text-qin-bronze-light">{tacticReport.heading} · 战后报告</div>
+              <p className="mt-3 text-qin-parchment-80">{tacticReport.result}</p>
+              <p className="text-qin-parchment-40">{tacticReport.cost}</p>
+            </div>
+          </article>
+        </section>
+
+        <section className="mt-10">
+          <C7ChoicePanel
+            c4Tactic={tactic}
+            currentChoice={c7Choice}
+            onChoose={(choice) => setFlags((current) => ({ ...current, c7_choice: choice }))}
+          />
+        </section>
+
+        {c7Choice && (
+          <section className="mt-10">
+            <C8ReportPanel choice={c7Choice} />
+          </section>
+        )}
+
+        <section className="mt-10">
+          <CaseFragmentBoard
+            key={caseKey}
+            onReveal={(fragment) => setCaseResult(`已翻开：${fragment.owner}·${fragment.source}`)}
+            onCombine={() => setCaseResult('并案完成，可进入章台')}
+          />
+          <div className="mt-3 flex items-center justify-between text-xs tracking-[0.15em] text-qin-parchment-40">
+            <span aria-live="polite">{caseResult}</span>
+            <button
+              type="button"
+              onClick={() => {
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 75 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 75 页
+============================
+                setCaseResult('等待勘验')
+                setCaseKey((value) => value + 1)
+              }}
+              className="text-qin-bronze-light hover:text-qin-bronze-light/80"
+            >
+              重置碎片
+            </button>
+          </div>
+        </section>
+
+        <section className="mt-14">
+          <h2 className="text-2xl tracking-[0.2em]">占位素材挂载</h2>
+          <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {ART_PLACEHOLDERS.map((asset) => (
+              <figure key={asset.id} className="overflow-hidden border border-qin-bronze-25 bg-[#151619]">
+                <img
+                  src={asset.src}
+                  alt={`${asset.label}占位素材`}
+                  className={`w-full object-cover ${asset.type === 'portrait' ? 'aspect-square object-top' : 'aspect-video'}`}
+                />
+                <figcaption className="p-4">
+                  <div className="text-qin-bronze-light">{asset.label}</div>
+                  <div className="mt-1 break-all text-xs text-qin-parchment-25">{asset.id}</div>
+                </figcaption>
+              </figure>
+            ))}
+          </div>
+        </section>
+
+        <pre className="mt-10 overflow-x-auto border border-qin-parchment-10 bg-black/20 p-4 text-xs leading-6 text-qin-parchment-50">
+          {JSON.stringify(flags, null, 2)}
+        </pre>
+      </div>
+
+      {showChapterCard && (
+        <ChapterCard
+          from={{ number: '序章', title: '郑地伏杀' }}
+          to={{ number: '第一章', title: '新郑覆旗' }}
+          transitionMs={700}
+          onContinue={() => setShowChapterCard(false)}
+        />
+      )}
+    </main>
+  )
+}
+
+
+// === file: src/ui/ChapterCard.tsx ===
+import { useEffect, useState } from 'react'
+
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 76 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 76 页
+============================
+export interface ChapterDescriptor {
+  number: string
+  title: string
+}
+
+export type ChapterDirection = 'forward' | 'backward'
+
+export interface ChapterCardProps {
+  from?: ChapterDescriptor
+  to: ChapterDescriptor
+  direction?: ChapterDirection
+  transitionMs?: number
+  onContinue: () => void
+  continueLabel?: string
+}
+
+type TransitionPhase = 'from' | 'closing' | 'opening'
+
+/**
+ * Full-screen chapter transition.
+ *
+ * Give the component a new React `key` when switching to another chapter pair,
+ * so the entrance sequence restarts from its initial state.
+ */
+export default function ChapterCard({
+  from,
+  to,
+  direction = 'forward',
+  transitionMs = 900,
+  onContinue,
+  continueLabel = '点击继续',
+}: ChapterCardProps) {
+  const [phase, setPhase] = useState<TransitionPhase>(from ? 'from' : 'opening')
+  const hasPreviousChapter = Boolean(from)
+  const canContinue = phase === 'opening'
+  const exitOffset = direction === 'forward' ? '-0.75rem' : '0.75rem'
+  const entranceOffset = direction === 'forward' ? '0.75rem' : '-0.75rem'
+
+  useEffect(() => {
+    if (!hasPreviousChapter) return
+
+    let timer = 0
+    const frame = window.requestAnimationFrame(() => {
+      setPhase('closing')
+      timer = window.setTimeout(() => setPhase('opening'), transitionMs)
+    })
+
+    return () => {
+      window.cancelAnimationFrame(frame)
+      window.clearTimeout(timer)
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 77 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 77 页
+============================
+    }
+  }, [hasPreviousChapter, transitionMs])
+
+  const continueChapter = () => {
+    if (canContinue) onContinue()
+  }
+
+  return (
+    <section
+      className="fixed inset-0 z-[80] flex cursor-pointer select-none items-center justify-center overflow-hidden bg-[#0d0e11] px-6 text-qin-parchment"
+      role="button"
+      tabIndex={0}
+      aria-label={`${to.number}《${to.title}》，${canContinue ? continueLabel : '章节转场中'}`}
+      onClick={continueChapter}
+      onKeyDown={(event) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault()
+          continueChapter()
+        }
+      }}
+    >
+      <div
+        className="pointer-events-none absolute inset-0 opacity-50"
+        aria-hidden="true"
+        style={{
+          background:
+            'radial-gradient(circle at 50% 48%, rgba(181, 138, 61, 0.13), transparent 31%), linear-gradient(180deg, #101114 0%, #090a0c 100%)',
+        }}
+      />
+
+      <div className="relative grid w-full max-w-4xl grid-rows-[1fr_auto_1fr] items-center">
+        <div
+          className="flex min-h-32 flex-col items-center justify-end transition-all ease-in"
+          style={{
+            opacity: hasPreviousChapter && phase !== 'opening' ? 1 : 0,
+            transform: phase === 'closing' ? `translateY(${exitOffset})` : 'translateY(0)',
+            transitionDuration: `${transitionMs}ms`,
+          }}
+          aria-hidden={!from || phase === 'opening'}
+        >
+          {from && (
+            <>
+              <p className="text-sm tracking-[0.45em] text-qin-bronze/70">{from.number}</p>
+              <h2 className="mt-3 text-center text-2xl tracking-[0.22em] text-qin-parchment-80 sm:text-3xl">
+                《{from.title}》· 完
+              </h2>
+            </>
+          )}
+        </div>
+
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 78 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 78 页
+============================
+        <div className="flex items-center gap-4 py-7 text-qin-bronze-50" aria-hidden="true">
+          <span className="h-px flex-1 bg-gradient-to-r from-transparent to-current" />
+          <span className="size-2 rotate-45 border border-current" />
+          <span className="h-px flex-1 bg-gradient-to-l from-transparent to-current" />
+        </div>
+
+        <div
+          className="flex min-h-40 flex-col items-center justify-start transition-all ease-out"
+          style={{
+            opacity: phase === 'opening' ? 1 : 0,
+            transform: phase === 'opening' ? 'translateY(0)' : `translateY(${entranceOffset})`,
+            transitionDuration: `${transitionMs}ms`,
+          }}
+          aria-hidden={!canContinue}
+        >
+          <p className="flex items-center gap-3 text-sm tracking-[0.5em] text-qin-bronze">
+            <img src="https://stats.puck-muling.top/game/assets/seal_qin.svg" alt="" className="size-8 opacity-60" aria-hidden="true" />
+            {to.number}
+          </p>
+          <h1 className="mt-4 text-center text-3xl tracking-[0.24em] sm:text-5xl">《{to.title}》</h1>
+          <p
+            className={`mt-10 text-xs tracking-[0.35em] text-qin-parchment-40 transition-opacity duration-700 ${
+              canContinue ? 'animate-pulse opacity-100' : 'opacity-0'
+            }`}
+          >
+            {continueLabel}
+          </p>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+
+// === file: src/ui/CaseFragmentBoard.tsx ===
+import ScrollInspect from './ScrollInspect'
+import { C1_SCROLL_STACKS } from './scrollInspectData'
+import { CASE_FRAGMENTS, type CaseFragment } from './caseFragmentData'
+
+export interface CaseFragmentBoardProps {
+  onCombine: () => void
+  onReveal?: (fragment: CaseFragment, index: number) => void
+  combineLabel?: string
+}
+
+export default function CaseFragmentBoard({
+  onCombine,
+  onReveal,
+  combineLabel = '并案',
+}: CaseFragmentBoardProps) {
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 79 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 79 页
+============================
+  return (
+    <ScrollInspect
+      sceneId="c1_pinan"
+      stacks={C1_SCROLL_STACKS}
+      requiredFindings={3}
+      eyebrow="C1 · 三证合勘"
+      title="拼案"
+      instruction="翻开三项证物，异常齐备后方可合并案卷"
+      continueLabel={combineLabel}
+      fallbackText="三项证物尚不能互相印证，再核对一遍。"
+      onReveal={(_, index) => {
+        const fragment = CASE_FRAGMENTS[index]
+        if (fragment) onReveal?.(fragment, index)
+      }}
+      onContinue={onCombine}
+    />
+  )
+}
+
+
+// === file: src/ui/C7ChoicePanel.tsx ===
+import { Check, LockKeyhole } from 'lucide-react'
+import {
+  C4_TACTIC_LABELS,
+  C7_CHOICE_OPTIONS,
+  C7_LOCKED_CHOICE_BY_TACTIC,
+  C7_LOCK_REASON_BY_TACTIC,
+  type C4Tactic,
+} from './c7ChoiceData'
+import type { C7Choice } from './c8ReportData'
+
+export interface C7ChoicePanelProps {
+  c4Tactic: C4Tactic
+  currentChoice: C7Choice | null
+  onChoose: (choice: C7Choice) => void
+  title?: string
+}
+
+export default function C7ChoicePanel({
+  c4Tactic,
+  currentChoice,
+  onChoose,
+  title = '火起之后',
+}: C7ChoicePanelProps) {
+  const lockedChoice = C7_LOCKED_CHOICE_BY_TACTIC[c4Tactic]
+  const lockReason = C7_LOCK_REASON_BY_TACTIC[c4Tactic]
+
+  return (
+    <section
+      className="mx-auto w-full max-w-4xl border border-qin-bronze-35 bg-[#121316]/95 p-5 text-qin-parchment shadow-2xl sm:p-8"
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 80 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 80 页
+============================
+      aria-labelledby="c7-choice-title"
+    >
+      <header className="text-center">
+        <p className="text-[0.65rem] tracking-[0.45em] text-qin-bronze-65">C7 · 三择其一</p>
+        <h2 id="c7-choice-title" className="mt-3 text-2xl tracking-[0.25em] sm:text-3xl">
+          {title}
+        </h2>
+        <p className="mt-3 text-sm leading-6 tracking-[0.08em] text-qin-parchment-50">
+          先前战术：{C4_TACTIC_LABELS[c4Tactic]}。兵力有限，只能择一而行。
+        </p>
+      </header>
+
+      <div className="mt-8 grid gap-4 md:grid-cols-3" role="radiogroup" aria-label="选择处置方向">
+        {C7_CHOICE_OPTIONS.map((option, index) => {
+          const isLocked = option.id === lockedChoice
+          const isSelected = option.id === currentChoice
+
+          return (
+            <button
+              key={option.id}
+              type="button"
+              role="radio"
+              aria-checked={isSelected}
+              disabled={isLocked}
+              onClick={() => onChoose(option.id)}
+              className={`relative flex min-h-56 flex-col border p-5 text-left transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-qin-bronze ${
+                isLocked
+                  ? 'cursor-not-allowed border-qin-parchment-10 bg-black/10 text-qin-parchment-25'
+                  : isSelected
+                    ? 'border-qin-bronze-80 bg-qin-bronze-10 shadow-[0_0_24px_rgba(181,138,61,0.12)]'
+                    : 'border-qin-bronze-25 bg-[#1b1c20] hover:-translate-y-1 hover:border-qin-bronze-65'
+              }`}
+            >
+              <span className="flex w-full items-center justify-between">
+                <span className="text-xs tracking-[0.24em] text-qin-bronze/70">
+                  抉择 {index + 1}
+                </span>
+                {isLocked ? (
+                  <LockKeyhole className="size-4 text-qin-parchment-25" aria-hidden="true" />
+                ) : isSelected ? (
+                  <Check className="size-4 text-qin-bronze-light" aria-hidden="true" />
+                ) : (
+                  <span
+                    className="size-3 rounded-full border border-qin-bronze-50"
+                    aria-hidden="true"
+                  />
+                )}
+              </span>
+
+              <span
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 81 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 81 页
+============================
+                className={`mt-7 text-xl tracking-[0.18em] ${
+                  isSelected ? 'text-qin-bronze-light' : ''
+                }`}
+              >
+                {option.title}
+              </span>
+              <span className="mt-4 text-sm leading-7 text-qin-parchment-50">{option.summary}</span>
+
+              <span
+                className={`mt-auto border-t pt-4 text-xs leading-6 ${
+                  isLocked
+                    ? 'border-qin-parchment-10 text-[#C4746A]/75'
+                    : isSelected
+                      ? 'border-qin-bronze-25 text-qin-bronze-light/80'
+                      : 'border-qin-parchment-10 text-qin-parchment-25'
+                }`}
+              >
+                {isLocked ? lockReason : isSelected ? '已选择' : '点击选择'}
+              </span>
+            </button>
+          )
+        })}
+      </div>
+    </section>
+  )
+}
+
+
+
+// === file: src/ui/C8ReportPanel.tsx ===
+import type { EvacSurvival, SavedRegisterId } from '../game/save'
+import {
+  C8_FIXED_REPORTS,
+  resolveC8ReportVariant,
+  type C7Choice,
+  type MilitaryReportSection,
+} from './c8ReportData'
+
+export interface C8ReportPanelProps {
+  choice: C7Choice
+  savedRegisters?: readonly SavedRegisterId[]
+  evacSurvival?: EvacSurvival
+  title?: string
+  onContinue?: () => void
+  continueLabel?: string
+}
+
+function ReportSection({
+  report,
+  emphasis = false,
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 82 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 82 页
+============================
+}: {
+  report: MilitaryReportSection
+  emphasis?: boolean
+}) {
+  return (
+    <article
+      className={`relative border px-5 py-5 sm:px-7 ${
+        emphasis
+          ? 'border-qin-bronze-50 bg-qin-bronze-10'
+          : 'border-qin-parchment-10 bg-black/10'
+      }`}
+    >
+      <div
+        className={`absolute left-0 top-5 h-8 w-0.5 ${emphasis ? 'bg-qin-bronze' : 'bg-qin-parchment-25'}`}
+        aria-hidden="true"
+      />
+      <h3 className={`text-sm tracking-[0.2em] ${emphasis ? 'text-qin-bronze-light' : 'text-qin-parchment-65'}`}>
+        {report.heading}
+      </h3>
+      <dl className="mt-4 grid gap-3 text-sm leading-7 sm:grid-cols-[3.5rem_1fr]">
+        <dt className="text-qin-bronze/75">结果</dt>
+        <dd className="text-qin-parchment-80">{report.result}</dd>
+        <dt className="text-qin-bronze/75">代价</dt>
+        <dd className="text-qin-parchment-65">{report.cost}</dd>
+      </dl>
+    </article>
+  )
+}
+
+export default function C8ReportPanel({
+  choice,
+  savedRegisters = [],
+  evacSurvival,
+  title = '新郑战后军报',
+  onContinue,
+  continueLabel = '收起军报',
+}: C8ReportPanelProps) {
+  const variant = resolveC8ReportVariant(choice, savedRegisters, evacSurvival)
+
+  return (
+    <section
+      className="mx-auto w-full max-w-3xl border border-qin-bronze-35 bg-[#151619]/95 p-4 text-qin-parchment shadow-2xl sm:p-8"
+      aria-labelledby="c8-report-title"
+    >
+      <header className="mb-6 text-center">
+        <p className="text-[0.65rem] tracking-[0.45em] text-qin-bronze-65">C8 · 军报汇录</p>
+        <h2 id="c8-report-title" className="mt-3 text-2xl tracking-[0.25em] sm:text-3xl">
+          {title}
+        </h2>
+        <div className="mx-auto mt-4 h-px w-32 bg-gradient-to-r from-transparent via-qin-bronze/70 to-transparent" />
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 83 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 83 页
+============================
+      </header>
+
+      <div className="grid gap-3">
+        <ReportSection report={C8_FIXED_REPORTS.surrender} />
+        <ReportSection report={variant} emphasis />
+        <ReportSection report={C8_FIXED_REPORTS.canal} />
+      </div>
+
+      {onContinue && (
+        <button
+          type="button"
+          onClick={onContinue}
+          className="qin-btn mt-7 w-full border border-qin-bronze-35 px-5 py-3 text-sm tracking-[0.25em] text-qin-bronze-light hover:bg-qin-bronze-10"
+        >
+          {continueLabel}
+        </button>
+      )}
+    </section>
+  )
+}
+
+
+// === file: src/ui/SettlePanel.tsx ===
+import { CheckCircle2, CircleDashed, Medal } from 'lucide-react'
+import type { StoryFlags } from '../game/save'
+import {
+  SETTLE_RATING_LABELS,
+  SETTLE_TEXT,
+  branchOutcomeSucceeded,
+  c7OutcomeLabel,
+  c4PerformanceLabel,
+  c4TacticLabel,
+  c7ChoiceLabel,
+  calculateSettleRating,
+  s6OutcomeLabel,
+} from './settleData'
+
+export interface SettlePanelProps {
+  flags: StoryFlags
+  shichengUnlocked: number
+  shichengTotal?: number
+  onContinue?: () => void
+  continueLabel?: string
+}
+
+interface Row {
+  label: string
+  value: string
+  complete?: boolean
+}
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 84 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 84 页
+============================
+
+function Column({ title, rows }: { title: string; rows: readonly Row[] }) {
+  return (
+    <section className="border border-qin-parchment-10 bg-black/10 p-5">
+      <h3 className="border-b border-qin-bronze-25 pb-3 text-sm tracking-[0.25em] text-qin-bronze-light">
+        {title}
+      </h3>
+      <ul className="mt-4 space-y-4">
+        {rows.map((row) => (
+          <li key={row.label} className="flex items-start gap-3 text-sm leading-6">
+            {row.complete === undefined ? (
+              <CircleDashed className="mt-1 size-4 shrink-0 text-qin-bronze-50" aria-hidden="true" />
+            ) : row.complete ? (
+              <CheckCircle2 className="mt-1 size-4 shrink-0 text-qin-bronze" aria-hidden="true" />
+            ) : (
+              <CircleDashed className="mt-1 size-4 shrink-0 text-qin-parchment-25" aria-hidden="true" />
+            )}
+            <span>
+              <span className="block text-xs tracking-[0.16em] text-qin-parchment-40">{row.label}</span>
+              <span className="mt-1 block text-qin-parchment-80">{row.value}</span>
+            </span>
+          </li>
+        ))}
+      </ul>
+    </section>
+  )
+}
+
+export default function SettlePanel({
+  flags,
+  shichengUnlocked,
+  shichengTotal = 4,
+  onContinue,
+  continueLabel = '进入章节转场',
+}: SettlePanelProps) {
+  const rating = calculateSettleRating(flags)
+  const branchSuccess = branchOutcomeSucceeded(flags)
+  const savedRegisters = flags.c7_saved_registers ?? []
+
+  const columns: readonly { title: string; rows: readonly Row[] }[] = [
+    {
+      title: '战绩',
+      rows: [
+        {
+          label: 'C4 战绩',
+          value: `${c4TacticLabel(flags)} · ${c4PerformanceLabel(flags)}`,
+          complete: flags.c4_performance ? flags.c4_performance !== 'low' : Boolean(flags.c4_tactic),
+        },
+        {
+          label: 'C7 战果',
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 85 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 85 页
+============================
+          value: c7OutcomeLabel(flags),
+          complete: branchSuccess,
+        },
+      ],
+    },
+    {
+      title: '抉择',
+      rows: [
+        {
+          label: '失期秦卒',
+          value:
+            flags.plead_soldier === true
+              ? '求过情'
+              : flags.plead_soldier === false
+                ? '未开口'
+                : '尚未作出抉择',
+          complete: flags.plead_soldier !== undefined,
+        },
+        { label: '官署火起', value: c7ChoiceLabel(flags), complete: Boolean(flags.c7_choice) },
+      ],
+    },
+    {
+      title: '支线',
+      rows: [
+        {
+          label: '韩蕙',
+          value: savedRegisters.includes('huji') ? SETTLE_TEXT.hanhui.reunited : SETTLE_TEXT.hanhui.lost,
+          complete: savedRegisters.includes('huji'),
+        },
+        {
+          label: '郑地伏杀',
+          value: s6OutcomeLabel(flags),
+        },
+      ],
+    },
+    {
+      title: '史乘',
+      rows: [
+        {
+          label: '收集进度',
+          value: `${Math.min(shichengUnlocked, shichengTotal)} / ${shichengTotal}`,
+          complete: shichengUnlocked >= shichengTotal,
+        },
+        { label: '本章新录', value: '疲秦计 · 逐客令 · 韩亡 · 郑国渠' },
+      ],
+    },
+  ]
+
+  return (
+    <section
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 86 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 86 页
+============================
+      className="mx-auto w-full max-w-6xl border border-qin-bronze-35 bg-[#121316]/95 p-5 text-qin-parchment shadow-2xl sm:p-8"
+      aria-labelledby="settle-title"
+      data-scene-id="c8_settle"
+    >
+      <header className="flex flex-col justify-between gap-5 border-b border-qin-bronze-25 pb-6 sm:flex-row sm:items-end">
+        <div>
+          <p className="text-[0.65rem] tracking-[0.45em] text-qin-bronze-65">C8 · 章末结算</p>
+          <h2 id="settle-title" className="mt-3 text-3xl tracking-[0.28em]">新郑覆旗</h2>
+        </div>
+        <div className="flex items-center gap-3 border border-qin-bronze-35 bg-qin-bronze-10 px-5 py-3">
+          <Medal className="size-6 text-qin-bronze-light" aria-hidden="true" />
+          <span>
+            <span className="block text-xs tracking-[0.2em] text-qin-parchment-40">本章评级</span>
+            <strong className="mt-1 block text-xl tracking-[0.25em] text-qin-bronze-light">
+              {SETTLE_RATING_LABELS[rating]}
+            </strong>
+          </span>
+        </div>
+      </header>
+
+      <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+        {columns.map((column) => <Column key={column.title} {...column} />)}
+      </div>
+
+      <p className="mt-6 border-l-2 border-qin-bronze-50 pl-4 text-sm leading-7 text-qin-parchment-50">
+        {SETTLE_TEXT.ratingLine[rating]}
+      </p>
+
+      {onContinue && (
+        <button
+          type="button"
+          onClick={onContinue}
+          className="qin-btn mt-7 w-full border border-qin-bronze-50 px-5 py-3 text-sm tracking-[0.25em] text-qin-bronze-light hover:bg-qin-bronze-10"
+        >
+          {continueLabel}
+        </button>
+      )}
+    </section>
+  )
+}
+
+
+// === file: src/ui/ShichengPage.tsx ===
+import { BookOpenText, LockKeyhole, X } from 'lucide-react'
+import { SHICHENG_CARDS, type ShichengCard } from './shichengData'
+
+export interface ShichengPageProps {
+  unlockedCardIds: readonly ShichengCard['id'][]
+  cards?: readonly ShichengCard[]
+  onClose?: () => void
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 87 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 87 页
+============================
+  title?: string
+}
+
+export default function ShichengPage({
+  unlockedCardIds,
+  cards = SHICHENG_CARDS,
+  onClose,
+  title = '史乘',
+}: ShichengPageProps) {
+  const unlocked = new Set(unlockedCardIds)
+
+  return (
+    <section
+      className="fixed inset-0 z-[60] overflow-y-auto bg-[#0d0e11]/98 px-4 py-6 text-qin-parchment sm:px-8"
+      aria-labelledby="shicheng-title"
+    >
+      <div className="mx-auto max-w-6xl">
+        <header className="sticky top-0 z-10 border-b border-qin-bronze-35 bg-[#0d0e11]/95 pb-5 pt-2 backdrop-blur">
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <p className="text-[0.65rem] tracking-[0.45em] text-qin-bronze-65">HISTORY / MEMORY</p>
+              <h2 id="shicheng-title" className="mt-3 flex items-center gap-3 text-3xl tracking-[0.3em]">
+                <BookOpenText className="size-7 text-qin-bronze" aria-hidden="true" />
+                {title}
+              </h2>
+              <p className="mt-3 text-sm tracking-[0.12em] text-qin-parchment-40">
+                已解锁 {unlocked.size} / {cards.length}
+              </p>
+            </div>
+            {onClose && (
+              <button
+                type="button"
+                onClick={onClose}
+                className="p-2 text-qin-parchment-50 transition-colors hover:text-qin-bronze-light"
+                aria-label="关闭史乘"
+              >
+                <X className="size-5" />
+              </button>
+            )}
+          </div>
+        </header>
+
+        <div className="mt-8 grid gap-5 lg:grid-cols-2">
+          {cards.map((card, index) => {
+            const isUnlocked = unlocked.has(card.id)
+            return (
+              <article
+                key={card.id}
+                className={`relative min-h-72 overflow-hidden border p-6 sm:p-7 ${
+                  isUnlocked
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 88 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 88 页
+============================
+                    ? 'border-qin-bronze-35 bg-[#17181b]'
+                    : 'border-qin-parchment-10 bg-[#121316]'
+                }`}
+              >
+                <div className="flex items-center justify-between">
+                  <span className="text-xs tracking-[0.25em] text-qin-bronze-65">
+                    {card.chapter} · 卡 {index + 1}
+                  </span>
+                  {!isUnlocked && <LockKeyhole className="size-4 text-qin-parchment-25" aria-hidden="true" />}
+                </div>
+                <h3 className={`mt-4 text-2xl tracking-[0.2em] ${isUnlocked ? '' : 'text-qin-parchment-25'}`}>
+                  {isUnlocked ? card.title : '未解锁'}
+                </h3>
+
+                {isUnlocked ? (
+                  <div className="mt-7 grid gap-5">
+                    <div className="border-l-2 border-qin-bronze-65 pl-4">
+                      <h4 className="text-xs tracking-[0.25em] text-qin-bronze-light">史书大意</h4>
+                      <p className="mt-2 text-sm leading-7 text-qin-parchment-65">{card.history}</p>
+                    </div>
+                    <div className="border-l-2 border-[#C4746A]/55 pl-4">
+                      <h4 className="text-xs tracking-[0.25em] text-[#C98B7E]">你经历的</h4>
+                      <p className="mt-2 text-sm leading-7 text-qin-parchment-65">{card.experienced}</p>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="absolute inset-x-6 bottom-6 top-24 overflow-hidden border border-qin-parchment-10 bg-black/15">
+                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_35%,rgba(181,138,61,0.08),transparent_45%)]" />
+                    <div className="absolute bottom-0 left-1/2 h-36 w-28 -translate-x-1/2 rounded-t-full bg-qin-parchment/[0.035] blur-[1px]" />
+                    <p className="absolute inset-x-4 bottom-5 text-center text-xs tracking-[0.2em] text-qin-parchment-25">
+                      随剧情解锁
+                    </p>
+                  </div>
+                )}
+              </article>
+            )
+          })}
+        </div>
+
+        <footer className="mt-10 border-t border-qin-bronze-25 py-6 text-center text-sm tracking-[0.14em] text-qin-parchment-40">
+          本故事借史为骨，时序有改编。
+        </footer>
+      </div>
+    </section>
+  )
+}
+
+
+// === file: src/ui/WitnessStatementPanel.tsx ===
+import { useState } from 'react'
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 89 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 89 页
+============================
+import { Check, Feather, RotateCcw, X } from 'lucide-react'
+import { playSfx, unlockBgm } from '../game/audio'
+
+type StatementId = 'seen' | 'rumor' | 'inference'
+
+const STATEMENTS: readonly {
+  id: StatementId
+  text: string
+  source: string
+  correct: boolean
+  feedback: string
+}[] = [
+  {
+    id: 'seen',
+    text: '郑国深夜密见韩使。',
+    source: '北芒亲眼所见',
+    correct: true,
+    feedback: '这是你看见的。可以落笔。',
+  },
+  {
+    id: 'rumor',
+    text: '韩国命水工疲秦坏渠。',
+    source: '章台传闻',
+    correct: false,
+    feedback: '这不是你看见的。传闻不能写成证词。',
+  },
+  {
+    id: 'inference',
+    text: '郑国与韩使商定了疲秦之计。',
+    source: '无人听见的谈话',
+    correct: false,
+    feedback: '你只看见他们见面，并没有听见他们谈了什么。',
+  },
+]
+
+export default function WitnessStatementPanel({ onComplete }: { onComplete: () => void }) {
+  const [selected, setSelected] = useState<StatementId | null>(null)
+  const statement = STATEMENTS.find((item) => item.id === selected) ?? null
+
+  const choose = (id: StatementId) => {
+    unlockBgm()
+    playSfx('select')
+    setSelected(id)
+  }
+
+  return (
+    <section className="mx-auto w-full max-w-4xl border border-qin-bronze-35 bg-[#111317]/95 p-5 text-qin-parchment shadow-2xl sm:p-8">
+      <header className="text-center">
+        <p className="text-[0.65rem] tracking-[0.45em] text-qin-bronze-65">序章 · 亲见为证</p>
+        <h2 className="mt-3 text-2xl tracking-[0.22em] sm:text-3xl">哪一句能写进告书？</h2>
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 90 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 90 页
+============================
+        <p className="mt-3 text-sm leading-7 tracking-[0.08em] text-qin-parchment-50">
+          公孙钺只准北芒写下亲眼确认的事实。传闻与推断，不能冒充证词。
+        </p>
+      </header>
+
+      <div className="mt-8 grid gap-4 md:grid-cols-3" role="radiogroup" aria-label="选择可以落笔的证词">
+        {STATEMENTS.map((item) => {
+          const isSelected = selected === item.id
+          const resolved = isSelected ? item.correct : null
+          return (
+            <button
+              key={item.id}
+              type="button"
+              role="radio"
+              aria-checked={isSelected}
+              onClick={() => choose(item.id)}
+              className={`flex min-h-56 flex-col border p-5 text-left transition-all ${
+                isSelected
+                  ? resolved
+                    ? 'border-[#8FAF8B]/70 bg-[#8FAF8B]/10'
+                    : 'border-[#C4746A]/70 bg-[#C4746A]/10'
+                  : 'border-qin-bronze-25 bg-[#1A1C20] hover:-translate-y-1 hover:border-qin-bronze-65'
+              }`}
+            >
+              <span className="flex items-center justify-between text-xs tracking-[0.2em] text-qin-bronze-65">
+                告书候选
+                {isSelected && (resolved
+                  ? <Check className="size-4 text-[#9DB89A]" aria-hidden="true" />
+                  : <X className="size-4 text-[#C98B7E]" aria-hidden="true" />)}
+              </span>
+              <span className="mt-8 text-lg leading-8 tracking-[0.1em]">{item.text}</span>
+              <span className="mt-auto border-t border-qin-parchment-10 pt-4 text-xs leading-6 text-qin-parchment-40">
+                来源：{item.source}
+              </span>
+            </button>
+          )
+        })}
+      </div>
+
+      <div className="mt-7 min-h-28 border border-qin-parchment-10 bg-black/20 p-5 text-center">
+        {statement ? (
+          <>
+            <p className={`leading-7 ${statement.correct ? 'text-[#B7C9AE]' : 'text-[#C98B7E]'}`} aria-live="polite">
+              {statement.feedback}
+            </p>
+            {statement.correct ? (
+              <button
+                type="button"
+                onClick={onComplete}
+                className="qin-btn mt-5 border border-qin-bronze-50 px-8 py-3 tracking-[0.25em] text-qin-bronze-light hover:bg-qin-bronze-10"
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 91 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 91 页
+============================
+              >
+                <Feather className="size-4" aria-hidden="true" />
+                落笔封卷
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={() => setSelected(null)}
+                className="qin-btn mt-5 text-sm tracking-[0.2em] text-qin-bronze-light"
+              >
+                <RotateCcw className="size-4" aria-hidden="true" />
+                删去重写
+              </button>
+            )}
+          </>
+        ) : (
+          <p className="pt-5 text-sm tracking-[0.14em] text-qin-parchment-25">选择一句，核对它来自亲见、传闻，还是推断。</p>
+        )}
+      </div>
+    </section>
+  )
+}
+
+
+// === file: src/ui/FireRescue.tsx ===
+import { useCallback, useEffect, useRef, useState } from 'react'
+import { Check, Clock3, Flame, ScrollText, X } from 'lucide-react'
+import type { SavedRegisterId, StoryFlags } from '../game/save'
+import {
+  FIRE_TEXT,
+  REGISTER_PILES,
+  burnedRegisters,
+  createFireThreatSchedule,
+  resolveFireRescueStep,
+} from './fireRescueData'
+
+export interface FireRescueProps {
+  durationSeconds?: number
+  maxSaved?: number
+  onFlagsChange: (patch: Pick<StoryFlags, 'c7_saved_registers'>) => void
+  onComplete?: (saved: SavedRegisterId[]) => void
+}
+
+export default function FireRescue({
+  durationSeconds = 18,
+  maxSaved = 3,
+  onFlagsChange,
+  onComplete,
+}: FireRescueProps) {
+  const [secondsLeft, setSecondsLeft] = useState(durationSeconds)
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 92 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 92 页
+============================
+  const [saved, setSaved] = useState<SavedRegisterId[]>([])
+  const [burned, setBurned] = useState<SavedRegisterId[]>([])
+  const [lastPile, setLastPile] = useState<SavedRegisterId | null>(null)
+  const [lastCost, setLastCost] = useState(0)
+  const [completed, setCompleted] = useState(false)
+  const [schedule] = useState(() => createFireThreatSchedule(durationSeconds))
+  const savedRef = useRef<SavedRegisterId[]>([])
+  const completedRef = useRef(false)
+
+  useEffect(() => {
+    savedRef.current = saved
+  }, [saved])
+
+  const finish = useCallback((result: SavedRegisterId[]) => {
+    if (completedRef.current) return
+    completedRef.current = true
+    setCompleted(true)
+    const finalResult = [...result].slice(0, maxSaved)
+    onFlagsChange({ c7_saved_registers: finalResult })
+    onComplete?.(finalResult)
+  }, [maxSaved, onComplete, onFlagsChange])
+
+  useEffect(() => {
+    if (completed) return
+    const timer = window.setInterval(() => {
+      setSecondsLeft((current) => {
+        if (current <= 1) {
+          window.clearInterval(timer)
+          queueMicrotask(() => finish(savedRef.current))
+          return 0
+        }
+        return current - 1
+      })
+    }, 1000)
+    return () => window.clearInterval(timer)
+  }, [completed, finish])
+
+  useEffect(() => {
+    if (completed) return
+    const nextBurned = [...new Set([...burned, ...burnedRegisters(schedule, secondsLeft, savedRef.current)])]
+    if (nextBurned.length !== burned.length) setBurned(nextBurned)
+    if (nextBurned.length + savedRef.current.length >= REGISTER_PILES.length) {
+      queueMicrotask(() => finish(savedRef.current))
+    }
+  }, [burned, completed, finish, schedule, secondsLeft])
+
+  const rescue = (id: SavedRegisterId) => {
+    if (completed) return
+    const step = resolveFireRescueStep({
+      saved: savedRef.current,
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 93 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 93 页
+============================
+      burned,
+      secondsLeft,
+      lastPile,
+      schedule,
+      id,
+      maxSaved,
+    })
+    if (!step.rescued) return
+    savedRef.current = step.saved
+    setSaved(step.saved)
+    setBurned(step.burned)
+    setSecondsLeft(step.secondsLeft)
+    setLastPile(step.lastPile)
+    setLastCost(step.cost)
+    if (step.saved.length >= maxSaved || step.saved.length + step.burned.length >= REGISTER_PILES.length) {
+      finish(step.saved)
+    }
+  }
+
+  const heat = Math.max(0, Math.min(100, (1 - secondsLeft / durationSeconds) * 100))
+
+  return (
+    <section
+      className="relative mx-auto w-full max-w-5xl overflow-hidden border border-[#C4746A]/45 bg-[#171316]/95 p-5 text-qin-parchment shadow-2xl sm:p-8"
+      aria-labelledby="fire-rescue-title"
+      data-scene-id="c7_fire"
+    >
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_100%,rgba(196,116,106,0.22),transparent_58%)]" />
+      <header className="relative">
+        <p className="text-[0.65rem] tracking-[0.45em] text-[#C98B7E]/75">C7 · 官署火场</p>
+        <div className="mt-3 flex flex-col justify-between gap-5 sm:flex-row sm:items-end">
+          <div>
+            <h2 id="fire-rescue-title" className="flex items-center gap-3 text-3xl tracking-[0.25em]">
+              <Flame className="size-7 text-[#C4746A]" aria-hidden="true" />
+              抢救简册
+            </h2>
+            <p className="mt-3 text-sm leading-7 text-qin-parchment-50">{FIRE_TEXT.instruction}</p>
+          </div>
+          <div className="min-w-44 border border-[#C4746A]/35 bg-black/20 px-4 py-3 text-right">
+            <span className="block text-xs tracking-[0.2em] text-qin-parchment-25">剩余火势</span>
+            <strong className="mt-1 block text-2xl tabular-nums text-[#C98B7E]">
+              {completed ? '撤离' : `${secondsLeft}s`}
+            </strong>
+          </div>
+        </div>
+
+        <div className="mt-5 h-2 overflow-hidden border border-[#C4746A]/30 bg-black/25" aria-label={`火势 ${Math.round(heat)}%`}>
+          <div
+            className="h-full bg-gradient-to-r from-qin-cinnabar to-[#C4746A] transition-[width] duration-700"
+            style={{ width: `${heat}%` }}
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 94 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 94 页
+============================
+          />
+        </div>
+      </header>
+
+      <div className="relative mt-5 grid grid-cols-2 gap-2 sm:mt-7 sm:gap-3 lg:grid-cols-5">
+        {REGISTER_PILES.map((pile) => {
+          const isSaved = saved.includes(pile.id)
+          const isBurned = burned.includes(pile.id)
+          const threat = schedule.find((item) => item.id === pile.id)
+          const burnsIn = Math.max(0, secondsLeft - (threat?.burnsAt ?? 0))
+          const shelfDistance = lastPile == null
+            ? 0
+            : Math.abs(
+                REGISTER_PILES.findIndex((item) => item.id === lastPile)
+                - REGISTER_PILES.findIndex((item) => item.id === pile.id),
+              )
+          const actionCost = pile.rescueSeconds + (shelfDistance >= 2 ? 1 : 0)
+          const disabled = completed || isSaved || isBurned || saved.length >= maxSaved
+          return (
+            <button
+              key={pile.id}
+              type="button"
+              disabled={disabled}
+              onClick={() => rescue(pile.id)}
+              className={`min-h-40 border p-3 text-left transition-all sm:min-h-48 sm:p-4 ${
+                isSaved
+                  ? 'border-qin-bronze-50 bg-qin-bronze-10'
+                  : isBurned
+                    ? 'cursor-not-allowed border-qin-cinnabar/45 bg-[#241415] opacity-45'
+                  : disabled
+                    ? 'cursor-not-allowed border-qin-parchment-10 bg-black/15 opacity-35'
+                    : burnsIn <= actionCost
+                      ? 'border-[#E06A5A]/75 bg-[#32191a] shadow-[inset_0_0_24px_rgba(224,106,90,.12)] hover:-translate-y-1'
+                      : 'border-[#C4746A]/30 bg-[#24191a] hover:-translate-y-1 hover:border-[#C4746A]/70'
+              }`}
+            >
+              <span className="flex items-center justify-between">
+                <ScrollText className="size-5 text-qin-bronze-light" aria-hidden="true" />
+                {isSaved && <Check className="size-4 text-qin-bronze-light" aria-hidden="true" />}
+                {isBurned && <X className="size-4 text-[#C4746A]" aria-hidden="true" />}
+              </span>
+              <span className="mt-4 block text-lg tracking-[0.18em] sm:mt-8 sm:text-xl">{pile.label}</span>
+              <span className="mt-2 block text-xs tracking-[0.12em] text-qin-parchment-40">{pile.subtitle}</span>
+              <span className="mt-3 block border-t border-qin-parchment-10 pt-3 text-xs leading-5 text-qin-parchment-25 sm:mt-5 sm:pt-4 sm:leading-6">
+                {isSaved ? '已抢出' : isBurned ? '已焚毁' : pile.placeholder}
+              </span>
+              {!isSaved && !isBurned && (
+                <span className={`mt-3 flex items-center justify-between text-[0.68rem] ${burnsIn <= actionCost ? 'text-[#F0A293]' : 'text-qin-parchment-40'}`}>
+                  <span className="flex items-center gap-1"><Flame className="size-3" />{burnsIn}s 后烧到</span>
+                  <span className="flex items-center gap-1"><Clock3 className="size-3" />耗 {actionCost}s</span>
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 95 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 95 页
+============================
+                </span>
+              )}
+            </button>
+          )
+        })}
+      </div>
+
+      <div className="relative mt-6 flex flex-col justify-between gap-3 border-t border-[#C4746A]/20 pt-5 text-sm sm:flex-row sm:items-center">
+        <span className="text-qin-parchment-50">
+          已抢出 {saved.length} / {maxSaved} 册 · 已焚 {burned.length} 册
+          {lastCost > 0 ? ` · 上次耗时 ${lastCost}s` : ''}
+        </span>
+        <span className={completed ? 'text-qin-bronze-light' : 'text-qin-parchment-25'} aria-live="polite">
+          {completed ? FIRE_TEXT.withdraw : '火路每局重排，抢满三册强制撤离'}
+        </span>
+      </div>
+    </section>
+  )
+}
+
+
+// === file: src/ui/PursuitIntercept.tsx ===
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { Check, Clock3, Flag, Footprints, MapPin, Waves, X } from 'lucide-react'
+import { playSfx, playSfxFile, stopSfxFile, unlockSfxFile } from '../game/audio'
+import type { StoryFlags } from '../game/save'
+import {
+  PURSUIT_ROUTES,
+  createPursuitWaves,
+  pursuitResultLabel,
+  type PursuitRouteId,
+} from './pursuitInterceptData'
+
+const WAVE_SECONDS = 9
+const TRACKING_SECONDS = 6
+
+const ROUTE_ICONS: Record<PursuitRouteId, typeof MapPin> = {
+  north: Flag,
+  market: Footprints,
+  canal: Waves,
+}
+
+interface WaveResult {
+  correct: boolean
+  text: string
+  total: number
+}
+
+export default function PursuitIntercept({
+  onFlagsChange,
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 96 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 96 页
+============================
+  onFinish,
+}: {
+  onFlagsChange: (patch: Pick<StoryFlags, 'c7_troops_intercepted'>) => void
+  onFinish: () => void
+}) {
+  const waves = useMemo(() => createPursuitWaves(), [])
+  const [waveIndex, setWaveIndex] = useState(0)
+  const [secondsLeft, setSecondsLeft] = useState(WAVE_SECONDS)
+  const [trackingLeft, setTrackingLeft] = useState(TRACKING_SECONDS)
+  const [ready, setReady] = useState(false)
+  const [intercepted, setIntercepted] = useState(0)
+  const [result, setResult] = useState<WaveResult | null>(null)
+  const [finished, setFinished] = useState(false)
+  const resolvedRef = useRef(false)
+  const audioRetriedRef = useRef(false)
+  const completionReportedRef = useRef(false)
+  const wave = waves[waveIndex]
+
+  useEffect(() => {
+    playSfxFile('sfx/city_siege.mp3', { loop: true, volume: 0.14, channel: 'environment' })
+    return () => stopSfxFile('environment')
+  }, [])
+
+  const commit = useCallback((choice: PursuitRouteId | null) => {
+    if (resolvedRef.current || !wave || !ready) return
+    resolvedRef.current = true
+    if (!audioRetriedRef.current) {
+      audioRetriedRef.current = true
+      unlockSfxFile('environment')
+    }
+    const correct = choice === wave.route
+    const total = intercepted + (correct ? 1 : 0)
+    setIntercepted(total)
+    setResult({
+      correct,
+      total,
+      text: correct
+        ? `截中！伏兵在${PURSUIT_ROUTES.find((route) => route.id === wave.route)?.label}合围。`
+        : choice == null
+          ? `迟了一步。残兵从${PURSUIT_ROUTES.find((route) => route.id === wave.route)?.label}冲了出去。`
+          : `判断失误。真正的逃路是${PURSUIT_ROUTES.find((route) => route.id === wave.route)?.label}。`,
+    })
+    playSfx(correct ? 'hold' : 'steal')
+  }, [intercepted, ready, wave])
+
+  useEffect(() => {
+    if (finished || result || ready) return
+    const timer = window.setInterval(() => {
+      setTrackingLeft((current) => Math.max(0, current - 1))
+    }, 1000)
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 97 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 97 页
+============================
+    const reveal = window.setTimeout(() => {
+      setReady(true)
+      setSecondsLeft(WAVE_SECONDS)
+    }, TRACKING_SECONDS * 1000)
+    return () => {
+      window.clearInterval(timer)
+      window.clearTimeout(reveal)
+    }
+  }, [finished, ready, result, waveIndex])
+
+  useEffect(() => {
+    if (finished || result || !ready) return
+    const timer = window.setInterval(() => {
+      setSecondsLeft((current) => Math.max(0, current - 1))
+    }, 1000)
+    const expiry = window.setTimeout(() => commit(null), WAVE_SECONDS * 1000)
+    return () => {
+      window.clearInterval(timer)
+      window.clearTimeout(expiry)
+    }
+  }, [commit, finished, ready, result, waveIndex])
+
+  useEffect(() => {
+    if (!result) return
+    const timer = window.setTimeout(() => {
+      if (waveIndex >= waves.length - 1) {
+        setFinished(true)
+        if (!completionReportedRef.current) {
+          completionReportedRef.current = true
+          onFlagsChange({ c7_troops_intercepted: result.total })
+        }
+        return
+      }
+      setWaveIndex((current) => current + 1)
+      setSecondsLeft(WAVE_SECONDS)
+      setTrackingLeft(TRACKING_SECONDS)
+      setReady(false)
+      setResult(null)
+      resolvedRef.current = false
+    }, 1400)
+    return () => window.clearTimeout(timer)
+  }, [onFlagsChange, result, waveIndex, waves.length])
+
+  return (
+    <section className="mx-auto w-full max-w-5xl overflow-hidden border border-qin-bronze-35 bg-[#111317]/95 text-qin-parchment shadow-2xl">
+      <div className="relative overflow-hidden border-b border-qin-bronze-25 bg-[linear-gradient(110deg,#17191d,#22211d,#15171a)] p-5 sm:p-8">
+        <div className="pointer-events-none absolute inset-0 opacity-15 [background-image:linear-gradient(90deg,transparent_49%,#B58A3D_50%,transparent_51%)] [background-size:80px_100%]" />
+        <p className="relative text-[0.65rem] tracking-[0.45em] text-qin-bronze/70">C7 · 北道追截</p>
+        <div className="relative mt-3 flex flex-wrap items-end justify-between gap-4">
+          <div>
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 98 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 98 页
+============================
+            <h2 className="text-3xl tracking-[0.2em]">截残军</h2>
+            <p className="mt-3 text-sm leading-7 tracking-[0.08em] text-qin-parchment-50">
+              五股残兵分路逃窜。读痕迹、判去向，在倒计时结束前派人封路。
+            </p>
+          </div>
+          {!finished && (
+            <div className="flex items-center gap-3 border border-[#C4746A]/40 bg-black/30 px-4 py-3 text-[#E6B1A7]">
+              <Clock3 className="size-5" aria-hidden="true" />
+              <span className="text-2xl tabular-nums">{ready ? secondsLeft : trackingLeft}</span>
+              <span className="text-xs tracking-[0.18em]">{ready ? '息' : '追迹'}</span>
+            </div>
+          )}
+        </div>
+      </div>
+
+      <div className="p-5 sm:p-8">
+        <div className="flex items-center justify-between text-xs tracking-[0.16em] text-qin-parchment-40">
+          <span>追截 {Math.min(waveIndex + 1, waves.length)} / {waves.length}</span>
+          <span>已截 {intercepted} 股</span>
+        </div>
+        <div className="mt-3 h-1 overflow-hidden bg-qin-parchment-10">
+          <div
+            className="h-full bg-qin-bronze transition-all duration-500"
+            style={{ width: `${finished ? 100 : (waveIndex / waves.length) * 100}%` }}
+          />
+        </div>
+
+        {finished ? (
+          <div className="py-12 text-center">
+            <Flag className="mx-auto size-10 text-qin-bronze-light" aria-hidden="true" />
+            <p className="mt-5 text-2xl tracking-[0.2em]">截下 {intercepted} / {waves.length} 股残兵</p>
+            <p className="mx-auto mt-4 max-w-xl leading-8 text-qin-parchment-50">
+              {pursuitResultLabel(intercepted, waves.length)}
+            </p>
+            <button
+              type="button"
+              onClick={onFinish}
+              className="mt-8 border border-qin-bronze-50 px-8 py-3 tracking-[0.25em] text-qin-bronze-light hover:bg-qin-bronze-10"
+            >
+              收拢俘虏
+            </button>
+          </div>
+        ) : (
+          <>
+            <div className="mt-7 min-h-28 border-l-2 border-[#C4746A] bg-qin-cinnabar-15 px-5 py-4">
+              <p className="text-xs tracking-[0.25em] text-[#C98B7E]">{ready ? '斥候急报' : '沿街追迹'}</p>
+              <p className="mt-3 text-lg leading-8 tracking-[0.08em]">
+                {ready ? wave.clue : '青翎辨旗痕，阿芒听马蹄，小满沿水沟寻找新鲜脚印……'}
+              </p>
+            </div>
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 99 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 99 页
+============================
+
+            <div className="mt-6 grid grid-cols-3 gap-2 sm:gap-4">
+              {PURSUIT_ROUTES.map((route) => {
+                const Icon = ROUTE_ICONS[route.id]
+                return (
+                  <button
+                    key={route.id}
+                    type="button"
+                    disabled={Boolean(result) || !ready}
+                    onClick={() => commit(route.id)}
+                    className="flex min-h-28 flex-col items-center justify-center gap-2 border border-qin-bronze-25 bg-[#1A1C20] px-2 py-4 transition-all enabled:hover:-translate-y-1 enabled:hover:border-qin-bronze-65 disabled:opacity-45 sm:min-h-32 sm:gap-3 sm:px-5 sm:py-6"
+                  >
+                    <Icon className="size-6 text-qin-bronze-light" aria-hidden="true" />
+                    <span className="text-sm tracking-[0.08em] sm:text-lg sm:tracking-[0.18em]">{route.label}</span>
+                    <span className="text-xs tracking-[0.16em] text-qin-parchment-25">派人封路</span>
+                  </button>
+                )
+              })}
+            </div>
+
+            <div className="mt-5 min-h-12 text-center text-sm leading-7" aria-live="polite">
+              {result && (
+                <span className={`inline-flex items-center gap-2 ${result.correct ? 'text-[#AFC4A8]' : 'text-[#C98B7E]'}`}>
+                  {result.correct ? <Check className="size-4" /> : <X className="size-4" />}
+                  {result.text}
+                </span>
+              )}
+            </div>
+          </>
+        )}
+      </div>
+    </section>
+  )
+}
+
+
+// === file: src/ui/DefenseBattlePanel.tsx ===
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { HeartPulse, Shield, Swords } from 'lucide-react'
+import type { StoryFlags } from '../game/save'
+import { playSfxFile, stopSfxFile, unlockSfxFile } from '../game/audio'
+import {
+  EVAC_BATTLE_CONFIG,
+  createDefenseBattle,
+  currentDefenseThreat,
+  defenseOutcome,
+  previewDefenseAction,
+  resolveDefenseRound,
+  type DefenseAction,
+  type DefenseBattleConfig,
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 100 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 100 页
+=============================
+} from '../game/defenseBattle'
+
+export interface DefenseBattlePanelProps {
+  config?: DefenseBattleConfig
+  onFlagsChange: (patch: Pick<StoryFlags, 'evac_survival'>) => void
+  onFinish?: () => void
+  onDefeat?: () => void
+}
+
+const ACTIONS: readonly {
+  id: DefenseAction
+  label: string
+  desc: string
+  icon: typeof Shield
+}[] = [
+  { id: 'hold', label: '结阵守线', desc: '克制正面冲阵；连续结阵会疲惫', icon: Shield },
+  { id: 'heal', label: '抢救伤者', desc: '克制担架断裂；同时抢回少量状态', icon: HeartPulse },
+  { id: 'strike', label: '反击乱兵', desc: '克制突入头目；对齐整冲阵效果有限', icon: Swords },
+]
+
+export default function DefenseBattlePanel({
+  config = EVAC_BATTLE_CONFIG,
+  onFlagsChange,
+  onFinish,
+  onDefeat,
+}: DefenseBattlePanelProps) {
+  const randomBattle = () => createDefenseBattle(
+    config,
+    Math.floor(Math.random() * Math.max(1, config.wavePlans.length)),
+  )
+  const [battle, setBattle] = useState(randomBattle)
+  const resolvedRef = useRef(false)
+  const audioRetriedRef = useRef(false)
+
+  useEffect(() => {
+    if (config.id !== 'c7_evac') return
+    playSfxFile('sfx/city_siege.mp3', { loop: true, volume: 0.14, channel: 'environment' })
+    return () => stopSfxFile('environment')
+  }, [config.id])
+
+  useEffect(() => {
+    if (battle.phase === 'won' && !resolvedRef.current) {
+      resolvedRef.current = true
+      onFlagsChange({ evac_survival: defenseOutcome(battle, config) })
+      onFinish?.()
+    }
+    if (battle.phase === 'lost' && !resolvedRef.current) {
+      resolvedRef.current = true
+      onDefeat?.()
+    }
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 101 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 101 页
+=============================
+  }, [battle, config, onDefeat, onFinish, onFlagsChange])
+
+  const enemyCount = useMemo(
+    () => config.waveEnemyCount[Math.min(battle.round - 1, config.waveEnemyCount.length - 1)] ?? 1,
+    [battle.round, config.waveEnemyCount],
+  )
+
+  const act = (action: DefenseAction) => {
+    // 场景切换后的自动播放若被浏览器拦截，第一次玩家出招时在明确交互中重试。
+    if (config.id === 'c7_evac' && !audioRetriedRef.current) {
+      audioRetriedRef.current = true
+      unlockSfxFile('environment')
+    }
+    setBattle((current) => resolveDefenseRound(current, config, action))
+  }
+
+  const reset = () => {
+    resolvedRef.current = false
+    setBattle(randomBattle())
+  }
+
+  const hpPercent = Math.max(0, Math.min(100, battle.targetHp / config.maxTargetHp * 100))
+  const survival = battle.phase === 'won' ? defenseOutcome(battle, config) : null
+  const threat = currentDefenseThreat(battle)
+
+  return (
+    <section
+      className="mx-auto w-full max-w-5xl overflow-hidden border border-qin-bronze-35 bg-[#111317]/95 text-qin-parchment shadow-2xl"
+      data-scene-id={config.id}
+      aria-labelledby={`${config.id}-title`}
+    >
+      <div
+        className="relative min-h-64 bg-cover bg-center p-5 sm:p-8"
+        style={{
+          backgroundImage:
+            "linear-gradient(rgba(13,14,17,.32),rgba(13,14,17,.9)),url('https://stats.puck-muling.top/game/assets/bg_yiying.webp')",
+        }}
+      >
+        <p className="text-[0.65rem] tracking-[0.45em] text-qin-bronze/75">防守战 · 局势应对</p>
+        <h2 id={`${config.id}-title`} className="mt-3 text-3xl tracking-[0.2em]">{config.title}</h2>
+        <p className="mt-3 text-sm tracking-[0.12em] text-qin-parchment-50">{config.objective}</p>
+
+        <div className="mt-8 flex min-h-28 items-end gap-2">
+          {Array.from({ length: enemyCount }, (_, index) => (
+            <img
+              key={`${battle.round}-${index}`}
+              src={config.enemySprite}
+              alt=""
+              className="h-24 w-24 object-contain drop-shadow-[0_8px_12px_rgba(0,0,0,.55)] sm:h-32 sm:w-32"
+            />
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 102 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 102 页
+=============================
+          ))}
+        </div>
+      </div>
+
+      <div className="p-5 sm:p-8">
+        {battle.phase === 'player' && (
+          <div className="mb-5 border-l-2 border-[#C4746A] bg-qin-cinnabar-15 px-4 py-3">
+            <span className="text-[0.65rem] tracking-[0.25em] text-[#C98B7E]">本轮危机</span>
+            <strong className="ml-3 tracking-[0.14em] text-qin-parchment">{threat.label}</strong>
+            <p className="mt-2 text-xs leading-6 text-qin-parchment-50">{threat.detail}</p>
+          </div>
+        )}
+        <div className="grid gap-4 sm:grid-cols-[1fr_auto] sm:items-end">
+          <div>
+            <div className="flex items-center justify-between text-sm">
+              <span className="tracking-[0.16em] text-qin-bronze-light">{config.targetName}</span>
+              <span className="tabular-nums text-qin-parchment-50">
+                {battle.targetHp} / {config.maxTargetHp}
+              </span>
+            </div>
+            <div className="mt-2 h-3 overflow-hidden border border-qin-bronze-25 bg-black/30">
+              <div
+                className="h-full bg-gradient-to-r from-qin-cinnabar to-qin-bronze transition-[width] duration-500"
+                style={{ width: `${hpPercent}%` }}
+              />
+            </div>
+          </div>
+          <div className="border border-qin-parchment-10 bg-black/15 px-5 py-3 text-center">
+            <span className="block text-xs tracking-[0.16em] text-qin-parchment-25">回合</span>
+            <strong className="mt-1 block text-xl text-qin-bronze-light">
+              {Math.min(battle.round, config.rounds)} / {config.rounds}
+            </strong>
+          </div>
+        </div>
+
+        {battle.phase === 'player' ? (
+          <div className="mt-6 grid gap-3 md:grid-cols-3">
+            {ACTIONS.map((action) => {
+              const Icon = action.icon
+              const preview = previewDefenseAction(battle, config, action.id)
+              return (
+                <button
+                  key={action.id}
+                  type="button"
+                  onClick={() => act(action.id)}
+                  className="border border-qin-bronze-25 bg-[#17191d] p-4 text-left transition-all hover:-translate-y-1 hover:border-qin-bronze-65"
+                >
+                  <span className="flex items-center gap-3 text-qin-bronze-light">
+                    <Icon className="size-5" aria-hidden="true" />
+                    <strong className="tracking-[0.14em]">{action.label}</strong>
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 103 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 103 页
+=============================
+                  </span>
+                  <span className="mt-3 block text-xs leading-6 text-qin-parchment-40">{action.desc}</span>
+                  <span className={`mt-3 block border-t pt-2 text-[0.68rem] ${preview.isCounter ? 'border-qin-bronze-light/25 text-qin-bronze-light' : 'border-qin-parchment-10 text-qin-parchment-25'}`}>
+                    预计受损 {preview.damage}
+                    {preview.healed > 0 ? ` · 抢回 ${preview.healed}` : ''}
+                    {preview.fatigued ? ' · 连用疲惫' : ''}
+                  </span>
+                </button>
+              )
+            })}
+          </div>
+        ) : (
+          <div className="mt-6 border border-qin-bronze-25 bg-black/15 p-5 text-center">
+            <strong className={battle.phase === 'won' ? 'text-qin-bronze-light' : 'text-[#C98B7E]'}>
+              {battle.phase === 'won'
+                ? `撤离完成 · 存活率 ${survival === 'high' ? '高' : '低'}`
+                : '防线失守'}
+            </strong>
+            <p className="mt-3 text-sm text-qin-parchment-40">
+              {battle.log.at(-1)}
+            </p>
+            <button
+              type="button"
+              onClick={reset}
+              className="mt-5 border border-qin-bronze-35 px-6 py-2 text-sm tracking-[0.2em] text-qin-bronze-light"
+            >
+              重新演练
+            </button>
+          </div>
+        )}
+
+        <div className="mt-6 max-h-28 overflow-y-auto border-t border-qin-parchment-10 pt-4 text-xs leading-6 text-qin-parchment-25">
+          {battle.log.slice(-4).map((line, index) => <p key={`${line}-${index}`}>{line}</p>)}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+
+// === file: src/ui/ScrollInspect.tsx ===
+import { useMemo, useState } from 'react'
+import { Check, FileSearch, LockKeyhole, ScrollText, TriangleAlert } from 'lucide-react'
+
+export interface ScrollInspectFinding {
+  title: string
+  detail: string
+}
+
+export interface ScrollInspectStack {
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 104 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 104 页
+=============================
+  id: string
+  label: string
+  cover: string
+  detail: string
+  finding?: ScrollInspectFinding
+}
+
+export interface ScrollInspectProps {
+  sceneId: 's3_chaan' | 'c1_pinan'
+  stacks: readonly ScrollInspectStack[]
+  requiredFindings?: number
+  title?: string
+  eyebrow?: string
+  instruction?: string
+  continueLabel?: string
+  fallbackText?: string
+  onReveal?: (stack: ScrollInspectStack, index: number) => void
+  onContinue: () => void
+}
+
+export default function ScrollInspect({
+  sceneId,
+  stacks,
+  requiredFindings = stacks.filter((stack) => stack.finding).length,
+  title = '简册翻查',
+  eyebrow = '案卷复核',
+  instruction = '逐叠翻查，找齐异常后继续剧情',
+  continueLabel = '继续剧情',
+  fallbackText = '异常尚未找齐，再核对一遍。',
+  onReveal,
+  onContinue,
+}: ScrollInspectProps) {
+  const [revealedIds, setRevealedIds] = useState<readonly string[]>([])
+
+  const findings = useMemo(
+    () => stacks.filter((stack) => revealedIds.includes(stack.id) && stack.finding),
+    [revealedIds, stacks],
+  )
+  const allRevealed = revealedIds.length === stacks.length
+  const canContinue = findings.length >= requiredFindings
+
+  const reveal = (stack: ScrollInspectStack, index: number) => {
+    if (revealedIds.includes(stack.id)) return
+    setRevealedIds((current) => [...current, stack.id])
+    onReveal?.(stack, index)
+  }
+
+  return (
+    <section
+      className="mx-auto w-full max-w-5xl border border-qin-bronze-35 bg-[#121316]/95 p-5 text-qin-parchment shadow-2xl sm:p-8"
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 105 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 105 页
+=============================
+      aria-labelledby={`${sceneId}-scroll-title`}
+      data-scene-id={sceneId}
+    >
+      <header className="text-center">
+        <p className="text-[0.65rem] tracking-[0.45em] text-qin-bronze-65">{eyebrow}</p>
+        <h2 id={`${sceneId}-scroll-title`} className="mt-3 text-2xl tracking-[0.25em] sm:text-3xl">
+          {title}
+        </h2>
+        <p className="mt-3 text-sm tracking-[0.12em] text-qin-parchment-50">{instruction}</p>
+      </header>
+
+      <ol className="mt-8 grid gap-4 md:grid-cols-3">
+        {stacks.map((stack, index) => {
+          const revealed = revealedIds.includes(stack.id)
+          return (
+            <li key={stack.id} className="min-h-72">
+              <button
+                type="button"
+                onClick={() => reveal(stack, index)}
+                aria-expanded={revealed}
+                className={`group relative flex h-full w-full flex-col border p-5 text-left transition-all duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-qin-bronze ${
+                  revealed
+                    ? 'border-qin-bronze-50 bg-qin-bronze-10'
+                    : 'cursor-pointer border-qin-bronze-25 bg-[#1b1c20] hover:-translate-y-1 hover:border-qin-bronze-65 hover:shadow-[0_12px_30px_rgba(0,0,0,0.3)]'
+                }`}
+              >
+                <span className="flex w-full items-center justify-between">
+                  <span className="text-xs tracking-[0.25em] text-qin-bronze/75">简册 {index + 1}</span>
+                  {revealed ? (
+                    <Check className="size-4 text-qin-bronze" aria-hidden="true" />
+                  ) : (
+                    <FileSearch className="size-4 text-qin-bronze/75" aria-hidden="true" />
+                  )}
+                </span>
+
+                <span className="mt-8 flex items-center gap-3 text-xl tracking-[0.14em]">
+                  <ScrollText className="size-5 text-qin-bronze/70" aria-hidden="true" />
+                  {stack.label}
+                </span>
+                <span className="mt-4 text-sm leading-7 text-qin-parchment-40">
+                  {revealed ? stack.detail : stack.cover}
+                </span>
+
+                <span className="mt-auto border-t border-qin-parchment-10 pt-5 text-sm leading-7">
+                  {revealed ? (
+                    stack.finding ? (
+                      <span className="block border border-[#C4746A]/35 bg-[#C4746A]/10 p-3">
+                        <span className="block text-xs tracking-[0.2em] text-[#C98B7E]">异常记录</span>
+                        <span className="mt-2 block text-qin-parchment-80">{stack.finding.title}</span>
+                        <span className="mt-1 block text-qin-parchment-50">{stack.finding.detail}</span>
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 106 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 106 页
+=============================
+                      </span>
+                    ) : (
+                      <span className="text-qin-parchment-40">本叠未见异常。</span>
+                    )
+                  ) : (
+                    <span className="text-qin-parchment-25">点击翻开</span>
+                  )}
+                </span>
+              </button>
+            </li>
+          )
+        })}
+      </ol>
+
+      <div className="mt-7 flex flex-col items-center">
+        <p className="mb-3 text-xs tracking-[0.2em] text-qin-parchment-40" aria-live="polite">
+          已翻查 {revealedIds.length} / {stacks.length} · 异常 {findings.length} / {requiredFindings}
+        </p>
+
+        {allRevealed && !canContinue && (
+          <div className="mb-4 flex max-w-xl items-start gap-3 border border-[#C4746A]/35 bg-[#C4746A]/10 p-4 text-sm leading-7 text-qin-parchment-65">
+            <TriangleAlert className="mt-1 size-4 shrink-0 text-[#C98B7E]" aria-hidden="true" />
+            <span>{fallbackText}</span>
+          </div>
+        )}
+
+        <button
+          type="button"
+          disabled={!canContinue}
+          onClick={onContinue}
+          className="qin-btn min-w-52 border border-qin-bronze-50 px-8 py-3 tracking-[0.3em] text-qin-bronze-light enabled:hover:bg-qin-bronze-10 disabled:cursor-not-allowed disabled:border-qin-parchment-10 disabled:text-qin-parchment-25"
+        >
+          {canContinue ? continueLabel : (
+            <span className="inline-flex items-center gap-2">
+              <LockKeyhole className="size-4" aria-hidden="true" />
+              尚缺异常
+            </span>
+          )}
+        </button>
+      </div>
+    </section>
+  )
+}
+
+
+// === file: src/sections/TitleScreen.tsx ===
+import { useState } from 'react'
+import { BookOpenText, FolderOpen, MessageCircle, Send, Sword, Tv, MessageSquare } from 'lucide-react'
+import SaveLoadModal from '../components/SaveLoadModal'
+import WechatQrModal from '../components/WechatQrModal'
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 107 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 107 页
+=============================
+import FeedbackModal from '../components/FeedbackModal'
+import { findLatestSave, listSaveSlots, type SaveData } from '../game/save'
+import ShichengPage from '../ui/ShichengPage'
+import type { ShichengCard } from '../ui/shichengData'
+import { SOCIAL_LINKS, SOCIAL_READY } from '../lib/social'
+import { useLoadedImage } from '../hooks/useLoadedImage'
+
+interface Props {
+  onStart: () => void
+  onLoad: (data: SaveData) => void
+  shichengUnlockedCardIds?: readonly ShichengCard['id'][]
+}
+
+export default function TitleScreen({
+  onStart,
+  onLoad,
+  shichengUnlockedCardIds = [],
+}: Props) {
+  const [showLoad, setShowLoad] = useState(false)
+  const [showShicheng, setShowShicheng] = useState(false)
+  const [showQr, setShowQr] = useState(false)
+  const [showTgQr, setShowTgQr] = useState(false)
+  const [showFeedback, setShowFeedback] = useState(false)
+  const saveSlots = listSaveSlots()
+  const hasSave = saveSlots.some((save) => save.status === 'ready')
+  const hasStoredSave = saveSlots.some((save) => save.status !== 'empty')
+  // 主视觉下载完成前不显示黑图，加载好后淡入
+  const keyartSrc = useLoadedImage('https://stats.puck-muling.top/game/assets/title_keyart.webp')
+
+  const handleLoad = (data: SaveData) => {
+    setShowLoad(false)
+    onLoad(data)
+  }
+
+  const quickContinue = () => {
+    const latest = findLatestSave()
+    if (latest) onLoad(latest)
+  }
+
+  return (
+    <div className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-qin-charcoal text-qin-parchment">
+      {keyartSrc && (
+        <img
+          src={keyartSrc}
+          alt=""
+          className="pointer-events-none absolute inset-0 h-full w-full object-cover animate-[fadein_.6s_ease]"
+          onError={(event) => {
+            event.currentTarget.style.display = 'none'
+          }}
+        />
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 108 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 108 页
+=============================
+      )}
+      <div className="pointer-events-none absolute inset-0 bg-qin-ink/40" />
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-qin-ink/25 via-qin-ink/55 to-qin-ink/65" />
+      <div className="relative z-10 flex flex-col items-center gap-6 px-6 text-center [text-shadow:0_2px_8px_#000]">
+        <div className="text-xs font-sans tracking-[0.4em] text-qin-bronze">前 230 — 前 221 · 战国末年</div>
+        <img src="https://stats.puck-muling.top/game/assets/seal_qin.svg" alt="" className="size-12 opacity-70" aria-hidden="true" />
+        <h1 className="font-serif-sc text-4xl font-bold tracking-[0.2em] sm:text-5xl md:text-6xl lg:text-7xl">秦灭六国</h1>
+        <div className="font-sans tracking-[0.25em] text-qin-parchment-65">玩法 Demo · 序章《郑地伏杀》+ 第一章《新郑覆旗》</div>
+        <div className="mt-2 max-w-md font-serif-sc text-sm leading-8 tracking-wide text-qin-parchment-65">
+          郑国下狱，逐客令下。现代青年阿芒，在秦军秘密行动头领北芒的
+          身体里醒来，与医者小满、剑士青翎结为三人小队——历史结局已定，
+          你决定的，是方法、代价，和战争之后的路。
+        </div>
+        <button
+          onClick={onStart}
+          className="qin-btn mt-6 border border-qin-bronze-50 bg-qin-cinnabar px-10 py-4 font-sans text-lg tracking-[0.15em] hover:bg-qin-cinnabar-hover"
+        >
+          <Sword className="size-5" />
+          奉令出发
+        </button>
+        {hasSave && (
+          <button
+            onClick={quickContinue}
+            className="qin-btn border border-qin-bronze-35 bg-[#202226] px-8 py-3 font-sans tracking-[0.15em] hover:bg-qin-cinnabar-15"
+          >
+            <FolderOpen className="size-4 text-qin-bronze" />
+            继续游戏
+          </button>
+        )}
+        <div className="flex flex-wrap items-center justify-center gap-5">
+          <button
+            onClick={() => setShowLoad(true)}
+            disabled={!hasStoredSave}
+            className={`text-xs tracking-[0.3em] transition-colors ${
+              hasStoredSave
+                ? 'text-qin-parchment-50 hover:text-qin-bronze'
+                : 'cursor-not-allowed text-qin-parchment-40'
+            }`}
+          >
+            {hasSave ? '选择存档载入…' : hasStoredSave ? '处理旧存档…' : '尚无存档'}
+          </button>
+          <button
+            onClick={() => setShowShicheng(true)}
+            className="flex items-center gap-2 text-xs tracking-[0.3em] text-qin-parchment-50 transition-colors hover:text-qin-bronze"
+          >
+            <BookOpenText className="size-4" />
+            史乘
+          </button>
+        </div>
+        <div className="mt-8 text-xs text-qin-parchment-25">三人固定小队 · 无等级 · 无装备 · 目标不止全歼</div>
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 109 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 109 页
+=============================
+        <div className="mt-2 text-xs text-qin-parchment-25">本作剧情对部分历史事件的时间线作戏剧性合并</div>
+
+        {SOCIAL_READY && (
+          <div className="mt-8 flex flex-col items-center gap-3">
+            <p className="text-xs tracking-[0.2em] text-qin-parchment-40">关注开发者 / 反馈 BUG</p>
+            <div className="flex items-center gap-5">
+              <button
+                onClick={() => setShowQr(true)}
+                className="flex items-center gap-1.5 text-sm tracking-[0.15em] text-qin-bronze transition-colors hover:text-qin-bronze-light"
+              >
+                <MessageCircle className="size-4" />
+                微信
+              </button>
+              <button
+                onClick={() => setShowTgQr(true)}
+                className="flex items-center gap-1.5 text-sm tracking-[0.15em] text-qin-bronze transition-colors hover:text-qin-bronze-light"
+              >
+                <Send className="size-4" />
+                Telegram
+              </button>
+              <a
+                href={SOCIAL_LINKS.bilibili}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-1.5 text-sm tracking-[0.15em] text-qin-parchment-50 transition-colors hover:text-qin-bronze"
+              >
+                <Tv className="size-4" />
+                B站
+              </a>
+              <button
+                onClick={() => setShowFeedback(true)}
+                className="flex items-center gap-1.5 text-sm tracking-[0.15em] text-qin-bronze transition-colors hover:text-qin-bronze-light"
+              >
+                <MessageSquare className="size-4" />
+                反馈
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {showLoad && (
+        <SaveLoadModal
+          mode="load"
+          onClose={() => setShowLoad(false)}
+          onLoad={handleLoad}
+          onReset={() => {
+            setShowLoad(false)
+            onStart()
+          }}
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 110 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 110 页
+=============================
+        />
+      )}
+
+      {showShicheng && (
+        <ShichengPage
+          unlockedCardIds={shichengUnlockedCardIds}
+          onClose={() => setShowShicheng(false)}
+        />
+      )}
+
+      {showQr && <WechatQrModal onClose={() => setShowQr(false)} />}
+      {showTgQr && <WechatQrModal onClose={() => setShowTgQr(false)} type="telegram" />}
+      {showFeedback && <FeedbackModal onClose={() => setShowFeedback(false)} />}
+    </div>
+  )
+}
+
+
+// === file: src/sections/StoryScene.tsx ===
+import { useEffect, useState } from 'react'
+import { ChevronRight } from 'lucide-react'
+import type { DialogueLine, LineType, StoryScene as Scene } from '../game/story'
+import type { StoryFlags } from '../game/save'
+import { playSfxFile, playVoiceLine, preloadSceneVoices, stopVoice, unlockAudio, unlockBgm } from '../game/audio'
+import { MEDIA_CDN } from '../lib/cdn'
+import { useLoadedImage } from '../hooks/useLoadedImage'
+import SkipButton from '../components/SkipButton'
+import S7ShotCard, { resolveS7Shot } from '../ui/S7ShotCard'
+import {
+  flagPatchForChoice,
+  selectLinesByFlags,
+  type ChoiceFlagBinding,
+  type FlagLineVariant,
+} from '../ui/flags'
+
+const SPEAKER_COLOR: Record<string, string> = {
+  旁白: '#8A8578',
+  阿芒: '#B58A3D',
+  北芒: '#B58A3D',
+  小满: '#9DB89A',
+  青翎: '#7FA3C4',
+  越女: '#7FA3C4',
+  孟甲: '#C4A484',
+  公孙钺: '#C4746A',
+  郑国: '#7FA3A0',
+  秦王: '#C4746A',
+  姚贾: '#A8A29E',
+  韩王: '#C4A484',
+  韩王安: '#C4A484',
+  小吏: '#A8A29E',
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 111 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 111 页
+=============================
+  狱卒: '#A8A29E',
+  军吏: '#A8A29E',
+  商队老执事: '#A8A29E',
+  农家老翁: '#A8A29E',
+  守谷口老卒: '#C4A484',
+  秦卒: '#C4A484',
+  韩地伤兵: '#A8A29E',
+  韩老伯: '#A8A29E',
+  韩老媪: '#A8A29E',
+}
+
+const SPEAKER_AVATAR: Record<string, string> = {
+  阿芒: `${MEDIA_CDN}assets/avatar_beimang.webp`,
+  北芒: `${MEDIA_CDN}assets/avatar_beimang.webp`,
+  小满: `${MEDIA_CDN}assets/avatar_xiaoman.webp`,
+  青翎: `${MEDIA_CDN}assets/avatar_qingling.webp`,
+  越女: `${MEDIA_CDN}assets/avatar_qingling.webp`,
+  公孙钺: `${MEDIA_CDN}assets/npc_gongsunyue.webp`,
+  郑国: `${MEDIA_CDN}assets/npc_zhengguo.webp`,
+  孟甲: `${MEDIA_CDN}assets/npc_mengjia.webp`,
+  秦王: `${MEDIA_CDN}assets/npc_qinwang.webp`,
+  姚贾: `${MEDIA_CDN}assets/npc_yaojia.webp`,
+  韩王: `${MEDIA_CDN}assets/npc_hanwang.webp`,
+  韩王安: `${MEDIA_CDN}assets/npc_hanwang.webp`,
+  韩老伯: `${MEDIA_CDN}assets/npc_hanlaobo.webp`,
+  // —— 缺图暂代（见交付报告缺图清单）——
+  韩老媪: `${MEDIA_CDN}assets/npc_hanlaomu.webp`,
+  农家老翁: `${MEDIA_CDN}assets/npc_hanlaomu.webp`,
+  小吏: `${MEDIA_CDN}assets/npc_shizu.webp`,
+  狱卒: `${MEDIA_CDN}assets/npc_shizu.webp`,
+  军吏: `${MEDIA_CDN}assets/npc_shizu.webp`,
+  商队老执事: `${MEDIA_CDN}assets/npc_shangdui.webp`,
+  守谷口老卒: `${MEDIA_CDN}assets/npc_shizu.webp`,
+  秦卒: `${MEDIA_CDN}assets/npc_shizu.webp`,
+  韩地伤兵: `${MEDIA_CDN}assets/npc_shizu.webp`,
+}
+
+// 演出轨不配音（配音台本轨约定）；字幕轨尝试查找——有条目则播（如 S7 三个镜头，通览标【旁白】），无条目静默
+const VOICE_SKIP_TYPES: ReadonlySet<LineType> = new Set(['stage'])
+
+export default function StoryScene({
+  scene,
+  flags = {},
+  lineVariants,
+  choiceFlag,
+  onFlagsChange,
+  onDone,
+  onSkipAvailable,
+  completeOnLastLine = false,
+}: {
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 112 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 112 页
+=============================
+  scene: Scene
+  flags?: StoryFlags
+  lineVariants?: readonly FlagLineVariant<DialogueLine>[]
+  choiceFlag?: ChoiceFlagBinding
+  onFlagsChange?: (patch: Partial<StoryFlags>) => void
+  onDone: (tag: string | null) => void
+  onSkipAvailable?: boolean
+  /** 点击正在显示的最后一句时直接结束场景，不再多留一个空白“继续”状态。 */
+  completeOnLastLine?: boolean
+}) {
+  const [idx, setIdx] = useState(0)
+  const [chosen, setChosen] = useState<null | { tag: string; lines: number }>(null)
+  const [respIdx, setRespIdx] = useState(0)
+  const [failedS7Shot, setFailedS7Shot] = useState<string | null>(null)
+
+  const lines = selectLinesByFlags(scene.lines, lineVariants ?? scene.lineVariants, flags)
+  const atEndOfMain = idx >= lines.length
+  const choice = scene.choice
+  const chosenOpt = chosen && choice ? choice.options.find((o) => o.tag === chosen.tag)! : null
+  // 选项回应 + 分支共用收尾（choice.after）按序播放
+  const postChoiceLines: DialogueLine[] = chosenOpt ? [...chosenOpt.response, ...(choice?.after ?? [])] : []
+
+  const recordChoiceFlag = (tag: string) => {
+    const patch = flagPatchForChoice(choiceFlag, tag)
+    if (Object.keys(patch).length > 0) onFlagsChange?.(patch)
+  }
+
+  // 进入新场景时预取本场景所有配音文件，让点击后播放近乎即时
+  useEffect(() => {
+    void preloadSceneVoices(scene.id)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [scene.id])
+
+  // 配音触发：监听 scene.id / idx / respIdx 变化，统一播放当前 active 行
+  useEffect(() => {
+    let line: DialogueLine | null = null
+
+    if (!atEndOfMain) {
+      line = lines[idx]
+    } else if (chosen && respIdx < postChoiceLines.length) {
+      line = postChoiceLines[respIdx]
+    }
+
+    if (line && !VOICE_SKIP_TYPES.has(line.type)) {
+      void playVoiceLine(scene.id, line.speaker, line.text)
+    } else {
+      stopVoice()
+    }
+    return stopVoice
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 113 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 113 页
+=============================
+  }, [atEndOfMain, choice, chosen, idx, lines, respIdx, scene.id])
+
+  const advance = () => {
+    unlockAudio()
+    unlockBgm()
+    // 剧情推进点击音：丝滑瓷音（替代默认 select）
+    playSfxFile('sfx/silk_click.mp3', { volume: 0.7 })
+    if (!atEndOfMain) {
+      if (completeOnLastLine && idx === lines.length - 1 && !choice) {
+        stopVoice()
+        onDone(null)
+        return
+      }
+      setIdx(idx + 1)
+      return
+    }
+    if (choice && !chosen) return
+    if (chosen && respIdx < postChoiceLines.length) {
+      setRespIdx(respIdx + 1)
+      return
+    }
+    stopVoice()
+    onDone(chosen?.tag ?? null)
+  }
+
+  // 有选择时只跳到选择点，绝不替玩家自动落子；已选分支则跳过余下回应。
+  const skip = () => {
+    stopVoice()
+    if (choice && !chosen) {
+      setIdx(lines.length)
+      return
+    }
+    onDone(chosen?.tag ?? null)
+  }
+
+  const visible = lines.slice(0, idx)
+  const current = !atEndOfMain ? lines[idx] : null
+  const respVisible = postChoiceLines.slice(0, respIdx)
+  const respCurrent = chosen && respIdx < postChoiceLines.length ? postChoiceLines[respIdx] : null
+  const background = scene.bg
+  // 新背景下载完成前不切图，避免切场景瞬间黑屏
+  const readyBackground = useLoadedImage(background)
+  const s7Shot = current ? resolveS7Shot(scene.id, current) : null
+  const showS7Shot = Boolean(s7Shot && failedS7Shot !== s7Shot.src)
+
+  useEffect(() => {
+    setFailedS7Shot(null)
+  }, [scene.id, s7Shot?.src])
+
+  return (
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 114 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 114 页
+=============================
+    <div
+      className="relative min-h-screen flex flex-col overflow-hidden bg-qin-charcoal text-qin-parchment cursor-pointer select-none"
+      onClick={advance}
+    >
+      {readyBackground && (
+        <img
+          src={readyBackground}
+          alt=""
+          className="pointer-events-none absolute inset-0 h-full w-full object-cover animate-[fadein_.45s_ease]"
+          onError={(event) => {
+            event.currentTarget.style.display = 'none'
+          }}
+        />
+      )}
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-qin-charcoal via-qin-charcoal/80 to-qin-charcoal/20" />
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-qin-charcoal/80 to-transparent" />
+      <div
+        data-testid="story-text-mask"
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-x-0 bottom-0 h-[46vh] bg-gradient-to-b from-transparent via-[#10111466] to-[#101114d9]"
+      />
+
+      <header className="relative z-10 px-6 py-4 pr-16 border-b border-qin-bronze-25 flex items-baseline gap-4">
+        <span className="text-qin-bronze tracking-[0.3em] text-sm shrink-0">{scene.chapter}</span>
+        <span className="text-qin-parchment-50 text-sm truncate min-w-0">{scene.place}</span>
+      </header>
+
+      {s7Shot && showS7Shot && (
+        <S7ShotCard
+          shot={s7Shot}
+          text={current?.text ?? ''}
+          onImageError={() => setFailedS7Shot(s7Shot.src)}
+        />
+      )}
+
+
+      <main
+        className={`relative z-10 flex-1 flex flex-col justify-end max-w-3xl w-full mx-auto px-6 pb-10 gap-3 transition-opacity duration-300 ${
+          showS7Shot ? 'pointer-events-none opacity-0' : 'opacity-100'
+        }`}
+      >
+        {visible.slice(-4).map((l, i) => (
+          <Line key={i} line={l} dim />
+        ))}
+        {respVisible.map((l, i) => (
+          <Line key={`r${i}`} line={l} dim />
+        ))}
+        {current && <Line line={current} active />}
+        {respCurrent && <Line line={respCurrent} active />}
+
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 115 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 115 页
+=============================
+        {atEndOfMain && choice && !chosen && (
+          <div className="mt-6 border border-qin-bronze-35 bg-[#202226] p-5" onClick={(e) => e.stopPropagation()}>
+            <div className="text-qin-bronze mb-4 tracking-wider">{choice.prompt}</div>
+            <div className="flex flex-col gap-3">
+              {choice.options.map((o) => (
+                <button
+                  key={o.tag}
+                  onClick={() => {
+                    recordChoiceFlag(o.tag)
+                    setChosen({ tag: o.tag, lines: o.response.length })
+                    setRespIdx(0)
+                  }}
+                  className="qin-btn text-left px-5 py-4 border border-qin-parchment-10 hover:border-qin-bronze hover:bg-qin-cinnabar-15"
+                >
+                  <div className="text-qin-parchment">{o.label}</div>
+                  <div className="text-sm text-qin-parchment-50 mt-1">{o.desc}</div>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {(current || respCurrent || (atEndOfMain && (!choice || chosen))) && (
+          <div className="flex justify-end items-center gap-1 text-qin-parchment-40 text-sm mt-2 animate-pulse">
+            继续 <ChevronRight className="w-4 h-4" />
+          </div>
+        )}
+      </main>
+
+      {onSkipAvailable && <SkipButton onSkip={skip} />}
+    </div>
+  )
+}
+
+function Line({ line, dim, active }: { line: DialogueLine; dim?: boolean; active?: boolean }) {
+  const { type, speaker, text } = line
+  const [imgFailed, setImgFailed] = useState(false)
+  const [useFallback, setUseFallback] = useState(false)
+
+  // 字幕轨：整行居中，无说话人栏
+  if (type === 'caption') {
+    return (
+      <div
+        className={`w-full text-center tracking-[0.2em] text-qin-bronze leading-8 ${
+          dim ? 'opacity-40' : ''
+        } ${active ? 'animate-[fadein_.3s_ease]' : ''}`}
+      >
+        {text}
+      </div>
+    )
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 116 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 116 页
+=============================
+  }
+
+  const color = SPEAKER_COLOR[speaker] ?? '#E9E5DA'
+  const avatar = SPEAKER_AVATAR[speaker]
+  // webp 失败时回退到 png portrait（仅主角有 png）
+  const pngFallback = avatar?.replace('avatar_', 'portrait_').replace('.webp', '.png')
+  const textClass =
+    type === 'stage'
+      ? 'italic text-[#8A8578]'
+      : type === 'inner'
+        ? 'italic text-qin-parchment-80'
+        : 'text-qin-parchment-80'
+
+  const renderAvatar = () => {
+    if (!avatar) return null
+    // 全部失败：显示彩色占位符
+    if (imgFailed) {
+      return (
+        <div
+          className="flex h-12 w-12 shrink-0 items-center justify-center rounded-md border-2 text-lg font-bold"
+          style={{ borderColor: color, color, backgroundColor: `${color}22` }}
+        >
+          {speaker[0]}
+        </div>
+      )
+    }
+    const src = useFallback && pngFallback ? pngFallback : avatar
+    return (
+      <img
+        src={src}
+        alt=""
+        loading="eager"
+        className="block h-12 w-12 shrink-0 rounded-md border-2 object-cover object-top"
+        style={{ borderColor: color }}
+        onError={() => {
+          if (!useFallback && pngFallback) {
+            setUseFallback(true)
+          } else {
+            setImgFailed(true)
+          }
+        }}
+      />
+    )
+  }
+
+  return (
+    <div className={`flex gap-3 leading-8 ${dim ? 'opacity-40' : ''} ${active ? 'animate-[fadein_.3s_ease]' : ''}`}>
+      {renderAvatar()}
+      <span className="shrink-0 w-20 text-right font-sans text-sm font-bold tracking-[0.1em]" style={{ color }}>
+        {speaker}
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 117 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 117 页
+=============================
+      </span>
+      <span className={`font-serif-sc tracking-[0.05em] ${textClass}`}>{text}</span>
+    </div>
+  )
+}
+
+
+// === file: src/sections/BattleScene.tsx ===
+import { useEffect, useMemo, useRef, useState, useCallback } from 'react'
+import { Crosshair, Flag, FlaskConical, HeartPulse, Shield, Sword, Wind, Cog, Hand, ScrollText } from 'lucide-react'
+import {
+  ACTIONS,
+  actionAvailable,
+  actionsFor,
+  applyHeroAction,
+  canAct,
+  getActiveEnemies,
+  resolveEnemyPhase,
+  type ActionId,
+  type BattleConfig,
+  type BattleState,
+  type HeroId,
+} from '../game/battle'
+import { playSfx, playSfxFile, stopSfxFile, unlockSfxFile } from '../game/audio'
+import {
+  playStrikeAnimation,
+  playHitReaction,
+  playCastAnimation,
+  playCameraShake,
+  type StrikeDirection,
+  type StrikeStyle,
+} from '../game/animationEngine'
+import type { ParticleData, SkillEffectData, SkillEffectKind } from '../components/BattleEffects'
+import CinematicBattlefield, {
+  type BattlefieldEnemy,
+  type BattlefieldHero,
+} from '../components/CinematicBattlefield'
+
+const HERO_STYLE: Record<HeroId, { border: string; badge: string; role: string }> = {
+  beimang: { border: '#B58A3D', badge: '头领', role: '判断 · 突击 · 打断' },
+  mengjia: { border: '#C4A484', badge: '老卒', role: '截剑 · 护卫' },
+  xiaoman: { border: '#9DB89A', badge: '医者', role: '治疗 · 布烟 · 掷毒' },
+  yuenu: { border: '#7FA3C4', badge: '剑士', role: '截剑 · 护卫' },
+}
+
+const HERO_SPRITE: Record<HeroId, string> = {
+  beimang: 'https://stats.puck-muling.top/game/assets/battle/hero_beimang_idle_v1.webp',
+  mengjia: 'https://stats.puck-muling.top/game/assets/battle/hero_mengjia_idle_v2.webp',
+  xiaoman: 'https://stats.puck-muling.top/game/assets/battle/hero_xiaoman_idle_v1.webp',
+  yuenu: 'https://stats.puck-muling.top/game/assets/battle/hero_qingling_idle_v1.webp',
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 118 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 118 页
+=============================
+}
+
+const DEFAULT_ENEMY_SPRITE = 'https://stats.puck-muling.top/game/assets/battle/enemy_assassin_idle_v1.webp'
+
+const ENEMY_SPRITE_BY_SPEC: Record<string, string> = {
+  youxia: DEFAULT_ENEMY_SPRITE,
+  toutmu: 'https://stats.puck-muling.top/game/assets/battle/enemy_toumu_idle_v1.webp',
+  zu: 'https://stats.puck-muling.top/game/assets/battle/enemy_hanzu_idle_v1.webp',
+  zhang: 'https://stats.puck-muling.top/game/assets/battle/enemy_hanwu_idle_v1.webp',
+  huo: 'https://stats.puck-muling.top/game/assets/battle/enemy_zonghuo_idle_v1.webp',
+  sibing: DEFAULT_ENEMY_SPRITE,
+  jingrui: 'https://stats.puck-muling.top/game/assets/battle/enemy_toumu_idle_v1.webp',
+  sishi: DEFAULT_ENEMY_SPRITE,
+  qishou: 'https://stats.puck-muling.top/game/assets/battle/enemy_rider_idle_v1.webp',
+  weishi: 'https://stats.puck-muling.top/game/assets/battle/enemy_hanzu_idle_v1.webp',
+  anzhuang: DEFAULT_ENEMY_SPRITE,
+  mengzu: DEFAULT_ENEMY_SPRITE,
+  nushou: 'https://stats.puck-muling.top/game/assets/battle/enemy_crossbow_idle_v1.webp',
+  zhizao: 'https://stats.puck-muling.top/game/assets/battle/enemy_toumu_idle_v1.webp',
+}
+
+const ACTION_ICON: Record<ActionId, typeof Sword> = {
+  tuji: Sword,
+  daduan: Hand,
+  duokong: Cog,
+  zhiliao: HeartPulse,
+  buyan: Wind,
+  zhidu: FlaskConical,
+  feizhen: Crosshair,
+  jiejian: Sword,
+  huwei: Shield,
+}
+
+const ACTION_SFX: Record<ActionId, 'hit' | 'interrupt' | 'rescue' | 'hold' | 'select'> = {
+  tuji: 'hit',
+  daduan: 'interrupt',
+  duokong: 'select',
+  zhiliao: 'rescue',
+  buyan: 'hold',
+  zhidu: 'hold',
+  feizhen: 'interrupt',
+  jiejian: 'hit',
+  huwei: 'hold',
+}
+
+const ACTION_KIND: Record<ActionId, 'attack' | 'support' | 'interact'> = {
+  tuji: 'attack',
+  daduan: 'attack',
+  duokong: 'interact',
+  zhiliao: 'support',
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 119 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 119 页
+=============================
+  buyan: 'support',
+  zhidu: 'attack',
+  feizhen: 'attack',
+  jiejian: 'attack',
+  huwei: 'support',
+}
+
+const ACTION_VISUAL: Record<ActionId, { effect: SkillEffectKind; color: string; particle?: ParticleData['kind']; shake: boolean; speed: boolean }> = {
+  tuji: { effect: 'thrust', color: '#F4D47A', particle: 'shard', shake: true, speed: true },
+  daduan: { effect: 'break', color: '#D9A36A', particle: 'shard', shake: true, speed: false },
+  duokong: { effect: 'winch', color: '#D2AC63', shake: false, speed: false },
+  zhiliao: { effect: 'heal', color: '#9DB89A', particle: 'droplet', shake: false, speed: false },
+  buyan: { effect: 'smoke', color: '#B7C1AF', shake: false, speed: false },
+  zhidu: { effect: 'poison', color: '#82A66F', particle: 'droplet', shake: false, speed: false },
+  feizhen: { effect: 'needle', color: '#8FC8D8', particle: 'shard', shake: false, speed: false },
+  jiejian: { effect: 'sword', color: '#E9C46A', particle: 'spark', shake: true, speed: false },
+  huwei: { effect: 'guard', color: '#C4A484', shake: false, speed: false },
+}
+
+type Floater = { id: number; target: number | HeroId; text: string; color: string }
+type ImpactPoint = { x: number; y: number }
+
+export default function BattleScene({
+  battle,
+  cfg,
+  title,
+  objective,
+  enemyLabel,
+  defeatText,
+  setBattle,
+  onFinish,
+  onRetry,
+}: {
+  battle: BattleState
+  cfg: BattleConfig
+  title: string
+  objective: string
+  enemyLabel: string
+  /** 战败旁白（附录冻结文案）：战败回卷时随重试按钮展示 */
+  defeatText?: string
+  setBattle: (b: BattleState) => void
+  onFinish: () => void
+  onRetry: () => void
+}) {
+  const [pendingAction, setPendingAction] = useState<ActionId | null>(null)
+  const [floaters, setFloaters] = useState<Floater[]>([])
+  const [hitUids, setHitUids] = useState<number[]>([])
+  const [actingHero, setActingHero] = useState<HeroId | null>(null)
+  const [actingEnemy, setActingEnemy] = useState<number | null>(null)
+  const [actingKind, setActingKind] = useState<'attack' | 'support' | 'interact' | null>(null)
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 120 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 120 页
+=============================
+  const [impactTarget, setImpactTarget] = useState<number | HeroId | null>(null)
+  const [enemyImpactHero, setEnemyImpactHero] = useState<HeroId | null>(null)
+  const [isAnimating, setIsAnimating] = useState(false)
+  const [particles, setParticles] = useState<ParticleData[]>([])
+  const [speedLines, setSpeedLines] = useState<{ active: boolean; direction: 'ltr' | 'rtl' }>({ active: false, direction: 'ltr' })
+  const [skillEffect, setSkillEffect] = useState<SkillEffectData | null>(null)
+  const seq = useRef(1)
+  const actionFxTimers = useRef<number[]>([])
+  const enemyFxTimers = useRef<number[]>([])
+  const enemySequenceRunning = useRef(false)
+  const actionRun = useRef(0)
+  const enemyRun = useRef(0)
+  const audioRetriedRef = useRef(false)
+  const battleLogRef = useRef<HTMLDivElement | null>(null)
+  const battlefieldRef = useRef<HTMLElement | null>(null)
+  const heroEls = useRef<Map<string, HTMLElement>>(new Map())
+  const enemyEls = useRef<Map<number, HTMLElement>>(new Map())
+
+  const registerHeroRef = useCallback((id: string, el: HTMLElement | null) => {
+    if (el) heroEls.current.set(id, el)
+    else heroEls.current.delete(id)
+  }, [])
+  const registerEnemyRef = useCallback((uid: number, el: HTMLElement | null) => {
+    if (el) enemyEls.current.set(uid, el)
+    else enemyEls.current.delete(uid)
+  }, [])
+
+  const targetCenter = useCallback((targetEl: HTMLElement): ImpactPoint => {
+    const battlefield = battlefieldRef.current
+    if (!battlefield) return { x: 50, y: 50 }
+    const targetFigure = targetEl.querySelector<HTMLElement>('.cinematic-actor__figure') ?? targetEl
+    const fieldRect = battlefield.getBoundingClientRect()
+    const targetRect = targetFigure.getBoundingClientRect()
+    if (fieldRect.width <= 0 || fieldRect.height <= 0) return { x: 50, y: 50 }
+    return {
+      x: ((targetRect.left + targetRect.width / 2 - fieldRect.left) / fieldRect.width) * 100,
+      y: ((targetRect.top + targetRect.height * 0.44 - fieldRect.top) / fieldRect.height) * 100,
+    }
+  }, [])
+
+  const spawnImpact = useCallback((
+    targetEl: HTMLElement,
+    effect: SkillEffectKind,
+    color: string,
+    direction: StrikeDirection,
+    intensity = 1,
+    particle?: ParticleData['kind'],
+    shake = true,
+  ) => {
+    const { x, y } = targetCenter(targetEl)
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 121 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 121 页
+=============================
+    const id = seq.current++
+    if (particle) {
+      setParticles((old) => [...old, { id, x, y, color, kind: particle }])
+      window.setTimeout(() => setParticles((old) => old.filter((p) => p.id !== id)), 700)
+    }
+    setSkillEffect({ id, x, y, kind: effect, direction, color })
+    window.setTimeout(() => setSkillEffect((current) => current?.id === id ? null : current), 720)
+    if (shake && battlefieldRef.current) {
+      playCameraShake(battlefieldRef.current, { direction, intensity, originX: x, originY: y })
+    }
+  }, [targetCenter])
+
+  const spawnFieldEffect = useCallback((
+    effect: SkillEffectKind,
+    color: string,
+    x = 50,
+    y = 50,
+    direction: StrikeDirection = 'ltr',
+  ) => {
+    const id = seq.current++
+    setSkillEffect({ id, x, y, kind: effect, direction, color })
+    window.setTimeout(() => setSkillEffect((current) => current?.id === id ? null : current), 760)
+  }, [])
+
+  // 战斗环境音由场景显式指定；仅为旧配置保留 mode 兜底。
+  useEffect(() => {
+    const env = cfg.environmentSfx ?? (cfg.mode === 'annihilate' ? 'sfx/farmyard_fight.mp3' : 'sfx/city_siege.mp3')
+    audioRetriedRef.current = false
+    playSfxFile(env, { loop: true, volume: 0.12, channel: 'environment' })
+    return () => {
+      stopSfxFile('environment')
+      actionFxTimers.current.forEach((timer) => window.clearTimeout(timer))
+      actionFxTimers.current = []
+      enemyFxTimers.current.forEach((timer) => window.clearTimeout(timer))
+      enemyFxTimers.current = []
+      enemySequenceRunning.current = false
+      actionRun.current += 1
+      enemyRun.current += 1
+    }
+  }, [cfg.environmentSfx, cfg.mode])
+
+  const unlockBattleAudio = () => {
+    if (audioRetriedRef.current) return
+    audioRetriedRef.current = true
+    unlockSfxFile('environment')
+  }
+
+  // 绞盘进度音：每拨动一次绞盘响一声
+  useEffect(() => {
+    if (cfg.mode === 'winch' && battle.winch > 0 && battle.winch < 3) {
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 122 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 122 页
+=============================
+      playSfxFile('sfx/winch_chains.mp3', { volume: 0.3 })
+    }
+    if (cfg.mode === 'winch' && battle.winch >= 3) {
+      playSfxFile('sfx/winch_chains.mp3', { volume: 0.35 })
+    }
+  }, [battle.winch, cfg.mode])
+
+  const activeHero: HeroId | null = useMemo(() => {
+    const order: HeroId[] = ['beimang', 'mengjia', 'xiaoman', 'yuenu']
+    return order.find((id) => canAct(battle, id)) ?? null
+  }, [battle])
+
+  const addFloaters = (prev: BattleState, next: BattleState, markEnemyHits = true) => {
+    const fs: Floater[] = []
+    for (const p of prev.enemies) {
+      const e = next.enemies.find((x) => x.uid === p.uid)
+      const damage = next.lastHit?.uid === p.uid ? next.lastHit.damage : e ? p.hp - e.hp : p.hp
+      if (damage > 0) fs.push({ id: seq.current++, target: p.uid, text: `-${damage}`, color: '#E9C46A' })
+    }
+    for (const id of Object.keys(next.heroes) as HeroId[]) {
+      const p = prev.heroes[id]
+      const n = next.heroes[id]
+      if (n.hp < p.hp) fs.push({ id: seq.current++, target: id, text: `-${p.hp - n.hp}`, color: '#E06A5A' })
+      else if (n.hp > p.hp) fs.push({ id: seq.current++, target: id, text: `+${n.hp - p.hp}`, color: '#9DB89A' })
+    }
+    if (fs.length > 0) {
+      setFloaters((old) => [...old, ...fs])
+      const ids = fs.map((f) => f.id)
+      setTimeout(() => setFloaters((old) => old.filter((f) => !ids.includes(f.id))), 950)
+    }
+    const hit = prev.enemies.filter((p) => {
+      const e = next.enemies.find((x) => x.uid === p.uid)
+      return !e || e.hp < p.hp
+    })
+    if (markEnemyHits && hit.length > 0) {
+      setHitUids(hit.map((enemy) => enemy.uid))
+      setTimeout(() => setHitUids([]), 300)
+    }
+    const heroHurt = (Object.keys(next.heroes) as HeroId[]).some((id) => next.heroes[id].hp < prev.heroes[id].hp)
+    if (heroHurt) playSfx('hurt')
+    if (next.phase === 'won' && prev.phase !== 'won') playSfx('win')
+  }
+
+  useEffect(() => {
+    if (battle.phase !== 'enemy' || enemySequenceRunning.current) return
+    const { state: next, steps } = resolveEnemyPhase(battle, cfg)
+    enemySequenceRunning.current = true
+    const runId = ++enemyRun.current
+    enemyFxTimers.current.forEach((timer) => window.clearTimeout(timer))
+    enemyFxTimers.current = []
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 123 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 123 页
+=============================
+
+    const remainingHp = Object.fromEntries(
+      (Object.keys(battle.heroes) as HeroId[]).map((id) => [id, battle.heroes[id].hp]),
+    ) as Record<HeroId, number>
+
+    const showStepFloater = (target: number | HeroId, text: string, color: string) => {
+      const floater = { id: seq.current++, target, text, color }
+      setFloaters((old) => [...old, floater])
+      enemyFxTimers.current.push(
+        window.setTimeout(() => setFloaters((old) => old.filter((item) => item.id !== floater.id)), 950),
+      )
+    }
+
+    const runSequence = async () => {
+      for (const step of steps) {
+        if (enemyRun.current !== runId) return
+        const enemyEl = enemyEls.current.get(step.uid)
+        const targetEl = step.target ? heroEls.current.get(step.target) : null
+        setActingEnemy(step.uid)
+        setEnemyImpactHero(null)
+
+        if ((step.kind === 'attack' || step.kind === 'hidden' || step.kind === 'miss') && enemyEl && targetEl) {
+          let reaction: Promise<void> = Promise.resolve()
+          const lethal = step.kind !== 'miss' && step.target
+            ? remainingHp[step.target] > 0 && remainingHp[step.target] - step.dmg <= 0
+            : false
+          const enemyStrikeStyle: StrikeStyle = step.style === 'crossbow'
+            ? 'crossbow'
+            : step.style === 'mounted'
+              ? 'mounted'
+              : step.style === 'hidden'
+                ? 'anqi'
+                : 'enemy'
+          const enemyEffect: SkillEffectKind = step.style === 'crossbow'
+            ? 'crossbow-bolt'
+            : step.style === 'mounted'
+              ? 'mounted-strike'
+              : step.kind === 'hidden'
+                ? 'hidden-weapon'
+                : 'enemy-slash'
+          const ranged = step.style === 'crossbow' || step.kind === 'hidden'
+          await playStrikeAnimation(enemyEl, targetEl, enemyStrikeStyle, {
+            onImpact: () => {
+              if (enemyRun.current !== runId) return
+              if ((step.kind === 'attack' || step.kind === 'hidden') && step.target) {
+                showStepFloater(step.target, `-${step.dmg}`, '#E06A5A')
+                playSfx('hurt')
+                spawnImpact(
+                  targetEl,
+                  enemyEffect,
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 124 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 124 页
+=============================
+                  ranged ? '#8FC8D8' : step.style === 'mounted' ? '#E9A06F' : '#E06A5A',
+                  'rtl',
+                  lethal ? 1.25 : 0.9,
+                  ranged ? 'shard' : 'spark',
+                  step.style !== 'crossbow' && step.kind !== 'hidden',
+                )
+              } else {
+                showStepFloater(step.uid, '落空', '#C4A484')
+              }
+              if (!ranged) {
+                setSpeedLines({ active: true, direction: 'rtl' })
+                enemyFxTimers.current.push(
+                  window.setTimeout(() => setSpeedLines((current) => ({ ...current, active: false })), 250),
+                )
+              }
+            },
+            onHitStopEnd: () => {
+              if (step.kind === 'attack' || step.kind === 'hidden') {
+                reaction = playHitReaction(targetEl, 'rtl', { lethal, intensity: lethal ? 1.25 : 0.9 })
+              }
+            },
+          })
+          await reaction
+          if ((step.kind === 'attack' || step.kind === 'hidden') && step.target) {
+            remainingHp[step.target] = Math.max(0, remainingHp[step.target] - step.dmg)
+          }
+        } else if (step.kind === 'burn') {
+          showStepFloater(step.uid, '纵火！', '#E06A5A')
+          if (enemyEl) {
+            spawnFieldEffect('fire', '#E06A5A', 70, 45, 'rtl')
+            await playCastAnimation(enemyEl)
+          }
+        } else {
+          showStepFloater(step.uid, step.kind === 'miss' ? '落空' : step.text, '#C4A484')
+          await new Promise<void>((resolve) => window.setTimeout(resolve, 360))
+        }
+
+        setActingEnemy(null)
+        setEnemyImpactHero(null)
+      }
+
+      if (enemyRun.current !== runId) return
+      setBattle(next)
+      enemySequenceRunning.current = false
+      setIsAnimating(false)
+    }
+
+    enemyFxTimers.current.push(
+      window.setTimeout(() => {
+        if (enemyRun.current !== runId) return
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 125 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 125 页
+=============================
+        setIsAnimating(true)
+        void runSequence().catch(() => {
+          if (enemyRun.current !== runId) return
+          setBattle(next)
+          setActingEnemy(null)
+          setEnemyImpactHero(null)
+          enemySequenceRunning.current = false
+          setIsAnimating(false)
+        })
+      }, 0),
+    )
+  }, [battle, cfg, setBattle, spawnFieldEffect, spawnImpact])
+
+  // 只滚动右侧日志自身。scrollIntoView 会连带滚动整个页面，点技能触发重渲染时就会造成战场下跳。
+  useEffect(() => {
+    const log = battleLogRef.current
+    if (log) log.scrollTop = log.scrollHeight
+  }, [battle.log.length])
+
+  const act = (action: ActionId, targetUid?: number, targetHero?: HeroId) => {
+    if (!activeHero || isAnimating) return
+    unlockBattleAudio()
+    const next = applyHeroAction(battle, activeHero, action, targetUid, targetHero)
+    if (next === battle) return
+    const hero = activeHero
+    const kind = ACTION_KIND[action]
+    const runId = ++actionRun.current
+    setActingHero(hero)
+    setActingKind(kind)
+    // 攻击特效在真实接触帧生成；治疗等支援仍提前标出目标。
+    setImpactTarget(kind === 'support' ? targetUid ?? targetHero ?? null : null)
+    setIsAnimating(true)
+    setPendingAction(null)
+    actionFxTimers.current.forEach((timer) => window.clearTimeout(timer))
+    actionFxTimers.current = []
+
+    const heroEl = heroEls.current.get(hero)
+    const targetEl = targetUid != null ? enemyEls.current.get(targetUid) : targetHero ? heroEls.current.get(targetHero) : null
+
+    if (kind === 'attack' && heroEl && targetEl) {
+      const targetBefore = targetUid != null ? battle.enemies.find((enemy) => enemy.uid === targetUid) : null
+      const targetAfter = targetUid != null ? next.enemies.find((enemy) => enemy.uid === targetUid) : null
+      const lethal = Boolean(targetBefore && !targetAfter)
+      const strikeStyle: StrikeStyle = action === 'feizhen' ? 'anqi' : action as StrikeStyle
+      const intensity = action === 'tuji' ? 1.2 : action === 'daduan' ? 0.82 : action === 'zhidu' ? 0.68 : action === 'feizhen' ? 0.76 : 1
+      const visual = ACTION_VISUAL[action]
+
+      const runAttack = async () => {
+        let reaction: Promise<void> = Promise.resolve()
+        await playStrikeAnimation(heroEl, targetEl, strikeStyle, {
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 126 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 126 页
+=============================
+          onImpact: () => {
+            if (actionRun.current !== runId) return
+            playSfx(ACTION_SFX[action])
+            addFloaters(battle, next, false)
+            spawnImpact(targetEl, visual.effect, visual.color, 'ltr', intensity, visual.particle, visual.shake)
+            if (visual.speed) {
+              setSpeedLines({ active: true, direction: 'ltr' })
+              actionFxTimers.current.push(
+                window.setTimeout(() => setSpeedLines((current) => ({ ...current, active: false })), 250),
+              )
+            }
+          },
+          onHitStopEnd: () => {
+            reaction = playHitReaction(targetEl, 'ltr', { lethal, intensity })
+          },
+        })
+        await reaction
+        if (actionRun.current !== runId) return
+        // 数值与退场只在完整受击动作结束后提交。
+        setBattle(next)
+        setActingHero(null)
+        setActingKind(null)
+        setImpactTarget(null)
+        setIsAnimating(false)
+      }
+
+      void runAttack().catch(() => {
+        if (actionRun.current !== runId) return
+        setBattle(next)
+        setActingHero(null)
+        setActingKind(null)
+        setImpactTarget(null)
+        setIsAnimating(false)
+      })
+    } else if (kind === 'support' && heroEl) {
+      // 施法/治疗动画
+      void playCastAnimation(heroEl).then(() => {
+        if (actionRun.current !== runId) return
+        setBattle(next)
+        setActingHero(null)
+        setActingKind(null)
+        setImpactTarget(null)
+        setIsAnimating(false)
+      })
+      actionFxTimers.current.push(
+        window.setTimeout(() => {
+          playSfx(ACTION_SFX[action])
+          addFloaters(battle, next)
+          const visual = ACTION_VISUAL[action]
+          if (targetEl) {
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 127 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 127 页
+=============================
+            spawnImpact(targetEl, visual.effect, visual.color, 'ltr', 0.35, visual.particle, false)
+          } else if (action === 'buyan') {
+            spawnFieldEffect('smoke', visual.color, 42, 55)
+          }
+        }, 280),
+      )
+    } else {
+      // interact 或无元素回退：保留计时器方案
+      actionFxTimers.current = [
+        window.setTimeout(() => {
+          playSfx(ACTION_SFX[action])
+          addFloaters(battle, next)
+          const visual = ACTION_VISUAL[action]
+          if (heroEl) {
+            spawnImpact(heroEl, visual.effect, visual.color, 'ltr', 0.25, visual.particle, false)
+          }
+        }, 260),
+        window.setTimeout(() => setBattle(next), 610),
+        window.setTimeout(() => {
+          setActingHero(null)
+          setActingKind(null)
+          setImpactTarget(null)
+          setIsAnimating(false)
+        }, 880),
+      ]
+    }
+  }
+
+  const pickAction = (a: ActionId) => {
+    if (isAnimating) return
+    unlockBattleAudio()
+    playSfx('select')
+    const def = ACTIONS[a]
+    if (def.target === 'none') act(a)
+    else setPendingAction(a)
+  }
+
+  const pendingDef = pendingAction ? ACTIONS[pendingAction] : null
+  const hasAvailableTarget = (action: ActionId) => {
+    if (action === 'zhiliao') {
+      return Object.values(battle.heroes).some((hero) => hero.present && hero.hp > 0 && hero.hp < hero.maxHp)
+    }
+    if (action === 'huwei') {
+      return Object.values(battle.heroes).some((hero) => hero.id !== activeHero && hero.present && hero.hp > 0)
+    }
+    return true
+  }
+  const battleBackground =
+    cfg.bg ?? (cfg.mode === 'winch' ? 'https://stats.puck-muling.top/game/assets/bg_jiaopanfang.webp' : cfg.mode === 'defend' ? 'https://stats.puck-muling.top/game/assets/bg_zhengdi_dao.webp' : 'https://stats.puck-muling.top/game/assets/bg_nongjia.webp')
+  const heroOrder: HeroId[] = ['mengjia', 'xiaoman', 'yuenu', 'beimang']
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 128 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 128 页
+=============================
+  const heroViews: BattlefieldHero[] = heroOrder.map((id) => {
+    const hero = battle.heroes[id]
+    const style = HERO_STYLE[id]
+    const injured = hero.hp < hero.maxHp && hero.maxHp > 24 && id === 'beimang' && hero.present
+    return {
+      id,
+      name: hero.name,
+      sprite: HERO_SPRITE[id],
+      hp: hero.hp,
+      maxHp: hero.maxHp,
+      color: style.border,
+      present: hero.present,
+      active: activeHero === id && battle.phase === 'player' && !isAnimating,
+      down: hero.present && hero.hp <= 0,
+      status: !hero.present
+        ? '尚未归队'
+        : hero.hp <= 0
+          ? '倒地'
+          : injured
+            ? '伤未愈'
+            : battle.acted.includes(id)
+              ? '已行动'
+              : activeHero === id
+                ? '待命'
+                : '等待',
+      scale: id === 'beimang' ? 1.45 : id === 'yuenu' ? 1.39 : id === 'mengjia' ? 1.34 : 1.37,
+      targetable:
+        pendingAction === 'zhiliao'
+          ? hero.hp < hero.maxHp
+          : pendingAction === 'huwei'
+            ? id !== activeHero
+            : true,
+    }
+  })
+  const activeEnemyStates = getActiveEnemies(battle.enemies)
+  const enemyViews: BattlefieldEnemy[] = activeEnemyStates.map((enemy) => ({
+    uid: enemy.uid,
+    name: enemy.name,
+    sprite: ENEMY_SPRITE_BY_SPEC[enemy.specKey] ?? DEFAULT_ENEMY_SPRITE,
+    hp: enemy.hp,
+    maxHp: enemy.maxHp,
+    intent: enemy.intent.label || '意图不明',
+    intentType: enemy.intent.type,
+    danger: enemy.intent.type === 'burn' || enemy.intent.type === 'hidden',
+    variant:
+      enemy.intent.type === 'burn'
+        ? 'arsonist'
+        : enemy.specKey === 'zhizao' || enemy.name.includes('头目') || enemy.name.includes('伍长')
+          ? 'leader'
+          : 'normal',
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 129 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 129 页
+=============================
+  }))
+  const currentEnemyLabel = [...new Set(activeEnemyStates.map((enemy) => enemy.name))].join(' / ') || enemyLabel
+  const urgentIntent = [...activeEnemyStates]
+    .filter((enemy) => enemy.intent.dmg > 0)
+    .sort((left, right) => right.intent.dmg - left.intent.dmg)[0]
+  const tacticalNotice = urgentIntent?.intent.target
+    ? urgentIntent.intent.type === 'hidden'
+      ? `${urgentIntent.name}正以暗器锁定${battle.heroes[urgentIntent.intent.target].name}：用打断、布烟、飞针封穴或护卫拆招。`
+      : `${urgentIntent.name}将攻击${battle.heroes[urgentIntent.intent.target].name}：可用截剑削弱、打断取消，或护卫承伤。`
+    : null
+
+  return (
+    <div className="relative min-h-screen overflow-hidden bg-qin-charcoal text-qin-parchment flex flex-col">
+      <img
+        src={battleBackground}
+        alt=""
+        className="pointer-events-none absolute inset-0 h-full w-full object-cover"
+        onError={(event) => {
+          event.currentTarget.style.display = 'none'
+        }}
+      />
+      <div className="pointer-events-none absolute inset-0 bg-qin-ink/65" />
+
+      <header className="relative z-10 py-3 pl-6 pr-16 border-b border-qin-bronze-25 flex flex-wrap items-center gap-x-6 gap-y-2">
+        <span className="text-qin-bronze tracking-[0.2em] text-sm">{title}</span>
+        <span className="text-sm text-qin-parchment-65">第 {battle.round} 回合</span>
+        {battle.mode === 'winch' && (
+          <span className="flex items-center gap-2 text-sm">
+            <Flag className="w-4 h-4 text-qin-bronze" />
+            绞盘
+            <span className="flex gap-1">
+              {[0, 1, 2].map((i) => (
+                <span
+                  key={i}
+                  className={`w-6 h-2 border ${i < battle.winch ? 'bg-qin-bronze border-qin-bronze' : 'border-qin-parchment-25'}`}
+                />
+              ))}
+            </span>
+          </span>
+        )}
+        {battle.mode === 'defend' && cfg.defendRounds != null && (
+          <span className="flex items-center gap-2 text-sm">
+            <Shield className="w-4 h-4 text-qin-bronze" />
+            坚守 {Math.min(battle.round, cfg.defendRounds)}/{cfg.defendRounds} 回合
+          </span>
+        )}
+        {cfg.arsonist && (
+          <span className={`flex items-center gap-1 text-sm ${battle.censusBurned ? 'text-[#C4746A]' : 'text-qin-parchment-65'}`}>
+            <ScrollText className="w-4 h-4" />
+            {battle.censusBurned ? '户籍已焚' : '户籍尚在'}
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 130 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 130 页
+=============================
+          </span>
+        )}
+        <span className="ml-auto text-xs text-qin-parchment-40">{objective}</span>
+      </header>
+
+      <div className="relative z-10 flex-1 flex flex-col lg:grid lg:grid-cols-[minmax(0,1fr)_20rem] min-h-0">
+        <div className="flex min-w-0 flex-1 flex-col gap-4 px-3 py-4 sm:px-6 sm:py-5">
+          <CinematicBattlefield
+            roundLabel={`第 ${battle.round} 回合`}
+            turnLabel={
+              battle.phase === 'enemy'
+                ? isAnimating
+                  ? '敌方进攻'
+                  : '敌方行动'
+                : isAnimating
+                ? '招式演出'
+                : battle.phase === 'won'
+                  ? '战局已定'
+                  : battle.phase === 'lost'
+                    ? '小队溃败'
+                    : activeHero
+                      ? `${battle.heroes[activeHero].name} 行动`
+                      : '等待行动'
+            }
+            enemyLabel={currentEnemyLabel}
+            totalEnemyCount={battle.enemies.length}
+            heroes={heroViews}
+            enemies={enemyViews}
+            targetMode={!isAnimating && pendingDef?.target === 'enemy' ? 'enemy' : !isAnimating && pendingDef?.target === 'ally' ? 'ally' : null}
+            actingHero={actingHero}
+            actingEnemy={actingEnemy}
+            actingKind={actingKind}
+            impactTarget={impactTarget}
+            enemyImpactHero={enemyImpactHero}
+            hitEnemyIds={hitUids}
+            floaters={floaters}
+            smoke={battle.smoke}
+            particles={particles}
+            speedLines={speedLines}
+            skillEffect={skillEffect}
+            weather={cfg.weather ?? 'clear'}
+            containerRef={battlefieldRef}
+            registerHeroRef={registerHeroRef}
+            registerEnemyRef={registerEnemyRef}
+            onEnemyClick={(uid) => {
+              if (pendingAction) act(pendingAction, uid)
+            }}
+            onHeroClick={(id) => {
+              if (pendingAction) act(pendingAction, undefined, id as HeroId)
+            }}
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 131 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 131 页
+=============================
+          />
+
+          {/* 行动面板 */}
+          <div className="battle-command sticky bottom-0 z-20 min-h-28 border border-qin-bronze-50 p-3 sm:p-4">
+            {battle.phase === 'won' && <EndPanel text={battle.log[battle.log.length - 1]?.text ?? '任务完成。'} btn="继续" onClick={onFinish} />}
+            {battle.phase === 'lost' && (
+              <EndPanel text={defeatText ?? '小队全员倒下。任务失败。'} btn="重整旗鼓，再试一次" onClick={onRetry} />
+            )}
+            {battle.phase === 'enemy' && (
+              <div className="flex min-h-20 items-center text-[#C4746A]">
+                敌方行动中{isAnimating ? '……' : '…'}
+              </div>
+            )}
+            {battle.phase === 'player' && activeHero && (
+              <div>
+                {tacticalNotice && !isAnimating && (
+                  <div className={`mb-3 border-l-2 px-3 py-2 text-xs leading-5 ${urgentIntent?.intent.type === 'hidden' ? 'border-[#E06A5A] bg-qin-cinnabar-15 text-[#F0A293]' : 'border-qin-bronze bg-qin-bronze-10 text-[#E9C46A]'}`}>
+                    <strong className="mr-2 tracking-wider">敌方计谋</strong>
+                    {tacticalNotice}
+                  </div>
+                )}
+                <div className="text-sm text-qin-bronze mb-3">
+                  {isAnimating
+                    ? '招式演出中'
+                    : pendingDef
+                      ? `选择「${pendingDef.name}」的目标（点击${pendingDef.target === 'enemy' ? '敌方' : '我方'}单位）`
+                      : `${battle.heroes[activeHero].name} 待命`}
+                  {pendingDef && !isAnimating && (
+                    <button className="ml-4 text-qin-parchment-50 underline text-xs" onClick={() => setPendingAction(null)}>
+                      取消
+                    </button>
+                  )}
+                </div>
+                <div className="flex gap-2 overflow-x-auto pb-1 sm:flex-wrap sm:gap-3">
+                  {actionsFor(battle, activeHero).map((a) => {
+                    const def = ACTIONS[a]
+                    const Icon = ACTION_ICON[a]
+                    const ok = actionAvailable(battle, a) && hasAvailableTarget(a)
+                    return (
+                      <button
+                        key={a}
+                        disabled={!ok || isAnimating}
+                        onClick={() => pickAction(a)}
+                        className={`battle-command__action flex min-w-[8.5rem] items-start gap-2 border px-3 py-2.5 text-left transition-colors sm:min-w-0 sm:px-4 sm:py-3 ${
+                          pendingAction === a
+                            ? 'border-qin-bronze bg-qin-bronze-15'
+                            : ok && !isAnimating
+                              ? 'border-qin-parchment-10 hover:border-qin-bronze hover:bg-qin-cinnabar-15'
+                              : 'border-qin-parchment-10 opacity-40'
+                        }`}
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 132 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 132 页
+=============================
+                      >
+                        <span className="battle-command__icon">
+                          <Icon className="h-4 w-4 text-[#E9C46A]" />
+                        </span>
+                        <span>
+                          <span className="block font-bold">{def.name}</span>
+                          <span className="block text-xs text-qin-parchment-50 mt-0.5 max-w-52">{def.desc}</span>
+                        </span>
+                      </button>
+                    )
+                  })}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* 战斗记录 */}
+        <details className="battle-log-mobile mx-3 mb-4 border border-qin-bronze-25 bg-[#17181be8] lg:hidden">
+          <summary className="cursor-pointer px-4 py-3 text-sm text-qin-bronze">
+            战况纪要
+            <span className="ml-3 text-xs text-qin-parchment-65">{battle.log[battle.log.length - 1]?.text}</span>
+          </summary>
+          <div className="max-h-44 overflow-y-auto border-t border-qin-bronze-15 px-4 py-3">
+            {battle.log.slice(-6).map((l, i) => (
+              <div key={i} className="text-sm leading-6 text-qin-parchment-65">
+                {l.text}
+              </div>
+            ))}
+          </div>
+        </details>
+        <aside className="hidden border-t border-qin-bronze-25 bg-[#17181be8] lg:flex lg:max-h-none lg:flex-col lg:border-l lg:border-t-0">
+          <div className="px-4 py-2 text-xs tracking-widest text-qin-bronze border-b border-qin-bronze-15">战斗记录</div>
+          <div ref={battleLogRef} className="battle-log__scroll flex-1 overflow-y-auto px-4 py-3 flex flex-col gap-2">
+            {battle.log.map((l, i) => (
+              <div key={i} className={`text-sm leading-6 ${i === battle.log.length - 1 ? 'text-qin-parchment' : 'text-qin-parchment-65'}`}>
+                {l.text}
+              </div>
+            ))}
+          </div>
+        </aside>
+      </div>
+    </div>
+  )
+}
+
+function EndPanel({ text, btn, onClick }: { text: string; btn: string; onClick: () => void }) {
+  return (
+    <div className="flex items-center justify-between gap-4 flex-wrap">
+      <div className="text-lg">{text}</div>
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 133 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 133 页
+=============================
+      <button onClick={onClick} className="px-6 py-3 bg-qin-cinnabar hover:bg-qin-cinnabar-hover transition-colors tracking-[0.2em]">
+        {btn}
+      </button>
+    </div>
+  )
+}
+
+
+// === file: src/sections/TutorialBattleScene.tsx ===
+import { useCallback, useEffect, useRef, useState } from 'react'
+import { Cog, Hand, Map as MapIcon, Shield, Swords, UserRound, Hourglass } from 'lucide-react'
+import {
+  AP_PER_ROUND,
+  CART_COST,
+  MAX_ROUNDS,
+  RESCUE_COST,
+  T_ACTIONS,
+  applyTutorialAction,
+  endTutorialTurn,
+  type TAction,
+  type TutorialState,
+} from '../game/tutorial'
+import { playSfx } from '../game/audio'
+import {
+  playCameraShake,
+  playCastAnimation,
+  playHitReaction,
+  playStrikeAnimation,
+  type StrikeDirection,
+} from '../game/animationEngine'
+import type { ParticleData, SkillEffectData, SkillEffectKind } from '../components/BattleEffects'
+import CinematicBattlefield, {
+  type BattlefieldEnemy,
+  type BattlefieldHero,
+} from '../components/CinematicBattlefield'
+
+type Floater = { id: number; target: number | 'hero'; text: string; color: string }
+
+const HERO_SPRITE = 'https://stats.puck-muling.top/game/assets/battle/hero_beimang_idle_v1.webp'
+const ENEMY_SPRITE = 'https://stats.puck-muling.top/game/assets/battle/enemy_assassin_idle_v1.webp'
+
+export default function TutorialBattleScene({
+  battle,
+  setBattle,
+  onFinish,
+  onRetry,
+}: {
+  battle: TutorialState
+  setBattle: (b: TutorialState) => void
+  onFinish: (battle: TutorialState) => void
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 134 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 134 页
+=============================
+  onRetry: () => void
+}) {
+  const [pending, setPending] = useState<TAction | null>(null)
+  const [floaters, setFloaters] = useState<Floater[]>([])
+  const [hitUids, setHitUids] = useState<number[]>([])
+  const [isAnimating, setIsAnimating] = useState(false)
+  const [actingKind, setActingKind] = useState<'attack' | 'support' | null>(null)
+  const [actingEnemy, setActingEnemy] = useState<number | null>(null)
+  const [impactTarget, setImpactTarget] = useState<number | string | null>(null)
+  const [particles, setParticles] = useState<ParticleData[]>([])
+  const [speedLines, setSpeedLines] = useState<{ active: boolean; direction: 'ltr' | 'rtl' }>({ active: false, direction: 'ltr' })
+  const [skillEffect, setSkillEffect] = useState<SkillEffectData | null>(null)
+  const seq = useRef(1)
+  const actionTimers = useRef<number[]>([])
+  const actionRun = useRef(0)
+  const battleLogRef = useRef<HTMLDivElement | null>(null)
+  const battlefieldRef = useRef<HTMLElement | null>(null)
+  const heroEls = useRef<Map<string, HTMLElement>>(new Map())
+  const enemyEls = useRef<Map<number, HTMLElement>>(new Map())
+
+  const registerHeroRef = useCallback((id: string, el: HTMLElement | null) => {
+    if (el) heroEls.current.set(id, el)
+    else heroEls.current.delete(id)
+  }, [])
+  const registerEnemyRef = useCallback((uid: number, el: HTMLElement | null) => {
+    if (el) enemyEls.current.set(uid, el)
+    else enemyEls.current.delete(uid)
+  }, [])
+
+  useEffect(
+    () => () => {
+      actionTimers.current.forEach((timer) => window.clearTimeout(timer))
+      actionTimers.current = []
+      actionRun.current += 1
+    },
+    [],
+  )
+
+  useEffect(() => {
+    const log = battleLogRef.current
+    if (log) log.scrollTop = log.scrollHeight
+  }, [battle.log.length])
+
+  const targetCenter = useCallback((targetEl: HTMLElement) => {
+    const battlefield = battlefieldRef.current
+    if (!battlefield) return { x: 50, y: 50 }
+    const targetFigure = targetEl.querySelector<HTMLElement>('.cinematic-actor__figure') ?? targetEl
+    const fieldRect = battlefield.getBoundingClientRect()
+    const targetRect = targetFigure.getBoundingClientRect()
+    if (fieldRect.width <= 0 || fieldRect.height <= 0) return { x: 50, y: 50 }
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 135 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 135 页
+=============================
+    return {
+      x: ((targetRect.left + targetRect.width / 2 - fieldRect.left) / fieldRect.width) * 100,
+      y: ((targetRect.top + targetRect.height * 0.44 - fieldRect.top) / fieldRect.height) * 100,
+    }
+  }, [])
+
+  const spawnImpact = useCallback((
+    targetEl: HTMLElement,
+    effect: SkillEffectKind,
+    color: string,
+    direction: StrikeDirection,
+    particle: ParticleData['kind'] = 'shard',
+    shake = true,
+  ) => {
+    const { x, y } = targetCenter(targetEl)
+    const id = seq.current++
+    setParticles((old) => [...old, { id, x, y, color, kind: particle }])
+    setSkillEffect({ id, x, y, kind: effect, direction, color })
+    actionTimers.current.push(
+      window.setTimeout(() => setParticles((old) => old.filter((item) => item.id !== id)), 700),
+      window.setTimeout(() => setSkillEffect((current) => current?.id === id ? null : current), 720),
+    )
+    if (shake && battlefieldRef.current) {
+      playCameraShake(battlefieldRef.current, { direction, intensity: 0.95, originX: x, originY: y })
+    }
+  }, [targetCenter])
+
+  const showFloater = (target: number | 'hero', text: string, color: string) => {
+    const floater = { id: seq.current++, target, text, color }
+    setFloaters((old) => [...old, floater])
+    actionTimers.current.push(
+      window.setTimeout(() => setFloaters((old) => old.filter((item) => item.id !== floater.id)), 950),
+    )
+  }
+
+  const addFloaters = (prev: TutorialState, next: TutorialState, markEnemyHits = true) => {
+    const fs: Floater[] = []
+    for (const p of prev.enemies) {
+      const e = next.enemies.find((x) => x.uid === p.uid)
+      const damage = next.lastHit?.uid === p.uid ? next.lastHit.damage : e ? p.hp - e.hp : p.hp
+      if (damage > 0) fs.push({ id: seq.current++, target: p.uid, text: `-${damage}`, color: '#E9C46A' })
+    }
+    if (next.hp < prev.hp) fs.push({ id: seq.current++, target: 'hero', text: `-${prev.hp - next.hp}`, color: '#E06A5A' })
+    if (prev.yutu === 'safe' && next.yutu === 'lost')
+      fs.push({ id: seq.current++, target: 'hero', text: '副本被夺！', color: '#E06A5A' })
+    if (fs.length > 0) {
+      setFloaters((old) => [...old, ...fs])
+      const ids = fs.map((f) => f.id)
+      actionTimers.current.push(window.setTimeout(() => setFloaters((old) => old.filter((f) => !ids.includes(f.id))), 950))
+    }
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 136 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 136 页
+=============================
+    const hit = prev.enemies.filter((p) => {
+      const e = next.enemies.find((x) => x.uid === p.uid)
+      return !e || e.hp < p.hp
+    })
+    if (markEnemyHits && hit.length > 0) {
+      setHitUids(hit.map((enemy) => enemy.uid))
+      actionTimers.current.push(window.setTimeout(() => setHitUids([]), 300))
+    }
+  }
+
+  const SFX: Record<TAction, 'hit' | 'interrupt' | 'rescue' | 'hold'> = {
+    tuji: 'hit',
+    daduan: 'interrupt',
+    mengjia: 'rescue',
+    cart: 'hold',
+  }
+
+  const act = (a: TAction, uid?: number) => {
+    if (isAnimating) return
+    const next = applyTutorialAction(battle, a, uid)
+    if (next === battle) return
+    const attack = a === 'tuji' || a === 'daduan'
+    const runId = ++actionRun.current
+    setActingKind(attack ? 'attack' : 'support')
+    setImpactTarget(attack ? null : 'hero')
+    setIsAnimating(true)
+    setPending(null)
+    actionTimers.current.forEach((timer) => window.clearTimeout(timer))
+    actionTimers.current = []
+    setFloaters([])
+    setHitUids([])
+    setParticles([])
+    setSkillEffect(null)
+    setSpeedLines({ active: false, direction: 'ltr' })
+
+    const heroEl = heroEls.current.get('hero')
+    const targetEl = uid != null ? enemyEls.current.get(uid) : null
+
+    if (attack && heroEl && targetEl) {
+      const targetBefore = battle.enemies.find((enemy) => enemy.uid === uid)
+      const targetAfter = next.enemies.find((enemy) => enemy.uid === uid)
+      const lethal = Boolean(targetBefore && !targetAfter)
+      const effect: SkillEffectKind = a === 'tuji' ? 'thrust' : 'break'
+      const color = a === 'tuji' ? '#F4D47A' : '#D9A36A'
+      const runAttack = async () => {
+        let reaction: Promise<void> = Promise.resolve()
+        await playStrikeAnimation(heroEl, targetEl, a === 'tuji' ? 'tuji' : 'daduan', {
+          onImpact: () => {
+            if (actionRun.current !== runId) return
+            playSfx(SFX[a])
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 137 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 137 页
+=============================
+            addFloaters(battle, next, false)
+            spawnImpact(targetEl, effect, color, 'ltr')
+            if (a === 'tuji') {
+              setSpeedLines({ active: true, direction: 'ltr' })
+              actionTimers.current.push(
+                window.setTimeout(() => setSpeedLines((current) => ({ ...current, active: false })), 250),
+              )
+            }
+          },
+          onHitStopEnd: () => {
+            reaction = playHitReaction(targetEl, 'ltr', { lethal, intensity: a === 'tuji' ? 1.15 : 0.82 })
+          },
+        })
+        await reaction
+        if (actionRun.current !== runId) return
+        setBattle(next)
+        setActingKind(null)
+        setImpactTarget(null)
+        setIsAnimating(false)
+      }
+      void runAttack().catch(() => {
+        if (actionRun.current !== runId) return
+        setBattle(next)
+        setActingKind(null)
+        setImpactTarget(null)
+        setIsAnimating(false)
+      })
+      return
+    }
+
+    if (heroEl) {
+      const effect: SkillEffectKind = a === 'mengjia' ? 'guard' : 'winch'
+      const color = a === 'mengjia' ? '#C4A484' : '#D2AC63'
+      actionTimers.current.push(
+        window.setTimeout(() => {
+          if (actionRun.current !== runId) return
+          playSfx(SFX[a])
+          addFloaters(battle, next)
+          spawnImpact(heroEl, effect, color, 'ltr', a === 'mengjia' ? 'spark' : 'shard', false)
+        }, 260),
+      )
+      void playCastAnimation(heroEl).then(() => {
+        if (actionRun.current !== runId) return
+        setBattle(next)
+        setActingKind(null)
+        setImpactTarget(null)
+        setIsAnimating(false)
+      })
+      return
+    }
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 138 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 138 页
+=============================
+
+    setBattle(next)
+    setActingKind(null)
+    setImpactTarget(null)
+    setIsAnimating(false)
+  }
+
+  const endTurn = () => {
+    if (isAnimating) return
+    const next = endTutorialTurn(battle)
+    const runId = ++actionRun.current
+    actionTimers.current.forEach((timer) => window.clearTimeout(timer))
+    actionTimers.current = []
+    setFloaters([])
+    setHitUids([])
+    setParticles([])
+    setSkillEffect(null)
+    setSpeedLines({ active: false, direction: 'rtl' })
+    setPending(null)
+    setIsAnimating(true)
+
+    const runEnemySequence = async () => {
+      const heroEl = heroEls.current.get('hero')
+      let remainingHp = battle.hp
+      for (const enemy of battle.enemies) {
+        if (actionRun.current !== runId) return
+        const enemyEl = enemyEls.current.get(enemy.uid)
+        setActingEnemy(enemy.uid)
+
+        if (enemy.intent.type === 'attack' && enemy.intent.dmg > 0 && enemyEl && heroEl) {
+          const lethal = remainingHp > 0 && remainingHp - enemy.intent.dmg <= 0
+          let reaction: Promise<void> = Promise.resolve()
+          await playStrikeAnimation(enemyEl, heroEl, 'enemy', {
+            onImpact: () => {
+              if (actionRun.current !== runId) return
+              playSfx('hurt')
+              showFloater('hero', `-${enemy.intent.dmg}`, '#E06A5A')
+              spawnImpact(heroEl, 'enemy-slash', '#E06A5A', 'rtl', 'spark', true)
+              setSpeedLines({ active: true, direction: 'rtl' })
+              actionTimers.current.push(
+                window.setTimeout(() => setSpeedLines((current) => ({ ...current, active: false })), 250),
+              )
+            },
+            onHitStopEnd: () => {
+              reaction = playHitReaction(heroEl, 'rtl', { lethal, intensity: lethal ? 1.22 : 0.9 })
+            },
+          })
+          await reaction
+          remainingHp = Math.max(0, remainingHp - enemy.intent.dmg)
+          if (remainingHp <= 0) break
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 139 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 139 页
+=============================
+        } else if (enemy.intent.type === 'steal' && battle.yutu === 'safe' && enemyEl && heroEl) {
+          await playStrikeAnimation(enemyEl, heroEl, 'anqi', {
+            onImpact: () => {
+              if (actionRun.current !== runId) return
+              playSfx('steal')
+              showFloater('hero', '明卷被夺！', '#E06A5A')
+              spawnImpact(heroEl, 'hidden-weapon', '#8FC8D8', 'rtl', 'shard', false)
+            },
+          })
+        } else {
+          showFloater(enemy.uid, '踉跄', '#C4A484')
+          await new Promise<void>((resolve) => window.setTimeout(resolve, 260))
+        }
+        setActingEnemy(null)
+      }
+
+      if (actionRun.current !== runId) return
+      if (next.phase === 'done' && battle.phase !== 'done') playSfx('fall')
+      setBattle(next)
+      setActingEnemy(null)
+      setIsAnimating(false)
+    }
+
+    void runEnemySequence().catch(() => {
+      if (actionRun.current !== runId) return
+      setBattle(next)
+      setActingEnemy(null)
+      setIsAnimating(false)
+    })
+  }
+
+  const pick = (a: TAction) => {
+    if (isAnimating) return
+    playSfx('select')
+    if (T_ACTIONS[a].target === 'none') act(a)
+    else setPending(a)
+  }
+
+  const objectives = [
+    {
+      icon: MapIcon,
+      name: '护住明卷',
+      state: battle.yutu === 'safe' ? '明卷尚在囊中' : '明卷被夺',
+      ok: battle.yutu === 'safe',
+      progress: null as number | null,
+    },
+    {
+      icon: UserRound,
+      name: '救出孟甲',
+      state: battle.mengjia >= RESCUE_COST ? '已救出' : `${battle.mengjia}/${RESCUE_COST}`,
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 140 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 140 页
+=============================
+      ok: battle.mengjia >= RESCUE_COST,
+      progress: battle.mengjia / RESCUE_COST,
+    },
+    {
+      icon: Shield,
+      name: '守住谷口退路',
+      state: battle.cart >= CART_COST ? '退路已守住' : `${battle.cart}/${CART_COST}`,
+      ok: battle.cart >= CART_COST,
+      progress: battle.cart / CART_COST,
+    },
+  ]
+
+  const actionIcons: Record<TAction, typeof Swords> = { tuji: Swords, daduan: Hand, mengjia: UserRound, cart: Shield }
+
+  const heroViews: BattlefieldHero[] = [
+    {
+      id: 'hero',
+      name: '北芒',
+      sprite: HERO_SPRITE,
+      hp: battle.hp,
+      maxHp: battle.maxHp,
+      color: '#B58A3D',
+      present: true,
+      active: battle.ap > 0 && battle.phase === 'player' && !isAnimating,
+      down: battle.phase === 'lost',
+      status: battle.phase === 'lost' ? '倒地' : battle.ap > 0 ? `剩余 ${battle.ap} 行动点` : '等待回合结束',
+      scale: 1.45,
+    },
+  ]
+  const enemyViews: BattlefieldEnemy[] = battle.enemies.map((enemy) => ({
+    uid: enemy.uid,
+    name: enemy.name,
+    sprite: ENEMY_SPRITE,
+    hp: enemy.hp,
+    maxHp: enemy.maxHp,
+    intent: enemy.intent.label || '意图不明',
+    danger: enemy.intent.type === 'steal',
+    variant: enemy.kind === 'qiang' ? 'thief' : 'normal',
+  }))
+
+  return (
+    <div className="relative flex h-dvh flex-col overflow-hidden bg-[#14161c] text-qin-parchment">
+      <img
+        src="https://stats.puck-muling.top/game/assets/bg_zhengdi_yuye.webp"
+        alt=""
+        className="pointer-events-none absolute inset-0 h-full w-full object-cover"
+        onError={(event) => {
+          event.currentTarget.style.display = 'none'
+        }}
+      />
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 141 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 141 页
+=============================
+      <div className="pointer-events-none absolute inset-0 bg-[#101218ad]" />
+
+      <header className="relative z-10 flex flex-wrap items-center gap-x-5 gap-y-1 border-b border-qin-bronze-25 py-2 pl-4 pr-16">
+        <span className="text-sm tracking-[0.2em] text-qin-bronze">序章 · 郑地山道 · 雨夜</span>
+        <span className="text-sm text-qin-parchment-65">
+          第 {battle.round} / {MAX_ROUNDS} 回合
+        </span>
+        <span className="flex items-center gap-1 text-sm">
+          <Hourglass className="h-4 w-4 text-qin-bronze" />
+          行动点
+          {Array.from({ length: AP_PER_ROUND }).map((_, i) => (
+            <span key={i} className={`h-3 w-3 rotate-45 border ${i < battle.ap ? 'border-qin-bronze bg-qin-bronze' : 'border-qin-parchment-25'} transition-colors`} />
+          ))}
+        </span>
+        <span className="ml-auto text-xs text-[#C4746A]">三项不可全成</span>
+      </header>
+
+      <div className="relative z-10 flex min-h-0 flex-1 flex-col lg:grid lg:grid-cols-[minmax(0,1fr)_20rem]">
+        <div className="flex min-h-0 min-w-0 flex-1 flex-col gap-3 overflow-y-auto px-3 py-3 sm:px-5 sm:py-4">
+          {/* 三项目标 */}
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-3 sm:gap-2">
+            {objectives.map((o) => (
+              <div
+                key={o.name}
+                className={`border bg-[#1a1d24] px-3 py-2 transition-colors ${o.ok ? 'border-qin-bronze-50' : o.progress === null && !o.ok ? 'border-[#C4746A88]' : 'border-qin-parchment-10'}`}
+              >
+                <div className="flex items-center gap-2 text-sm">
+                  <o.icon className={`h-4 w-4 ${o.ok ? 'text-qin-bronze' : 'text-qin-parchment-50'}`} />
+                  {o.name}
+                </div>
+                <div className={`mt-0.5 text-xs ${o.ok ? 'text-qin-bronze' : 'text-qin-parchment-50'}`}>{o.state}</div>
+                {o.progress !== null && (
+                  <div className="mt-1 h-1 bg-[#00000055]">
+                    <div className="h-full bg-qin-bronze transition-all" style={{ width: `${o.progress * 100}%` }} />
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+
+          <CinematicBattlefield
+            roundLabel={`第 ${battle.round} / ${MAX_ROUNDS} 回合`}
+            turnLabel={battle.phase === 'lost' ? '北芒倒下' : actingEnemy != null ? '敌方进攻' : isAnimating ? '招式演出' : battle.ap > 0 ? `剩余 ${battle.ap} 行动点` : '准备结束回合'}
+            enemyLabel="灭口伏兵"
+            heroes={heroViews}
+            enemies={enemyViews}
+            targetMode={!isAnimating && (pending === 'tuji' || pending === 'daduan') ? 'enemy' : null}
+            actingHero={isAnimating && actingEnemy == null && actingKind != null ? 'hero' : null}
+            actingEnemy={actingEnemy}
+            actingKind={actingKind}
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 142 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 142 页
+=============================
+            impactTarget={impactTarget}
+            hitEnemyIds={hitUids}
+            floaters={floaters}
+            particles={particles}
+            speedLines={speedLines}
+            skillEffect={skillEffect}
+            weather="rain"
+            containerRef={battlefieldRef}
+            registerHeroRef={registerHeroRef}
+            registerEnemyRef={registerEnemyRef}
+            onEnemyClick={(uid) => {
+              if (pending) act(pending, uid)
+            }}
+            onHeroClick={() => undefined}
+          />
+
+          {/* 行动面板 */}
+          <div className="battle-command sticky bottom-0 z-20 border border-qin-bronze-50 p-2.5 sm:p-3">
+            {battle.phase === 'lost' ? (
+              <div className="flex flex-wrap items-end justify-between gap-5">
+                <div>
+                  <div className="text-lg leading-8 text-[#C4746A]">北芒倒下。伏兵越过谷口，任务失败。</div>
+                  <div className="mt-2 text-sm text-qin-parchment-50">留意敌方公开意图；该打断时若强攻，可能被围杀。</div>
+                </div>
+                <button onClick={onRetry} className="bg-qin-cinnabar px-6 py-3 tracking-[0.2em] transition-colors hover:bg-qin-cinnabar-hover">
+                  重整旗鼓，再试一次
+                </button>
+              </div>
+            ) : battle.phase === 'done' ? (
+              <div className="flex items-end justify-between gap-5 flex-wrap">
+                <div className="max-w-3xl text-lg leading-8">
+                  伏兵主力压上坡口。雨幕里，一道剑光正从山坡上杀下来——
+                  <div className="mt-3 grid gap-1 text-sm text-qin-parchment-65 sm:grid-cols-3">
+                    <span>{battle.yutu === 'safe' ? '明卷保住' : '明卷被夺；暗层未明'}</span>
+                    <span>{battle.mengjia >= RESCUE_COST ? '孟甲已被北芒救出' : '孟甲仍困在辎重旁'}</span>
+                    <span>{battle.cart >= CART_COST ? '谷口退路守住' : '谷口失守，旧部四散'}</span>
+                  </div>
+                  <div className="text-sm text-qin-parchment-50 mt-2">绝境还没有解开。那个本该离开的人，到了。</div>
+                </div>
+                <button onClick={() => onFinish(battle)} className="px-6 py-3 bg-qin-cinnabar hover:bg-qin-cinnabar-hover transition-colors tracking-[0.2em]">
+                  迎战
+                </button>
+              </div>
+            ) : (
+              <div>
+                <div className="text-sm text-qin-bronze mb-3">
+                  {isAnimating
+                    ? '招式演出中'
+                    : pending
+                      ? `选择「${T_ACTIONS[pending].name}」的目标（点击伏兵）`
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 143 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 143 页
+=============================
+                      : battle.ap > 0
+                        ? '北芒待命'
+                        : '行动点已用尽'}
+                  {pending && !isAnimating && (
+                    <button className="ml-4 text-qin-parchment-50 underline text-xs" onClick={() => setPending(null)}>
+                      取消
+                    </button>
+                  )}
+                </div>
+                <div className="flex gap-2 overflow-x-auto pb-1 sm:flex-wrap sm:gap-3">
+                  {(Object.keys(T_ACTIONS) as TAction[]).map((a) => {
+                    const def = T_ACTIONS[a]
+                    const Icon = actionIcons[a]
+                    const disabled =
+                      isAnimating ||
+                      battle.ap <= 0 ||
+                      (a === 'mengjia' && battle.mengjia >= RESCUE_COST) ||
+                      (a === 'cart' && battle.cart >= CART_COST)
+                    return (
+                      <button
+                        key={a}
+                        disabled={disabled}
+                        onClick={() => pick(a)}
+                        className={`battle-command__action flex min-w-[8.5rem] items-start gap-2 border px-3 py-2.5 text-left transition-colors sm:min-w-0 sm:px-4 sm:py-3 ${
+                          pending === a
+                            ? 'border-qin-bronze bg-qin-bronze-15'
+                            : disabled
+                              ? 'border-qin-parchment-10 opacity-40'
+                              : 'border-qin-parchment-10 hover:border-qin-bronze hover:bg-qin-cinnabar-15'
+                        }`}
+                      >
+                        <span className="battle-command__icon">
+                          <Icon className="h-4 w-4 text-[#E9C46A]" />
+                        </span>
+                        <span>
+                          <span className="block font-bold">{def.name}</span>
+                          <span className="block text-xs text-qin-parchment-50 mt-0.5 max-w-52">{def.desc}</span>
+                        </span>
+                      </button>
+                    )
+                  })}
+                  <button
+                    disabled={isAnimating}
+                    onClick={endTurn}
+                    className="battle-command__action ml-auto flex min-w-[8.5rem] items-center justify-center gap-2 border border-[#C4746A88] px-5 py-3 text-[#C4746A] transition-colors hover:bg-qin-cinnabar-15 disabled:opacity-40"
+                  >
+                    <Cog className="w-4 h-4" />
+                    结束回合
+                  </button>
+                </div>
+
+```
+
+## 秦灭六国 V1.0 | 源程序鉴别材料 | 第 144 页
+
+```text
+秦灭六国 V1.0 | 源程序鉴别材料 | 第 144 页
+=============================
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* 战斗记录 */}
+        <details className="battle-log-mobile mx-3 mb-4 border border-qin-bronze-25 bg-[#12141ae8] lg:hidden">
+          <summary className="cursor-pointer px-4 py-3 text-sm text-qin-bronze">
+            战况纪要
+            <span className="ml-3 text-xs text-qin-parchment-65">{battle.log[battle.log.length - 1]}</span>
+          </summary>
+          <div className="max-h-44 overflow-y-auto border-t border-qin-bronze-15 px-4 py-3">
+            {battle.log.slice(-6).map((l, i) => (
+              <div key={i} className="text-sm leading-6 text-qin-parchment-65">
+                {l}
+              </div>
+            ))}
+          </div>
+        </details>
+        <aside className="hidden border-t border-qin-bronze-25 bg-[#12141ae8] lg:flex lg:max-h-none lg:flex-col lg:border-l lg:border-t-0">
+          <div className="px-4 py-2 text-xs tracking-widest text-qin-bronze border-b border-qin-bronze-15">战斗记录</div>
+          <div ref={battleLogRef} className="flex-1 overflow-y-auto px-4 py-3 flex flex-col gap-2">
+            {battle.log.map((l, i) => (
+              <div key={i} className={`text-sm leading-6 ${i === battle.log.length - 1 ? 'text-qin-parchment' : 'text-qin-parchment-65'}`}>
+                {l}
+              </div>
+            ))}
+          </div>
+        </aside>
+      </div>
+    </div>
+  )
+}
+
+
+//                                                                                //
+//                                                                                //
+//                                                                                //
+//                                                                                //
+//                                                                                //
+//                                                                                //
+//                                                                                //
+//                                                                                //
+//                                                                                //
+//                                                                                //
+//                                                                                //
+//                                                                                //
+//                                                                                //
+//                                                                                //
+//                                                                                //
+
+```

@@ -10,7 +10,7 @@ export const S3_SCROLL_STACKS: readonly ScrollInspectStack[] = [
   },
   {
     id: 'rujing',
-    label: '黑冰台入境记档',
+    label: '隐密署入境记档',
     cover: '核对韩使入秦、离秦的关津簿。',
     detail: '入境——韩使，有入，无出。',
     finding: {

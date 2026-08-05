@@ -12,6 +12,12 @@
     "paths": {
       "@/*": [
         "./src/*"
+      ],
+      "@/platform": [
+        "./src/platform/index.web.ts"
+      ],
+      "@/shared/*": [
+        "./src/shared/*"
       ]
     },
     /* Bundler mode */

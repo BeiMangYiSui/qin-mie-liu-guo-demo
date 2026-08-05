@@ -25,6 +25,10 @@ const bundle = await esbuild.build({
   platform: 'node',
   format: 'esm',
   write: false,
+  // 补齐 @/platform 别名：Node 测试环境强制走 web 版（localStorage 不可用会 fallback dummy）
+  alias: {
+    '@/platform': path.join(projectRoot, 'src/platform/index.web.ts'),
+  },
 })
 
 const moduleUrl = `data:text/javascript;base64,${Buffer.from(bundle.outputFiles[0].text).toString('base64')}`

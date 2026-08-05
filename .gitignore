@@ -10,7 +10,12 @@ lerna-debug.log*
 node_modules
 dist
 dist-ssr
+dist-minigame
+dist-minigame-douyin
 *.local
+
+# Qoder IDE cache (regenerated automatically by the IDE, not part of the project)
+Support/
 
 # Editor directories and files
 .vscode/*

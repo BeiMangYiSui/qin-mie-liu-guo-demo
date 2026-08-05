@@ -1,0 +1,28 @@
+{
+  "miniprogramRoot": "./",
+  "projectname": "qin-mie-liu-guo",
+  "appid": "tt27ff5142b985910002",
+  "setting": {
+    "urlCheck": false,
+    "es6": true,
+    "minify": false,
+    "newFeature": true,
+    "autoAudits": false
+  },
+  "compileType": "miniprogram",
+  "condition": {},
+  "editorSetting": {
+    "tabIndent": "insertSpaces",
+    "tabSize": 2
+  },
+  "libVersion": "3.0.0",
+  "pullAuth": false,
+  "projectPrivateConfig": {
+    "miniprogram_npm": "npm",
+    "es6": true,
+    "disableUseStrict": false,
+    "useCompilerModule": true,
+    "miniprogram_npm_pacakge": "miniprogram_npm"
+  },
+  "description": "《秦灭六国》抖音小游戏项目配置 - 提交前需把 appid 替换为实际创建小游戏时获得的 appid。"
+}

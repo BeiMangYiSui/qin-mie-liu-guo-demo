@@ -1,0 +1,32 @@
+{
+  "miniprogramRoot": "./",
+  "projectname": "qin-mie-liu-guo-wechat",
+  "appid": "PLACEHOLDER_WX_APPID",
+  "setting": {
+    "urlCheck": false,
+    "es6": true,
+    "minify": true,
+    "newFeature": true,
+    "autoAudits": false,
+    "showShadowRootInWxmlPanel": true,
+    "useDistributedPackaging": true,
+    "checkInvalidKey": true
+  },
+  "compileType": "game",
+  "gameSpecificFilePath": "game.json",
+  "condition": {},
+  "editorSetting": {
+    "tabIndent": "insertSpaces",
+    "tabSize": 2
+  },
+  "libVersion": "3.0.0",
+  "pullAuth": false,
+  "projectPrivateConfig": {
+    "miniprogram_npm": "npm",
+    "es6": true,
+    "disableUseStrict": false,
+    "useCompilerModule": true,
+    "miniprogram_npm_pacakge": "miniprogram_npm"
+  },
+  "description": "《秦灭六国》微信小游戏工程配置 - 把 PLACEHOLDER_WX_APPID 替换为 mp.weixin.qq.com 后台创建小游戏后获得的 wx 开头 18 位 AppID。compileType 必须为 game，对应小游戏。提交前需在开发者工具中开启\"普通编译\"。AppSecret 仅保留在本地，不写入仓库。"
+}

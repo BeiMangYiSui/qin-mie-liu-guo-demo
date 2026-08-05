@@ -26,4 +26,11 @@ export default defineConfig([
       'react-refresh/only-export-components': 'off',
     },
   },
+  {
+    // 入口文件（main.tsx / main.minigame.tsx）以副作用渲染为主，不强制要求 fast-refresh
+    files: ['src/main.{ts,tsx}', 'src/main.minigame.tsx'],
+    rules: {
+      'react-refresh/only-export-components': 'off',
+    },
+  },
 ])

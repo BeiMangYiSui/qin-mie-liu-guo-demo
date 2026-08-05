@@ -1,0 +1,38 @@
+{
+  "deviceOrientation": "landscape",
+  "showStatusBar": false,
+  "networkTimeout": {
+    "request": 10000,
+    "connectSocket": 10000,
+    "uploadFile": 10000,
+    "downloadFile": 10000
+  },
+  "pages": [
+    "pages/index/index"
+  ],
+  "subpackages": [],
+  "workers": "",
+  "openDataContext": "",
+  "navigateToMiniProgramAppIdList": [],
+  "resizable": false,
+  "lazyCodeLoading": false,
+  "permission": {},
+  "requiredPrivateInfos": [],
+  "sitemapLocation": "sitemap.json",
+  "useApiHook": true,
+  "useApiHostService": true,
+  "useExtendedLib": {},
+  "enableEnginePlugin": false,
+  "renderer": "webview",
+  "renderTemplateId": "",
+  "componentFramework": "exparser",
+  "sitemap": {
+    "rules": [
+      {
+        "action": "disallow",
+        "page": "*"
+      }
+    ]
+  },
+  "description": "《秦灭六国》game.json - 横屏小游戏配置。提审前需把 builder 切换到「普通编译」并配置 request/downloadFile 合法域名后再上传。"
+}

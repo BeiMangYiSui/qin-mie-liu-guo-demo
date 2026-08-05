@@ -77,7 +77,7 @@ export const S1_BEFORE_TESTIMONY_LINES: DialogueLine[] = [
     N('郑国下狱。逐客令下。'),
     N('驿道上，被逐的车队连绵出城，从清晨排到黄昏。'),
     N('郑国渠修了十年，行将竣工。'),
-    N('三日前，黑冰台都尉北芒探知——'),
+    N('三日前，隐密署都尉北芒探知——'),
     N('郑国深夜，密见韩使。'),
     N('见了什么，没人知道。'),
     N('谈了什么，没人听见。'),
@@ -102,7 +102,7 @@ export const S1_AFTER_TESTIMONY_LINES: DialogueLine[] = [
 const s1_anfa: StoryScene = {
   id: 's1_anfa',
   chapter: PRO,
-  place: '前 230 年 · 咸阳 · 黑冰台',
+  place: '前 230 年 · 咸阳 · 隐密署',
   bg: 'https://stats.puck-muling.top/game/assets/bg_heibingtai.webp',
   notes: ['“亲见”与“传闻”之间插入落笔取证互动，让玩家在序章两分钟内第一次参与。'],
   lines: [...S1_BEFORE_TESTIMONY_LINES, ...S1_AFTER_TESTIMONY_LINES],
@@ -668,7 +668,7 @@ export interface ChaanFinding {
 }
 
 export const S3_CHAAN = {
-  ledgers: ['渠口查验记档·十年', '黑冰台入境记档', '秦韩馆驿传讯记档'],
+  ledgers: ['渠口查验记档·十年', '隐密署入境记档', '秦韩馆驿传讯记档'],
   findings: [
     { ledger: '渠口', text: '渠口——十年，无一错漏。', star: false },
     { ledger: '入境', text: '入境——韩使，有入，无出。', star: true },

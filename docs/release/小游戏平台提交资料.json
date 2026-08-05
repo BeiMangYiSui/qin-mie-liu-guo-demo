@@ -1,0 +1,158 @@
+{
+  "game": {
+    "name": "秦灭六国",
+    "softwareName": "秦灭六国",
+    "softwareVersion": "V1.0",
+    "packageVersion": "0.1.0",
+    "genreSuggestions": ["角色扮演", "策略", "剧情互动"],
+    "orientation": "横屏优先，最终以小游戏迁移版为准",
+    "businessModel": "首版无内购、无广告、无虚拟货币",
+    "shortDescription": "战国末年叙事策略小游戏，在历史结局已定的时代，带领三人小队完成调查、护送与撤离，选择方法并承担代价。",
+    "detailedDescription": "《秦灭六国》是一款战国末年背景的叙事策略小游戏。玩家扮演秦军秘密行动头领北芒，与医者小满、剑士青翎组成三人小队，在郑地、新郑等虚构化历史场景中推进调查、护送、救援和撤离任务。游戏以章节剧情、人物对话、分支选择和轻量回合制战斗为主要玩法，战斗中需要根据敌方意图安排行动，目标不只包括击败敌人，也包括保护人员、夺取物证、守住退路和控制伤亡。游戏不设置等级、装备和付费抽取，玩家的选择会影响后续叙事、战斗配置和章末结算。作品对部分历史事件时间线作戏剧性合并，内容仅用于架空叙事体验。",
+    "keywords": ["秦灭六国", "战国", "历史剧情", "叙事RPG", "策略战斗", "回合制", "分支选择", "单机剧情"],
+    "releaseNotes": "首个可玩版本，包含序章与第一章主要剧情、分支选择、轻量回合制战斗、救援与追截玩法、章末结算和本地进度保存。版本不包含登录、内购、广告和用户自定义输入功能。",
+    "healthAdvice": "抵制不良游戏，拒绝盗版游戏。注意自我保护，谨防受骗上当。适度游戏益脑，沉迷游戏伤身。合理安排时间，享受健康生活。",
+    "ageRatingRecommendation": {
+      "segment": "12+ 候选",
+      "reason": "含历史战争、战斗、火灾、疾病和人物伤亡叙事，但无写实血腥、赌博、色情或用户社交内容；最终年龄分段以平台审核规则和最终提审画面为准。"
+    }
+  },
+  "developerPlaceholders": {
+    "legalName": "【待填写】",
+    "idVerifiedPhone": "【待填写，仅在平台后台提交，不写入公开仓库】",
+    "contactPhone": "【待填写，仅在平台后台提交，不写入公开仓库】",
+    "contactEmail": "【待填写】",
+    "contactAddress": "【待填写】",
+    "copyrightOwner": "【待填写，应与平台个人主体一致】",
+    "softwareCopyrightRegistrationNumber": "【待填写，如已取得】",
+    "completionDate": "【待填写】",
+    "firstPublicationDate": "【未发表或待填写】"
+  },
+  "currentDeveloperStatus": {
+    "developerType": "个人开发者",
+    "wechatAccount": "仅有个人微信账号，尚未注册微信小游戏账号",
+    "douyinAccount": "仅有个人抖音账号，尚未注册抖音开放平台账号",
+    "softwareCopyright": "尚未申请",
+    "recommendedNextStep": "先固定游戏名称和著作权人，再并行注册平台账号与申请软件著作权；首版按无内购、无广告准备。"
+  },
+  "privacyDeclarations": {
+    "accountLogin": false,
+    "realNameCollectedByDeveloper": false,
+    "phoneCollectedByDeveloper": false,
+    "locationCollectedByDeveloper": false,
+    "contactsCollectedByDeveloper": false,
+    "cameraCollectedByDeveloper": false,
+    "microphoneCollectedByDeveloper": false,
+    "ugc": false,
+    "chat": false,
+    "payment": false,
+    "advertising": false,
+    "analyticsSdk": false,
+    "cloudSave": false,
+    "localSave": true,
+    "localSaveDescription": "仅保存剧情阶段、分支选择和保存时间；小游戏迁移版应使用平台本地存储 API。"
+  },
+  "wechat": {
+    "recommendedPath": "IAA/当前及未来不需要开通虚拟支付",
+    "materials": [
+      "个人主体认证与小游戏账号",
+      "代备案授权书，按后台扫码签署",
+      "著作权自我声明，按后台扫码签署",
+      "游戏自审自查报告，按后台线上确认或最新模板办理",
+      "小游戏内容介绍及最终版本截图",
+      "适龄提示和健康游戏忠告",
+      "建议准备计算机软件著作权登记证书"
+    ],
+    "notPreparedUntilNeeded": [
+      "网络游戏出版物号核发单",
+      "虚拟支付相关承诺和支付资质",
+      "第三方运营授权书"
+    ],
+    "technicalBlockers": [
+      "ReactDOM 和 DOM UI 不能直接运行",
+      "new Audio、new Image、localStorage 需替换为 wx API",
+      "外部 CDN 需配置合法域名或改为包内资源",
+      "站外链接和二维码需从提审版本移除"
+    ]
+  },
+  "douyin": {
+    "recommendedPath": "个人主体、无内购首发",
+    "materials": [
+      "个人主体认证和平台实名认证",
+      "小游戏名称、头像、简介和详细介绍",
+      "计算机软件著作权登记证书及必要授权证明",
+      "游戏自审自查线上确认",
+      "适龄提示和健康游戏忠告",
+      "最终版本首页及玩法截图",
+      "基础信息与测试版本审核通过后按平台流程申报备案"
+    ],
+    "mandatoryCapabilities": [
+      "侧边栏复访能力"
+    ],
+    "commercializationNotes": [
+      "流量主和结算资格以个人主体后台实际可申请能力为准",
+      "如接广告必须实现广告加载失败兜底，不可阻断正常游戏",
+      "如接内购需重新核对版号、支付资质和主体条件"
+    ],
+    "technicalBlockers": [
+      "ReactDOM 和 DOM UI 不能直接运行",
+      "浏览器音频、图片和存储 API 需替换为 tt API",
+      "外部 CDN 需配置域名白名单或改为包内资源",
+      "必须接入侧边栏复访能力"
+    ]
+  },
+  "screenshotPlan": [
+    {
+      "id": "01-home",
+      "title": "首页",
+      "webPreview": "/",
+      "requirements": "完整显示游戏名称、主视觉和开始按钮；小游戏提审版需加入健康提示并移除站外导流。"
+    },
+    {
+      "id": "02-story",
+      "title": "剧情对话",
+      "webPreview": "/?stage=s1_anfa",
+      "requirements": "显示场景背景、人物、对白和继续操作。"
+    },
+    {
+      "id": "03-choice",
+      "title": "分支选择",
+      "webPreview": "/?stage=c7_choice",
+      "requirements": "完整显示选择项及选择目标。"
+    },
+    {
+      "id": "04-battle",
+      "title": "战斗",
+      "webPreview": "/?stage=c4_battle",
+      "requirements": "显示双方单位、任务目标、行动按钮和战斗反馈。"
+    },
+    {
+      "id": "05-rescue",
+      "title": "火场救援",
+      "webPreview": "/?stage=c7_fire",
+      "requirements": "展示特殊玩法、计时或操作反馈。"
+    },
+    {
+      "id": "06-settlement",
+      "title": "章末结算",
+      "webPreview": "/?stage=c8_settle",
+      "requirements": "展示玩家选择造成的差异和结算信息。"
+    }
+  ],
+  "assetRightsChecklist": [
+    "标题主视觉及所有背景图",
+    "角色头像、立绘和战斗 Sprite",
+    "BGM、音效和全部配音",
+    "字体及图标库许可",
+    "AI 生成素材的生成记录和可商用条款",
+    "外包或第三方素材的书面授权"
+  ],
+  "currentProjectEvidence": {
+    "webStack": "React 19 + TypeScript + Vite 7",
+    "publicAssetsApproximateSize": "73MB",
+    "productionBuildApproximateSize": "44MB",
+    "buildCheck": "npm run check 已通过，存在 2 条非阻断 ESLint warning",
+    "miniGameReady": false,
+    "reason": "当前版本是浏览器 DOM 应用，尚未完成微信/抖音小游戏运行时迁移。"
+  }
+}
