@@ -267,6 +267,7 @@ function Line({ line, dim, active }: { line: DialogueLine; dim?: boolean; active
   const { type, speaker, text } = line
   const [imgFailed, setImgFailed] = useState(false)
   const [useFallback, setUseFallback] = useState(false)
+  const [imgLoaded, setImgLoaded] = useState(false)
 
   // 字幕轨：整行居中，无说话人栏
   if (type === 'caption') {
@@ -285,6 +286,11 @@ function Line({ line, dim, active }: { line: DialogueLine; dim?: boolean; active
   const avatar = SPEAKER_AVATAR[speaker]
   // webp 失败时回退到 png portrait（仅主角有 png）
   const pngFallback = avatar?.replace('avatar_', 'portrait_').replace('.webp', '.png')
+  const src = useFallback && pngFallback ? pngFallback : avatar
+  // 头像源变化时重置加载态（fallback 切换后重新淡入）
+  useEffect(() => {
+    setImgLoaded(false)
+  }, [src])
   const textClass =
     type === 'stage'
       ? 'italic text-[#8A8578]'
@@ -305,22 +311,31 @@ function Line({ line, dim, active }: { line: DialogueLine; dim?: boolean; active
         </div>
       )
     }
-    const src = useFallback && pngFallback ? pngFallback : avatar
     return (
-      <img
-        src={src}
-        alt=""
-        loading="eager"
-        className="block h-12 w-12 shrink-0 rounded-md border-2 object-cover object-top"
-        style={{ borderColor: color }}
-        onError={() => {
-          if (!useFallback && pngFallback) {
-            setUseFallback(true)
-          } else {
-            setImgFailed(true)
-          }
-        }}
-      />
+      <div
+        className="relative flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-md border-2 text-lg font-bold"
+        style={{ borderColor: color, color, backgroundColor: `${color}22` }}
+      >
+        {/* 图片加载完成前显示首字占位，避免慢网络下透明 img 露出深色底的黑块 */}
+        {!imgLoaded && <span>{speaker[0]}</span>}
+        <img
+          src={src}
+          alt=""
+          loading="eager"
+          className={`absolute inset-0 h-full w-full rounded-md object-cover object-top transition-opacity duration-300 ${
+            imgLoaded ? 'opacity-100' : 'opacity-0'
+          }`}
+          style={{ borderColor: color }}
+          onLoad={() => setImgLoaded(true)}
+          onError={() => {
+            if (!useFallback && pngFallback) {
+              setUseFallback(true)
+            } else {
+              setImgFailed(true)
+            }
+          }}
+        />
+      </div>
     )
   }
 
