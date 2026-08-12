@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { ChevronRight } from 'lucide-react'
 import type { DialogueLine, LineType, StoryScene as Scene } from '../game/story'
 import type { StoryFlags } from '../game/save'
-import { playSfxFile, playVoiceLine, preloadSceneVoices, stopVoice, unlockAudio, unlockBgm } from '../game/audio'
+import { playSfxFile, playVoiceLine, preloadSceneVoices, preloadVoiceAhead, stopVoice, unlockAudio, unlockBgm } from '../game/audio'
 import { MEDIA_CDN } from '../lib/cdn'
 import { useLoadedImage } from '../hooks/useLoadedImage'
 import SkipButton from '../components/SkipButton'
@@ -124,6 +124,8 @@ export default function StoryScene({
 
     if (line && !VOICE_SKIP_TYPES.has(line.type)) {
       void playVoiceLine(scene.id, line.speaker, line.text)
+      // 预取后续 2 句配音，慢网络下保证下一句点击即播（避免即时下载超时无声）
+      void preloadVoiceAhead(scene.id, line.speaker, line.text)
     } else {
       stopVoice()
     }
