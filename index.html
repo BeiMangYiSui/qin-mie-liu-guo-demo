@@ -22,6 +22,16 @@
     <style>
       /* JS/CSS 就绪前保持深色底，避免白屏/黑屏闪烁 */
       html, body { background: #1a1b1f; margin: 0; }
+      /* 静态首屏骨架：React 挂载前立即显示标题画面，消除慢网络下的黑屏等待 */
+      #boot-screen { position: fixed; inset: 0; background: #14161c; overflow: hidden; }
+      .boot-bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0.85; }
+      .boot-shade { position: absolute; inset: 0; background: rgba(20, 22, 28, 0.4); }
+      .boot-content { position: relative; z-index: 1; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; text-align: center; padding: 24px; color: #E9E5DA; text-shadow: 0 2px 8px #000; }
+      .boot-era { color: #B08D57; font-size: 12px; letter-spacing: 0.4em; }
+      .boot-title { font-size: 44px; font-weight: 700; letter-spacing: 0.2em; }
+      .boot-sub { font-size: 12px; color: rgba(233, 229, 218, 0.65); letter-spacing: 0.25em; }
+      .boot-loading { margin-top: 12px; font-size: 11px; color: rgba(233, 229, 218, 0.4); letter-spacing: 0.2em; animation: boot-pulse 1.2s ease-in-out infinite; }
+      @keyframes boot-pulse { 0%, 100% { opacity: 0.4; } 50% { opacity: 1; } }
     </style>
     <!-- 统计脚本延迟加载：不阻塞首屏，页面 load 后空闲时再注入 -->
     <script>
@@ -42,7 +52,19 @@
     </script>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <!-- 静态首屏骨架：React 挂载后会被真实标题画面替换；主视觉走 preload 共享缓存 -->
+      <div id="boot-screen">
+        <img class="boot-bg" src="./assets/title_keyart.webp" alt="" />
+        <div class="boot-shade"></div>
+        <div class="boot-content">
+          <div class="boot-era">前 230 — 前 221 · 战国末年</div>
+          <div class="boot-title">秦灭六国</div>
+          <div class="boot-sub">玩法 Demo · 序章《郑地伏杀》+ 第一章《新郑覆旗》</div>
+          <div class="boot-loading">加载中…</div>
+        </div>
+      </div>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
     <!-- itch.io iframe auto-resize -->
     <script src="https://static.itch.io/iframe-minifier.js"></script>
