@@ -251,18 +251,39 @@ function startVoice(relativePath: string) {
   })
 }
 
-/** 预取某个场景的所有配音文件，让首次点击播放近乎即时 */
+/**
+ * 预取某个场景的配音：按 manifest 顺序只取前 3 条（即将播放的）。
+ * 避免慢网络下全场景 21 个文件并行争抢带宽，导致前几句有缓存、后几句点击时才即时下载而超时无声。
+ * 后续台词由 preloadVoiceAhead 随播放进度逐句推进预取。
+ */
 export async function preloadSceneVoices(sceneId: string) {
   const manifest = voiceManifest ?? (await loadVoiceManifest())
+  if (manifest.length === 0) return
   const scenePrefix = sceneId.split('#', 1)[0]
   const urls = manifest
     .filter((m) => m.scene === scenePrefix)
     .map((m) => cdnUrl(m.file))
-  // 并行 fetch，浏览器会自动缓存
   await Promise.allSettled(
-    urls.map((url) =>
+    urls.slice(0, 3).map((url) =>
       fetch(url, { mode: 'no-cors' }).catch(() => {}),
     ),
+  )
+}
+
+/** 播放某一行时，预取 manifest 中该行之后的 2 句配音，保证慢网络下下一句点击即播。 */
+export async function preloadVoiceAhead(sceneId: string, speaker: string, text: string) {
+  const manifest = voiceManifest ?? (await loadVoiceManifest())
+  if (manifest.length === 0) return
+  const scenePrefix = sceneId.split('#', 1)[0]
+  const normalized = normalizeVoiceText(text)
+  const entries = manifest.filter((m) => m.scene === scenePrefix)
+  const idx = entries.findIndex(
+    (item) => item.speaker === speaker && normalizeVoiceText(item.text) === normalized,
+  )
+  if (idx < 0) return
+  const ahead = entries.slice(idx + 1, idx + 3)
+  await Promise.allSettled(
+    ahead.map((entry) => fetch(cdnUrl(entry.file), { mode: 'no-cors' }).catch(() => {})),
   )
 }
 
