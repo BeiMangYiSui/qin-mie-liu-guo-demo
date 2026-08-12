@@ -3,7 +3,7 @@ import { SCENES } from '../game/story'
 
 // MountShell 挂载点硬编码的背景（不在 SCENES.bg 里，需单独收集）
 const EXTRA_BACKGROUNDS = [
-  'https://stats.puck-muling.top/game/assets/bg_guanshu_huo.webp',
+  './assets/bg_guanshu_huo.webp',
 ]
 
 // 战斗立绘 sprite（战场底为 CSS 渐变，立绘慢加载不会黑屏，但预取可避免人物突入）
@@ -19,7 +19,7 @@ const BATTLE_SPRITES = [
   'enemy_rider_idle_v1',
   'enemy_toumu_idle_v1',
   'enemy_zonghuo_idle_v1',
-].map((name) => `https://stats.puck-muling.top/game/assets/battle/${name}.webp`)
+].map((name) => `./assets/battle/${name}.webp`)
 
 function collectSceneBackgrounds(): string[] {
   const urls = new Set<string>()

@@ -1,13 +1,13 @@
-// 媒体资源 CDN：
-// - 浏览器版（默认）：指向境外 stats.puck-muling.top/game/，仅作为开发预览
-// - 小游戏提审版（MINIGAME_BUILD=true）：返回包内相对路径 ./assets/...
+// 媒体资源路径：
+// - 浏览器版（默认）：同域相对路径 ./，资源随 dist/ 一起部署（GitHub Pages）
+// - 小游戏提审版（MINIGAME_BUILD=true）：返回包内相对路径 /assets/...
 //   资源在提审版打入包或迁移至已备案、境内、HTTPS 的资源域名后才能上线
 import { IS_MINI_GAME } from '../shared/runtime-flag'
 
-export const MEDIA_CDN = IS_MINI_GAME ? '' : 'https://stats.puck-muling.top/game/'
+export const MEDIA_CDN = IS_MINI_GAME ? '' : './'
 
-// 资源版本号：CDN 上的媒体文件被替换后递增此值，URL 携带 ?v= 绕过浏览器旧缓存
-export const ASSET_VERSION = '20260803'
+// 资源版本号：媒体文件被替换后递增此值，URL 携带 ?v= 绕过浏览器旧缓存
+export const ASSET_VERSION = '20260812'
 
 /**
  * 带版本号的媒体资源地址。

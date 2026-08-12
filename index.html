@@ -18,12 +18,28 @@
     <meta name="twitter:description" content="战国末年叙事 RPG · 无等级 · 无装备 · 目标不止全歼" />
     <meta name="twitter:image" content="./assets/title_keyart.webp" />
     <!-- 提前拉取标题页主视觉，避免首屏黑底等待 -->
-    <link rel="preload" as="image" href="https://stats.puck-muling.top/game/assets/title_keyart.webp" />
+    <link rel="preload" as="image" href="./assets/title_keyart.webp" />
     <style>
       /* JS/CSS 就绪前保持深色底，避免白屏/黑屏闪烁 */
       html, body { background: #1a1b1f; margin: 0; }
     </style>
-    <script async src="https://stats.puck-muling.top/script.js" data-website-id="63c0fb58-53c8-4d65-b989-269f049699d6"></script>
+    <!-- 统计脚本延迟加载：不阻塞首屏，页面 load 后空闲时再注入 -->
+    <script>
+      window.addEventListener('load', function () {
+        var inject = function () {
+          var s = document.createElement('script')
+          s.src = 'https://stats.puck-muling.top/script.js'
+          s.setAttribute('data-website-id', '63c0fb58-53c8-4d65-b989-269f049699d6')
+          s.async = true
+          document.body.appendChild(s)
+        }
+        if ('requestIdleCallback' in window) {
+          window.requestIdleCallback(inject, { timeout: 3000 })
+        } else {
+          setTimeout(inject, 2000)
+        }
+      })
+    </script>
   </head>
   <body>
     <div id="root"></div>
