@@ -116,7 +116,7 @@ export default function ChapterCard({
           aria-hidden={!canContinue}
         >
           <p className="flex items-center gap-3 text-sm tracking-[0.5em] text-qin-bronze">
-            <img src="https://stats.puck-muling.top/game/assets/seal_qin.svg" alt="" className="size-8 opacity-60" aria-hidden="true" />
+            <img src="./assets/seal_qin.svg" alt="" className="size-8 opacity-60" aria-hidden="true" />
             {to.number}
           </p>
           <h1 className="mt-4 text-center text-3xl tracking-[0.24em] sm:text-5xl">《{to.title}》</h1>

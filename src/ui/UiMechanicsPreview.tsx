@@ -14,12 +14,12 @@ import type { C7Choice } from './c8ReportData'
 import { C4_TACTIC_REPORTS } from './c4TacticData'
 
 const ART_PLACEHOLDERS = [
-  { id: 'bg_qukou.png', label: '渠口查验', src: 'https://stats.puck-muling.top/game/assets/bg_qukou.webp', type: 'background' },
-  { id: 'bg_hangong.png', label: '韩王宫', src: 'https://stats.puck-muling.top/game/assets/bg_hangong.webp', type: 'background' },
-  { id: 'bg_xinzheng.png', label: '新郑受降', src: 'https://stats.puck-muling.top/game/assets/bg_xinzheng.webp', type: 'background' },
-  { id: 'bg_guanshu_huo.png', label: '官署火起', src: 'https://stats.puck-muling.top/game/assets/bg_guanshu_huo.webp', type: 'background' },
-  { id: '韩王安', label: '韩王安', src: 'https://stats.puck-muling.top/game/assets/npc_hanwang.webp', type: 'portrait' },
-  { id: '司马朔', label: '司马朔', src: 'https://stats.puck-muling.top/game/assets/npc_simashuo.webp', type: 'portrait' },
+  { id: 'bg_qukou.png', label: '渠口查验', src: './assets/bg_qukou.webp', type: 'background' },
+  { id: 'bg_hangong.png', label: '韩王宫', src: './assets/bg_hangong.webp', type: 'background' },
+  { id: 'bg_xinzheng.png', label: '新郑受降', src: './assets/bg_xinzheng.webp', type: 'background' },
+  { id: 'bg_guanshu_huo.png', label: '官署火起', src: './assets/bg_guanshu_huo.webp', type: 'background' },
+  { id: '韩王安', label: '韩王安', src: './assets/npc_hanwang.webp', type: 'portrait' },
+  { id: '司马朔', label: '司马朔', src: './assets/npc_simashuo.webp', type: 'portrait' },
 ] as const
 
 function firstAvailableChoice(tactic: C4Tactic): C7Choice {

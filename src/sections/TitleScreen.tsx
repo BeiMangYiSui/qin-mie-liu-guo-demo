@@ -29,7 +29,7 @@ export default function TitleScreen({
   const hasSave = saveSlots.some((save) => save.status === 'ready')
   const hasStoredSave = saveSlots.some((save) => save.status !== 'empty')
   // 主视觉下载完成前不显示黑图，加载好后淡入
-  const keyartSrc = useLoadedImage('https://stats.puck-muling.top/game/assets/title_keyart.webp')
+  const keyartSrc = useLoadedImage('./assets/title_keyart.webp')
 
   const handleLoad = (data: SaveData) => {
     setShowLoad(false)
@@ -57,7 +57,7 @@ export default function TitleScreen({
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-qin-ink/25 via-qin-ink/55 to-qin-ink/65" />
       <div className="relative z-10 flex flex-col items-center gap-6 px-6 text-center [text-shadow:0_2px_8px_#000]">
         <div className="text-xs font-sans tracking-[0.4em] text-qin-bronze">前 230 — 前 221 · 战国末年</div>
-        <img src="https://stats.puck-muling.top/game/assets/seal_qin.svg" alt="" className="size-12 opacity-70" aria-hidden="true" />
+        <img src="./assets/seal_qin.svg" alt="" className="size-12 opacity-70" aria-hidden="true" />
         <h1 className="font-serif-sc text-4xl font-bold tracking-[0.2em] sm:text-5xl md:text-6xl lg:text-7xl">秦灭六国</h1>
         <div className="font-sans tracking-[0.25em] text-qin-parchment-65">玩法 Demo · 序章《郑地伏杀》+ 第一章《新郑覆旗》</div>
         <div className="mt-2 max-w-md font-serif-sc text-sm leading-8 tracking-wide text-qin-parchment-65">
