@@ -688,6 +688,10 @@
   justify-content: center;
   pointer-events: none;
   transform-origin: 50% 100%;
+  /* 立绘未加载完成时的剪影占位：人物色光晕 + 深色渐隐，避免慢网络下角色空白 */
+  background:
+    radial-gradient(62% 40% at 50% 88%, rgba(233, 229, 218, 0.1), transparent 72%),
+    linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.38));
 }
 
 .cinematic-actor__figure img {
