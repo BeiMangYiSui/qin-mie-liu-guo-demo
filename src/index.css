@@ -721,7 +721,7 @@
 }
 
 .cinematic-actor--enemy.is-arsonist .cinematic-actor__figure img {
-  filter: sepia(0.18) saturate(1.12) drop-shadow(0 0 12px rgba(196, 116, 106, 0.25));
+  filter: sepia(0.18) saturate(1.12);
 }
 
 .cinematic-actor--enemy.is-thief .cinematic-actor__figure img {
@@ -865,9 +865,11 @@
 
 .cinematic-actor.is-targetable {
   cursor: pointer;
-  filter:
-    drop-shadow(0 0 5px rgba(233, 196, 106, 0.48))
-    drop-shadow(0 16px 13px rgba(0, 0, 0, 0.42));
+}
+
+.cinematic-actor.is-targetable .cinematic-actor__shadow {
+  background: rgba(79, 65, 28, 0.72);
+  box-shadow: 0 0 12px rgba(233, 196, 106, 0.42);
 }
 
 .cinematic-actor.is-targetable:hover .cinematic-actor__figure img {

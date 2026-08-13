@@ -11,7 +11,7 @@ export const RETRY_BATTLE_IDS: readonly RetryBattleId[] = [
   'c7_evac',
 ]
 
-// s5/s6/s9/c4 为 v3.5 冻结稿附录战败旁白逐字（DEFEAT_NARRATION 同源）；c7_evac 无冻结对应句，保留占位
+// s5/s6/s9/c4 使用 v3.5 冻结稿附录战败旁白（DEFEAT_NARRATION 同源）；c7_evac 使用通用撤离失败提示
 export const BATTLE_DEFEAT_PLACEHOLDERS: Record<RetryBattleId, string> = {
   s5_zhuishi: DEFEAT_NARRATION.s5,
   s6_fusha: DEFEAT_NARRATION.s6,

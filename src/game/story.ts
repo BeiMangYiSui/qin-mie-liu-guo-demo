@@ -597,7 +597,7 @@ const c8_zhangmo: StoryScene = {
   chapter: CH1,
   place: '新郑 · 市门',
   bg: './assets/bg_xinzheng.webp',
-  notes: ['军报按 C7 选择与战果变体；章末结算挂载点 c8_settle（SettlePanel 占位）。'],
+  notes: ['军报按 C7 选择与战果变体；章末结算由 c8_settle 接入 SettlePanel。'],
   lines: [...C8_BODY.head, C8_BODY.registerLost, ...C8_BODY.tail],
   lineVariants: [
     {
@@ -640,9 +640,9 @@ export const SCENES: Record<string, StoryScene> = {
   c8_zhangmo,
 }
 
-// ———————————————————————————— 增补挂载点（占位接入，组件由另一路开发） ————————————————————————————
+// ———————————————————————————— 扩展场景挂载点（界面组件与剧情数据分层接入） ————————————————————————————
 
-/** §0 组件占位：界面组件实现，story.ts 只挂占位与数据 */
+/** §0 组件接口：story.ts 负责场景挂载与数据，界面组件负责交互呈现 */
 export interface MountPoint {
   id: 's3_chaan' | 'c1_case' | 'c7_fire' | 'c7_troops' | 'c7_evac' | 'c8_settle' | 'shicheng'
   component: 'ScrollInspect' | 'CaseFragmentBoard' | 'FireRescue' | 'PursuitIntercept' | 'SettlePanel' | 'ShichengPage' | 'EvacBattle'
@@ -696,11 +696,11 @@ export const C7_FIRE = {
   lostHuji: '册灰落在水缸里，黑了一层。有些名字，没人记得了。',
 }
 
-// —— c7_evac 护疫营·撤离战（数据与占位，附录「C7 两分支」逐字；战斗配置由另一路复用 C4 框架） ——
+// —— c7_evac 护疫营·撤离战（数据接入附录「C7 两分支」；战斗配置复用 C4 框架） ——
 
 export const C7_EVAC = {
   intro: ['乱兵冲着医篷来了——伤兵抢药，溃兵抢命。'],
-  notes: ['战斗：护住医篷，撑到撤离。', '撤离战配置：占位，复用 C4 护送战框架；存活率写 flag evac_survival。'],
+  notes: ['战斗：护住医篷，撑到撤离。', '撤离战配置复用 C4 护送战框架；存活率写入 flag evac_survival。'],
   xiaomanLine: D('小满', '“军令要城。”（顿）“这里要命。”'),
   survivalHigh: '医篷保住了。躺着的，多半还能起来。',
   survivalLow: '医篷塌了半边。抬出去的，比抬进来的少。',
@@ -717,7 +717,7 @@ export const DEFEAT_NARRATION = {
   huipai: '回旆盟冲破街口——新郑陷入乱火。重整阵线，再战一次。',
 } as const
 
-// —— c8_settle 章末结算（SettlePanel 数据，附录「章末结算」逐字；评级逻辑纯 flag，占位） ——
+// —— c8_settle 章末结算（SettlePanel 数据接入附录「章末结算」；评级逻辑基于 flag） ——
 
 export interface SettleRating {
   id: 'top' | 'mid' | 'even'
