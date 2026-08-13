@@ -125,11 +125,46 @@ def design_trace_audit() -> dict:
     per_page: dict[int, list[dict]] = {}
     for row in rows:
         per_page.setdefault(int(row["page"]), []).append(row)
+    text_pages = {
+        page: page_rows
+        for page, page_rows in per_page.items()
+        if all((row.get("pageType") or "text") == "text" for row in page_rows)
+    }
+    screenshot_pages = {
+        page: page_rows
+        for page, page_rows in per_page.items()
+        if all((row.get("pageType") or "text") == "screenshot" for row in page_rows)
+    }
+    screenshot_files = sorted(
+        {
+            image
+            for page_rows in screenshot_pages.values()
+            for row in page_rows
+            for image in (row.get("imageFile") or "").split(";")
+            if image
+        }
+    )
+    technical_feature_pages = sorted(
+        page
+        for page, page_rows in text_pages.items()
+        if any((row.get("section") or "").startswith("第 13 章") for row in page_rows)
+    )
+    appendix_pages = sorted(page for page in text_pages if page not in set(range(3, 12)) and page not in technical_feature_pages)
     return {
         "rows": len(rows),
         "pages": len(per_page),
-        "allPages30SubstantiveLines": all(len(page_rows) == 30 and all(row["content"].strip() for row in page_rows) for page_rows in per_page.values()),
+        "textPages": len(text_pages),
+        "screenshotPages": len(screenshot_pages),
+        "screenshotFiles": screenshot_files,
+        "allTextPages30SubstantiveLines": all(len(page_rows) == 30 and all(row["content"].strip() for row in page_rows) for page_rows in text_pages.values()),
+        "allScreenshotPages30SubstantiveLines": all(len(page_rows) == 30 and all(row["content"].strip() for row in page_rows) for page_rows in screenshot_pages.values()),
         "pageCounts": {str(page): len(page_rows) for page, page_rows in sorted(per_page.items())},
+        "chapterOrder": {
+            "mainTextPages": sorted(text_pages)[:9],
+            "screenshotPages": sorted(screenshot_pages),
+            "technicalFeaturePages": technical_feature_pages,
+            "appendixPages": appendix_pages,
+        },
     }
 
 
@@ -147,6 +182,44 @@ def embedded_fonts(path: Path) -> list[str]:
     return sorted(names)
 
 
+def design_heading_audit(path: Path) -> dict:
+    """Verify the visible chapter/section hierarchy in the rendered manual."""
+    with pdfplumber.open(path) as pdf:
+        pages = [re.sub(r"\s+", "", page.extract_text() or "") for page in pdf.pages]
+    screenshot_pages = pages[11:23]
+    expected_sections = [f"12.{index}" for index in range(1, 13)]
+    return {
+        "noBracketedHeadings": all("【" not in text and "】" not in text for text in pages),
+        "noPageNumberInHeading": all(not re.search(r"·第\d+页", text) for text in pages),
+        "chapter12OnlyOnFirstScreenshotPage": (
+            "第12章运行截图及说明" in screenshot_pages[0]
+            and all("第12章运行截图及说明" not in text for text in screenshot_pages[1:])
+        ),
+        "allScreenshotSectionsPresent": all(
+            section in page for section, page in zip(expected_sections, screenshot_pages)
+        ),
+        "allScreenshotCaptionsPresent": all(
+            f"图12-{index}" in page for index, page in enumerate(screenshot_pages, 1)
+        ),
+        "chapter13AfterScreenshots": "第13章技术特点" in pages[23],
+        "chapter13HasTechnicalFeatureSections": all(f"13.{index}" in pages[23] for index in range(1, 9)),
+        "appendixStartsAfterChapter13": "附录A场景状态全表" in pages[24],
+    }
+
+
+def source_footer_audit(path: Path) -> dict:
+    """Require a visible, consecutive page number on every source page."""
+    with pdfplumber.open(path) as pdf:
+        pages = [re.sub(r"\s+", " ", page.extract_text() or "").strip() for page in pdf.pages]
+    total = len(pages)
+    missing = [
+        index
+        for index, text in enumerate(pages, 1)
+        if f"第 {index} 页 / 共 {total} 页" not in text
+    ]
+    return {"totalPages": total, "missingOrIncorrectPages": missing, "allPagesNumbered": not missing}
+
+
 def main() -> None:
     rendered_source = RENDER / "source" / SOURCE_DOCX.with_suffix(".pdf").name
     rendered_design = RENDER / "design" / DESIGN_DOCX.with_suffix(".pdf").name
@@ -156,22 +229,37 @@ def main() -> None:
     shutil.copy2(rendered_design, DESIGN_PDF)
 
     contact_sheet(RENDER / "source", QA / "联系表-源程序60页.png")
-    contact_sheet(RENDER / "design", QA / "联系表-软件说明书45页.png")
+    # Remove the obsolete pre-cover contact sheet so the final package exposes
+    # only the current manual review evidence.
+    (QA / "联系表-软件说明书45页.png").unlink(missing_ok=True)
+    (QA / "联系表-软件说明书52页.png").unlink(missing_ok=True)
+    contact_sheet(RENDER / "design", QA / "联系表-软件说明书53页.png")
 
     audits = [pdf_audit(SOURCE_PDF, "source"), pdf_audit(DESIGN_PDF, "design")]
     source_trace = source_trace_audit()
     design_trace = design_trace_audit()
+    design_headings = design_heading_audit(DESIGN_PDF)
+    source_footer = source_footer_audit(SOURCE_PDF)
     fonts = {SOURCE_PDF.name: embedded_fonts(SOURCE_PDF), DESIGN_PDF.name: embedded_fonts(DESIGN_PDF)}
     requirements = {
         "sourceA4_60Pages": audits[0]["pages"] == 60 and audits[0]["pageSizes"] == [(595.3, 841.9)],
         "source50NonEmptyPerPage": source_trace["allPages50NonEmpty"],
         "sourceNoOverflow": not audits[0]["overflows"],
         "sourceNoForbidden": not audits[0]["forbiddenHits"],
-        "designA4_34To45Pages": 34 <= audits[1]["pages"] <= 45 and audits[1]["pageSizes"] == [(595.3, 841.9)],
-        "design30SubstantivePerPage": design_trace["allPages30SubstantiveLines"],
+        "sourceAllPagesNumbered": source_footer["allPagesNumbered"],
+        "designA4_53Pages": audits[1]["pages"] == 53 and audits[1]["pageSizes"] == [(595.3, 841.9)],
+        "design39TextPages30Lines": design_trace["textPages"] == 39 and design_trace["allTextPages30SubstantiveLines"],
+        "design12ScreenshotPages30Lines12Images": design_trace["screenshotPages"] == 12 and len(design_trace["screenshotFiles"]) == 12 and design_trace["allScreenshotPages30SubstantiveLines"],
+        "designChapter12BeforeAppendices": design_trace["chapterOrder"] == {
+            "mainTextPages": list(range(3, 12)),
+            "screenshotPages": list(range(12, 24)),
+            "technicalFeaturePages": [24],
+            "appendixPages": list(range(25, 54)),
+        },
+        "designHeadingHierarchyConsistent": all(design_headings.values()),
         "designNoOverflow": not audits[1]["overflows"],
         "designNoForbidden": not audits[1]["forbiddenHits"],
-        "docxPdfPageMatch": len(list((RENDER / "source").glob("page-*.png"))) == 60 and len(list((RENDER / "design").glob("page-*.png"))) == 45,
+        "docxPdfPageMatch": len(list((RENDER / "source").glob("page-*.png"))) == 60 and len(list((RENDER / "design").glob("page-*.png"))) == 53,
     }
     if not all(requirements.values()):
         raise RuntimeError(json.dumps(requirements, ensure_ascii=False, indent=2))
@@ -182,13 +270,14 @@ def main() -> None:
         "requirements": requirements,
         "pdfAudits": audits,
         "sourceTrace": source_trace,
+        "sourceFooterAudit": source_footer,
         "designTrace": design_trace,
+        "designHeadingAudit": design_headings,
         "embeddedFonts": fonts,
         "sha256": hashes,
         "applicationInfoDraftCompleted": True,
         "identityEvidenceCompleted": True,
         "remainingApplicantActions": [
-            "补充通信地址门牌信息",
             "在登记系统创建R11申请",
             "本人签署并上传系统生成的申请确认签章页",
         ],
@@ -203,7 +292,7 @@ def main() -> None:
         "## 验收结果",
         "",
         "- 源程序：A4，60页，每页50行非空代码，PDF与DOCX渲染页数一致。",
-        "- 软件说明书：A4，45页，每页30行实质内容，PDF与DOCX渲染页数一致。",
+        "- 软件说明书：A4，53页；含封面和目录、设计与使用正文、12页运行截图说明及第13章技术特点；正文与截图说明页均有30行实质内容，PDF与DOCX渲染页数一致。",
         "- 两份PDF均未检测到页面边界溢出、内部工具名称、本机绝对路径或占位符。",
         "- 两份PDF均使用嵌入式 Arial Unicode MS 子集，中文渲染正常。",
         "- 已生成全部页面联系表，并保留逐页行数与源码追溯数据。",
@@ -217,9 +306,8 @@ def main() -> None:
             "",
             "## 本人办理待办",
             "",
-            "1. 在线填报时把现有小区级通信地址补充到楼栋、单元、楼层和房号。",
-            "2. 登录中国版权保护中心登记系统，照录登记申请信息最终填写稿创建 R11 申请。",
-            "3. 下载系统生成的申请确认签章页，由本人签名并填写身份证号码，再按页面要求上传签章原件。",
+            "1. 登录中国版权保护中心登记系统，照录登记申请信息最终填写稿创建 R11 申请。",
+            "2. 下载系统生成的申请确认签章页，由本人签名并填写身份证号码，再按页面要求上传签章原件。",
             "",
             "身份证正反面已完成本地识别核对并生成平台支持的 JPG 文件，不再列为待办。",
             "",

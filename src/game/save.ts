@@ -163,7 +163,7 @@ export const STAGE_LABELS: Record<Stage, string> = {
   end: 'Demo 终',
 }
 
-// 这些 stage 不允许存档（过场/标题/战斗与挂载占位中存档没意义，强制玩家只在叙事场景存档）
+// 这些 stage 不允许存档（过场、标题、战斗及功能面板中存档没有意义，强制玩家只在叙事场景存档）
 const SAVE_BLOCKED: ReadonlySet<Stage> = new Set([
   'title',
   'chapter_card',

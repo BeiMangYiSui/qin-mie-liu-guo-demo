@@ -18,7 +18,7 @@ from pathlib import Path
 
 RENDERER = Path(
     "/Users/zhuangxiji/.codex/plugins/cache/openai-primary-runtime/"
-    "documents/26.805.11740/skills/documents/render_docx.py"
+    "documents/26.812.11052/skills/documents/render_docx.py"
 )
 FONT_CANDIDATES = (
     Path("/Library/Fonts/Arial Unicode.ttf"),

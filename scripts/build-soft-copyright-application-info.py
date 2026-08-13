@@ -28,12 +28,16 @@ PERSONAL = REPO / "docs/release/抖音上线待做事项/个人基本信息.md"
 FILING = REPO / "docs/release/微信上线待做事项/02-小程序备案信息预填表.md"
 OUT = PACKAGE / "03-申请信息与提交指引-含敏感信息"
 MISSING = PACKAGE / "05-本人必须补充-勿上传空白说明"
+LOCAL_ASSIST = PACKAGE.parent / "00-填报与本人签署-含敏感信息"
+ADDRESS_FORM = LOCAL_ASSIST / "03-通信地址门牌信息-本人本地填写.txt"
 
 SOFTWARE = "秦灭六国游戏软件"
 SHORT_NAME = "秦灭六国"
 VERSION = "V1.0"
 COMPLETION_DATE = "2026年08月05日"
+MANUAL_PAGES = 53
 FONT = "Arial Unicode MS"
+STANDARD_ADDRESS_BASE = "重庆市两江新区悦来街道悦来滨江路2号嘉悦江庭"
 
 
 @dataclass(frozen=True)
@@ -95,6 +99,30 @@ def load_applicant() -> Applicant:
     if filing_email != email:
         raise ValueError("Applicant emails disagree between local source files")
     address = read_table(filing, "住所/通信地址")
+    if ADDRESS_FORM.exists():
+        address_text = ADDRESS_FORM.read_text(encoding="utf-8")
+
+        def optional_field(label: str) -> str:
+            match = re.search(rf"^\s*{re.escape(label)}\s*[：:]\s*(.*?)\s*$", address_text, re.M)
+            return match.group(1).strip() if match else ""
+
+        building = optional_field("楼栋/幢/座")
+        unit = optional_field("单元")
+        floor = optional_field("楼层")
+        room = optional_field("房号")
+        if building and room:
+            # Combine an explicitly supplied floor and a short room suffix
+            # (for example 3楼 + 07) into the conventional room number 307.
+            if unit in {"无", "无单元", "不分单元", "无（官网地址中省略）"}:
+                unit = ""
+            floor_digits = "".join(re.findall(r"\d+", floor))
+            room_digits = "".join(re.findall(r"\d+", room))
+            if floor_digits and room_digits and len(room_digits) <= 2:
+                room = f"{floor_digits}{room_digits.zfill(2)}"
+            address = f"{STANDARD_ADDRESS_BASE}{building}{unit}{room}室"
+            address = address.replace("室室", "室")
+            if floor and not re.search(r"\d", floor):
+                raise ValueError("Address floor must contain a number when supplied")
     validate_prc_id(id_number)
     if not re.fullmatch(r"1\d{10}", phone):
         raise ValueError("Applicant phone number is not an 11-digit mobile number")
@@ -102,6 +130,13 @@ def load_applicant() -> Applicant:
         raise ValueError("Applicant email format is invalid")
     id_type = "居民身份证" if "身份证" in id_type_raw else id_type_raw
     return Applicant(name, id_type, id_number, address, phone, email)
+
+
+def source_program_stats() -> tuple[int, int]:
+    extensions = {".ts", ".tsx", ".js", ".jsx", ".css"}
+    files = sorted(path for path in (REPO / "src").rglob("*") if path.is_file() and path.suffix in extensions)
+    physical_lines = sum(len(path.read_text(encoding="utf-8", errors="replace").splitlines()) for path in files)
+    return len(files), physical_lines
 
 
 def set_cell_shading(cell, fill: str) -> None:
@@ -260,6 +295,7 @@ def add_page_break(doc: Document) -> None:
 
 
 def build_application_info(applicant: Applicant, path: Path) -> None:
+    source_file_count, source_line_count = source_program_stats()
     doc = Document()
     configure(doc, "登记申请信息最终填写稿")
     add_title(doc, "计算机软件著作权登记申请信息最终填写稿", f"{SOFTWARE}｜{VERSION}｜自然人申请")
@@ -290,7 +326,7 @@ def build_application_info(applicant: Applicant, path: Path) -> None:
         ("国籍/地区", "中国", "居民身份证持有人"),
         ("证件类型", applicant.id_type, "身份证正反面 JPG 已准备"),
         ("证件号码", applicant.id_number, "已通过 18 位身份证校验规则"),
-        ("通信地址", applicant.address, "来自现有备案预填资料；提交前本人核对门牌信息"),
+        ("通信地址", applicant.address, "依据本人本地填写的楼栋和房号整理；提交前本人复核"),
         ("邮政编码", "401122", "两江新区政府公布的悦来街道嘉悦社区邮编"),
         ("联系电话", applicant.phone, "来自现有备案预填资料"),
         ("电子邮箱", applicant.email, "来自现有个人基本信息"),
@@ -309,7 +345,7 @@ def build_application_info(applicant: Applicant, path: Path) -> None:
         ("运行操作系统", "Windows、macOS、iOS 或 Android", "需具备现代浏览器"),
         ("运行支撑软件", "Chrome、Edge、Safari 等现代浏览器", "当前 V1.0 不申报为原生小游戏"),
         ("编程语言", "TypeScript、JavaScript、TSX、CSS", "核心业务以 TypeScript/TSX 编写"),
-        ("源程序量", "17057 行", "src 目录 128 个源文件的物理行数"),
+        ("源程序量", f"{source_line_count} 行", f"src 目录 {source_file_count} 个源文件的物理行数"),
     ])
     add_heading(doc, "四、开发目的")
     p = doc.add_paragraph()
@@ -343,10 +379,10 @@ def build_application_info(applicant: Applicant, path: Path) -> None:
     ])
     add_heading(doc, "九、提交前本人逐项确认")
     add_bullets(doc, [
-        f"软件全称和版本号确认为“{SOFTWARE}”“{VERSION}”。",
+        f"软件全称确认为“{SOFTWARE}”，版本号确认为“{VERSION}”。",
         f"开发完成日期确认为 {COMPLETION_DATE}；如真实完成日不同，先修改登记系统再提交。",
         "截至申请日软件未向不特定公众开放；如曾有可公开访问的正式版本，须改填已发表并写实际日期、地点。",
-        "著作权人、证件号码、电话和邮箱均与本人当前有效资料一致；通信地址需补充门牌及邮编。",
+        "著作权人、证件号码、通信地址、电话和邮箱均与本人当前有效资料一致。",
     ])
     add_notice(doc, "提交前最后核对：姓名、证件号码、地址、电话、完成日期及未发表状态均属于法律事实；若现实情况与本稿不同，以真实情况为准并同步修改登记系统。", "FCE4D6")
     doc.save(path)
@@ -356,7 +392,7 @@ def build_submission_guide(applicant: Applicant, path: Path) -> None:
     doc = Document()
     configure(doc, "提交顺序与文件清单")
     add_title(doc, "软件著作权登记提交顺序与文件清单", f"{SOFTWARE}｜{VERSION}")
-    add_notice(doc, "两份技术 PDF 和身份证正反面 JPG 已准备并通过校验。本人仍需补全通信地址门牌与邮编，并在登记系统生成、签署和上传 R11 申请确认签章页。")
+    add_notice(doc, "两份技术 PDF、身份证正反面 JPG、通信地址和邮政编码均已准备。本人只需在登记系统完成实名认证、照录、核对、签名和最终提交。")
     add_heading(doc, "一、登记系统照录信息")
     add_fields_table(doc, [
         ("软件", f"{SOFTWARE} {VERSION}", "不得改名或改版本号"),
@@ -369,8 +405,12 @@ def build_submission_guide(applicant: Applicant, path: Path) -> None:
     add_heading(doc, "二、上传文件")
     add_fields_table(doc, [
         ("程序鉴别材料", "01-秦灭六国游戏软件-V1.0-源程序鉴别材料.pdf", "60 页，A4，每页 50 行"),
-        ("文档鉴别材料", "02-秦灭六国游戏软件-V1.0-软件设计与使用说明书.pdf", "45 页，A4，每页不少于 30 行"),
-        ("身份证明", "01-居民身份证正面.jpg / 02-居民身份证反面.jpg", "已准备；官方页面按正反面分栏上传"),
+        (
+            "文档鉴别材料",
+            "02-秦灭六国游戏软件-V1.0-软件设计与使用说明书.pdf",
+            f"{MANUAL_PAGES} 页，A4；含封面、目录、38 页设计与使用正文、12 页运行截图说明和 1 页技术特点",
+        ),
+        ("身份证明", "03-居民身份证正面.jpg / 04-居民身份证反面.jpg", "待上传文件夹中的名称；官方页面按正反面分栏上传"),
         ("权属证明", "通常无需另交", "独立开发、原始取得且无合作/委托/职务情形时"),
         ("申请确认签章页", "登记系统生成后下载", "自然人本人签名并填写身份证号码，再上传签章原件"),
     ])
@@ -397,10 +437,14 @@ def build_submission_guide(applicant: Applicant, path: Path) -> None:
     add_heading(doc, "六、当前材料状态")
     add_fields_table(doc, [
         ("源程序 PDF", "已完成并通过 QA", "60 页、每页 50 行"),
-        ("说明书 PDF", "已完成并通过 QA", "45 页、每页不少于 30 行"),
+        (
+            "说明书 PDF",
+            "已完成并通过 QA",
+            f"{MANUAL_PAGES} 页；含 38 页设计与使用正文、12 页截图说明和 1 页技术特点；含 12 张运行截图",
+        ),
         ("申请信息填写稿", "已预填", "含敏感信息，仅本人使用"),
         ("身份证明", "已完成并核对", "正面姓名/号码匹配，反面类型匹配"),
-        ("通信地址/邮编", "待本人补充", "现有资料只到小区级"),
+        ("通信地址/邮编", "已补全", "通信地址已写到楼栋和房号；提交前本人复核"),
         ("申请确认签章页", "待系统生成并本人签名", "需登录本人登记账号"),
     ])
     doc.save(path)
@@ -410,14 +454,13 @@ def write_markdown_files(applicant: Applicant) -> None:
     OUT.mkdir(parents=True, exist_ok=True)
     MISSING.mkdir(parents=True, exist_ok=True)
     (MISSING / "README-本人必须补充.md").write_text(
-        f"""# 本人必须补充的两项信息/操作
+        f"""# 本人必须完成的一项操作
 
-身份证正反面已在私密目录中准备完成。以下内容仍无法由项目源码或现有文档代替：
+技术材料、身份证正反面、通信地址和邮政编码均已准备完成。以下操作无法由他人代替：
 
-1. **通信地址门牌信息**。现有资料只到小区级；请在本目录 `通信地址门牌信息-本人本地填写.txt` 中补充楼栋、单元、楼层和房号。官方页面的收件地址规范明确要求填写到房间号。
-2. **R11 申请确认签章页**。登录系统照录 `../03-申请信息与提交指引-含敏感信息/01-登记申请信息最终填写稿.pdf`。系统生成签章页后，自然人申请人本人签名并填写身份证号码，再按页面要求上传签章原件。
+1. **登录、实名认证、验证码、申请确认签名和最终提交**。登录系统照录 `../03-申请信息与提交指引-含敏感信息/01-登记申请信息最终填写稿.pdf`。系统生成签章页后，自然人申请人本人签名并填写身份证号码，再按页面要求上传签章原件。
 
-本目录中的说明文件不能代替本人签名和登记系统生成的签章页。技术鉴别材料与身份证明已经准备完成。
+本目录中的说明文件不能代替本人签名和登记系统生成的签章页。
 """,
         encoding="utf-8",
     )
