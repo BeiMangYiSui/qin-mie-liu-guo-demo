@@ -664,7 +664,8 @@
   color: #e9e5da;
   background: transparent;
   text-align: left;
-  filter: drop-shadow(0 16px 13px rgba(0, 0, 0, 0.42));
+  /* iOS Safari 对透明 WebP 的 drop-shadow 会渲染成黑色竖直光柱，改用 box-shadow 替代 */
+  box-shadow: 0 16px 13px rgba(0, 0, 0, 0.42);
   transform-origin: 50% 84%;
   transition:
     filter 180ms ease,
