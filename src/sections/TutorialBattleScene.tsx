@@ -445,7 +445,6 @@ export default function TutorialBattleScene({
             particles={particles}
             speedLines={speedLines}
             skillEffect={skillEffect}
-            weather="rain"
             containerRef={battlefieldRef}
             registerHeroRef={registerHeroRef}
             registerEnemyRef={registerEnemyRef}
