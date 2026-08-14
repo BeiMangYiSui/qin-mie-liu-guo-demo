@@ -253,7 +253,7 @@ export default function StoryScene({
           </div>
         )}
 
-        {(current || respCurrent || (atEndOfMain && (!choice || chosen))) && (
+        {Boolean(current || respCurrent || (atEndOfMain && (!choice || chosen))) && (
           <div className="flex justify-end items-center gap-1 text-qin-parchment-40 text-sm mt-2 animate-pulse">
             继续 <ChevronRight className="w-4 h-4" />
           </div>
