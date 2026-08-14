@@ -39,7 +39,6 @@ export const YUENU_BREAKOUT_BATTLE: BattleConfig = {
   heroPresent: { beimang: false, mengjia: false, xiaoman: false, yuenu: true },
   heroNames: { yuenu: '越女' },
   bg: './assets/bg_zhengdi_yuye.webp',
-  weather: 'rain',
   environmentSfx: 'sfx/city_siege.mp3',
   winLog: '越女一人切开合围，山道上终于露出一条退路。',
   introLogs: [
