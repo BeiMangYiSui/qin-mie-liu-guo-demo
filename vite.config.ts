@@ -10,6 +10,9 @@ import { inspectAttr } from 'kimi-plugin-inspect-react'
 // 否则 src/platform 是目录、需要再找 index.ts/web.ts 等。
 export default defineConfig({
   base: './',
+  build: {
+    sourcemap: true,
+  },
   plugins: [inspectAttr(), react()],
   server: {
     port: 3000,

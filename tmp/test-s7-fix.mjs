@@ -20,7 +20,7 @@ page.on('pageerror', (err) => {
 })
 
 // 1. 打开线上版本，通过 URL 参数直接跳到 s7_xiandai 场景
-await page.goto('https://beimangyisui.github.io/qin-mie-liu-guo-demo/?stage=s7_xiandai', {
+await page.goto('https://beimangyisui.github.io/qin-mie-liu-guo-demo/?stage=s7_xiandai&_=' + Date.now(), {
   waitUntil: 'domcontentloaded',
   timeout: 60000,
 })
