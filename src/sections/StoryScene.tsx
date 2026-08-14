@@ -271,7 +271,17 @@ function Line({ line, dim, active }: { line: DialogueLine; dim?: boolean; active
   const [useFallback, setUseFallback] = useState(false)
   const [imgLoaded, setImgLoaded] = useState(false)
 
-  // 字幕轨：整行居中，无说话人栏
+  const color = SPEAKER_COLOR[speaker] ?? '#E9E5DA'
+  const avatar = SPEAKER_AVATAR[speaker]
+  // webp 失败时回退到 png portrait（仅主角有 png）
+  const pngFallback = avatar?.replace('avatar_', 'portrait_').replace('.webp', '.png')
+  const src = useFallback && pngFallback ? pngFallback : avatar
+  // 头像源变化时重置加载态（fallback 切换后重新淡入）
+  useEffect(() => {
+    setImgLoaded(false)
+  }, [src])
+
+  // 字幕轨：整行居中，无说话人栏（hooks 之后才能早期 return）
   if (type === 'caption') {
     return (
       <div
@@ -284,15 +294,6 @@ function Line({ line, dim, active }: { line: DialogueLine; dim?: boolean; active
     )
   }
 
-  const color = SPEAKER_COLOR[speaker] ?? '#E9E5DA'
-  const avatar = SPEAKER_AVATAR[speaker]
-  // webp 失败时回退到 png portrait（仅主角有 png）
-  const pngFallback = avatar?.replace('avatar_', 'portrait_').replace('.webp', '.png')
-  const src = useFallback && pngFallback ? pngFallback : avatar
-  // 头像源变化时重置加载态（fallback 切换后重新淡入）
-  useEffect(() => {
-    setImgLoaded(false)
-  }, [src])
   const textClass =
     type === 'stage'
       ? 'italic text-[#8A8578]'
