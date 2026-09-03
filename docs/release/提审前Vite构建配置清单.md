@@ -268,10 +268,7 @@ console.log('Mini-game build cleaned');
     "test": "node scripts/verify-demo.mjs",
     "test:minigame": "node scripts/verify-minigame.mjs",
     "check": "npm run test && npm run lint && npm run build",
-    "preview": "vite preview",
-    "soft-copyright:source": "node scripts/build-soft-copyright-source.mjs",
-    "soft-copyright:doc": "node scripts/build-soft-copyright-doc.mjs",
-    "soft-copyright": "npm run soft-copyright:source && npm run soft-copyright:doc"
+    "preview": "vite preview"
   }
 }
 ```
@@ -361,7 +358,6 @@ dist-minigame/
 |----------|---------|
 | `scripts/post-build-clean.mjs` | 浏览器版清理，**保留不变** |
 | `scripts/verify-demo.mjs` | 浏览器版验证，**保留不变** |
-| `scripts/build-soft-copyright-*.mjs` | 软著材料生成，**保留不变** |
 | `package.json` | **新增** `build:minigame` 脚本 |
 
 ---

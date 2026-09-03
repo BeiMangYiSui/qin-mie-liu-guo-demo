@@ -17,6 +17,13 @@ dist-minigame-douyin
 # Qoder IDE cache (regenerated automatically by the IDE, not part of the project)
 Support/
 
+# Local scratch, attachments and build caches (never commit)
+tmp/
+vibe_images/
+performance-screenshot-page.png
+__pycache__/
+*.pyc
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

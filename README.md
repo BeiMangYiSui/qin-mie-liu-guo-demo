@@ -53,11 +53,10 @@
 │   ├── App.tsx        # 浏览器版根组件
 │   ├── main.tsx       # 浏览器版入口
 │   └── main.minigame.tsx  # 小游戏提审版入口
-├── scripts/           # 构建后清理 / 软著材料生成 / 验证 / 截图脚本
+├── scripts/           # 构建后清理 / 验证 / 截图脚本
 ├── public/            # 静态资源：assets / bgm / sfx / voice
 ├── docs/
-│   ├── soft-copyright/    # 软著申请材料（自动生成 + V1.0 源稿）
-│   └── release/           # 发布材料：软著 / 小游戏 / 抖音 / 素材授权
+│   └── release/           # 发布材料：小游戏接入 / 素材授权
 ├── .github/workflows/ # GitHub Pages 部署
 ├── game.json          # 微信小游戏项目配置
 ├── project.config.json# 抖音小游戏项目配置
@@ -79,11 +78,6 @@ npm run lint                   # ESLint
 npm run test                   # scripts/verify-demo.mjs 18 场战斗结构验证
 npm run check                  # test + lint + build 一把梭
 
-# 软著材料生成（输出到 docs/soft-copyright/）
-npm run soft-copyright:source  # 源代码鉴别材料
-npm run soft-copyright:doc     # 软件设计说明
-npm run soft-copyright         # 两个一起
-
 # 小游戏提审包
 npm run build:minigame:wx        # 微信小游戏 → dist-minigame/
 npm run build:minigame:douyin    # 抖音小游戏 → dist-minigame-douyin/
@@ -100,17 +94,12 @@ npm run clean:minigame:douyin    # 清空 dist-minigame-douyin/
 - **GitHub Pages**：`.github/workflows/deploy-pages.yml` 自动部署 `dist/`
 - **Vercel**：`vercel.json` 配置 SPA rewrite
 - **微信小游戏**：参考 [docs/release/小游戏提审版接入指南.md](docs/release/小游戏提审版接入指南.md)
-- **抖音小游戏**：参考 `docs/release/抖音上线待做事项/`
-
-发布材料总览：[docs/release/发布准备总表.txt](docs/release/发布准备总表.txt)
 
 ---
 
-## 软著与素材合规
+## 素材合规
 
-- 软著申请模板：[docs/release/软著申请表示例.txt](docs/release/软著申请表示例.txt)
 - 素材授权链路：[docs/release/素材授权链路核对表.md](docs/release/素材授权链路核对表.md)
-- 提审前自检：[docs/release/提审前自检与签字模板.txt](docs/release/提审前自检与签字模板.txt)
 
 ---
 
