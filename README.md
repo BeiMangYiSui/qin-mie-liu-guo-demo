@@ -1,5 +1,9 @@
 # 《秦灭六国》
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](./LICENSE)
+[![CI](https://github.com/BeiMangYiSui/qin-mie-liu-guo-demo/actions/workflows/ci.yml/badge.svg)](https://github.com/BeiMangYiSui/qin-mie-liu-guo-demo/actions/workflows/ci.yml)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](./CONTRIBUTING.md)
+
 > 战国末期·秦王政·隐密署视角的回合制剧情叙事游戏
 > React 19 + Vite 7 + TypeScript 5.9，可一键构建为浏览器版、微信小游戏、抖音小游戏。
 
@@ -103,6 +107,35 @@ npm run clean:minigame:douyin    # 清空 dist-minigame-douyin/
 
 ---
 
-## 许可证
+## 参与贡献 / Contributing
 
-个人开发者作品，源码仅供学习参考；商用、二次分发需作者授权。
+欢迎参与《秦灭六国》项目的建设！请参阅以下社区指引：
+
+- **贡献指南**：请阅读 [CONTRIBUTING.md](./CONTRIBUTING.md) 了解环境搭建、测试用例核验与 Pull Request 流程；
+- **行为准则**：本项目遵循 Contributor Covenant 行为规范，详见 [CODE_OF_CONDUCT.md](./CODE_OF_CONDUCT.md)；
+- **安全策略**：若发现安全漏洞，请通过 [SECURITY.md](./SECURITY.md) 中的私密渠道与维护者联系。
+
+---
+
+## 许可证 / License
+
+### 中文说明
+
+除特别注明外，本仓库的源代码采用 [MIT License](./LICENSE) 开源。
+
+游戏中的美术资源、音乐、音效、配音、视频、剧情文本、角色设定、世界观、商标以及第三方素材不属于 MIT License 的授权范围。
+
+上述非代码内容的版权及使用权仍归原作者或相应权利人所有，未经授权不得复制、重新分发或用于商业用途。
+
+详细代码许可证请参阅 [LICENSE](./LICENSE)。
+
+### License (English)
+
+Unless otherwise noted, the source code in this repository is licensed under the [MIT License](./LICENSE).
+
+Artwork, music, sound effects, voice assets, video assets, narrative content, character designs, world-building content, trademarks, and third-party assets are not covered by the MIT License.
+
+Rights to those non-code assets remain with their respective authors or rights holders and may not be copied, redistributed, or used commercially without permission.
+
+See [LICENSE](./LICENSE) for the source code license.
+

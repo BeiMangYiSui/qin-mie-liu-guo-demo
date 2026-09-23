@@ -1,7 +1,17 @@
 {
-  "name": "my-app",
+  "name": "qin-mie-liu-guo-demo",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.1.0",
+  "description": "战国末期·秦王政·隐密署视角的回合制剧情叙事游戏",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/BeiMangYiSui/qin-mie-liu-guo-demo.git"
+  },
+  "bugs": {
+    "url": "https://github.com/BeiMangYiSui/qin-mie-liu-guo-demo/issues"
+  },
+  "homepage": "https://github.com/BeiMangYiSui/qin-mie-liu-guo-demo#readme",
   "type": "module",
   "scripts": {
     "dev": "vite",
